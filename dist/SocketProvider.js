@@ -10,17 +10,20 @@ var _dispatcherJs = require('./dispatcher.js');
 
 var _dispatcherJs2 = _interopRequireDefault(_dispatcherJs);
 
-// services
-
 function SocketProvider() {
   var dispatcher = null;
 
-  function setUpSocket(socket) {
-    dispatcher = (0, _dispatcherJs2['default'])();
-    dispatcher.init(socket);
+  function setupSocketListeners(services) {
+    var PopSuggest = services.PopSuggest;
+
+    dispatcher.listen('getPopSuggestions', PopSuggest.getSuggestions); //TODO implement method for retreiving suggestions
   }
 
-  function setupSocketListeners() {}
+  function setUpSocket(socket, api) {
+    dispatcher = (0, _dispatcherJs2['default'])();
+    dispatcher.init(socket);
+    setupSocketListeners(api);
+  }
 
   return {
     setUpSocket: setUpSocket
@@ -29,5 +32,3 @@ function SocketProvider() {
 
 exports['default'] = SocketProvider;
 module.exports = exports['default'];
-
-//dispatcher.listen('getSuggestions', OpenSuggest.getSuggestions); //TODO implement method for retreiving suggestions

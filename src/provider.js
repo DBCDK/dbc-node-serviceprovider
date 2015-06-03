@@ -2,17 +2,19 @@
 
 //import OpenSuggest from '';
 import SocketProvider from './SocketProvider.js';
+const socketProvider = new SocketProvider();
 
-let endPoint = '';
+import * as api from './api.js';
 
-export function init(endpoint = null, socket = null) {
-  if (!endpoint) {
-    throw new Error('No endpoint provided');
+export function init(config = null, socket = null) {
+  if (!config) {
+    throw new Error('No config provided');
   }
-  endPoint = endpoint;
 
-  if (socket) {
+  api.init(config);
+
+  if (socket) { //if no socket is provided an alternative shuld be set up
     console.log('Setting up socket');
-    SocketProvider.setUpSocket(socket);
+    socketProvider.setUpSocket(socket, api.services);
   }
 }

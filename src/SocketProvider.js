@@ -2,19 +2,19 @@
 
 import Dispatcher from './dispatcher.js';
 
-// services
-
-
 function SocketProvider() {
   let dispatcher = null;
 
-  function setUpSocket(socket) {
-    dispatcher = Dispatcher();
-    dispatcher.init(socket);
+  function setupSocketListeners(services) {
+    const PopSuggest = services.PopSuggest;
+
+    dispatcher.listen('getPopSuggestions', PopSuggest.getSuggestions); //TODO implement method for retreiving suggestions
   }
 
-  function setupSocketListeners() {
-    //dispatcher.listen('getSuggestions', OpenSuggest.getSuggestions); //TODO implement method for retreiving suggestions
+  function setUpSocket(socket, api) {
+    dispatcher = Dispatcher();
+    dispatcher.init(socket);
+    setupSocketListeners(api);
   }
 
   return {

@@ -6,8 +6,9 @@ function SocketProvider() {
   let dispatcher = null;
 
   function setupSocketListeners(services) {
+    console.log('setupSocketListeners');
     const PopSuggest = services.PopSuggest;
-
+    PopSuggest.getSuggestions();
     dispatcher.listen('getPopSuggestions', PopSuggest.getSuggestions); //TODO implement method for retreiving suggestions
   }
 

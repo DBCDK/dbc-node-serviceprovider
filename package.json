@@ -1,0 +1,28 @@
+{
+  "name": "dbc-node-serviceprovider",
+  "version": "0.0.1",
+  "description": "Provider for the Node modules that accesesthe DBC webservices",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "build": "npm run cleardest && babel ./src -d dist",
+    "cleardest": "rm -rf ./dist",
+    "watch": "npm run cleardest && babel ./src --watch -d dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DBCDK/dbc-node-serviceprovider.git#develop"
+  },
+  "keywords": [
+    "dbc",
+    "webservice",
+    "provider",
+    "ws"
+  ],
+  "author": "DBC A/S",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DBCDK/dbc-node-serviceprovider/issues"
+  },
+  "homepage": "https://github.com/DBCDK/dbc-node-serviceprovider/tree/develop#readme"
+}

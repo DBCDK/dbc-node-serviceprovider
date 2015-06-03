@@ -21,6 +21,7 @@ function Dispatcher() {
    * @return {null}
    */
   function makeConnection(connection) {
+    console.log('connection: ', connection);
     var user = connection.request.session && connection.request.session.passport && connection.request.session.passport.user || null;
     _listeners.map(function (listener) {
       connection.on(listener.type + 'Request', function (data) {

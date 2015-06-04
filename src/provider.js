@@ -1,6 +1,6 @@
 'use strict';
 
-//import OpenSuggest from '';
+// import OpenSuggest from '';
 import SocketProvider from './SocketProvider.js';
 const socketProvider = new SocketProvider();
 
@@ -13,7 +13,7 @@ export function init(config = null, socket = null) {
 
   api.init(config);
 
-  if (socket) { //if no socket is provided an alternative shuld be set up
+  if (socket) { // if no socket is provided an alternative shuld be set up
     console.log('Setting up socket');
     socketProvider.setUpSocket(socket, api.services);
   }

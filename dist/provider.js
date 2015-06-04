@@ -9,7 +9,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-//import OpenSuggest from '';
+// import OpenSuggest from '';
 
 var _SocketProviderJs = require('./SocketProvider.js');
 
@@ -32,7 +32,7 @@ function init() {
   api.init(config);
 
   if (socket) {
-    //if no socket is provided an alternative shuld be set up
+    // if no socket is provided an alternative shuld be set up
     console.log('Setting up socket');
     socketProvider.setUpSocket(socket, api.services);
   }

@@ -24,12 +24,7 @@ function Dispatcher() {
     var user = connection.request.session && connection.request.session.passport && connection.request.session.passport.user || null;
     _listeners.map(function (listener) {
       console.log(listener);
-      connection.on(listener.type + 'Request', function (data) {
-        listener.callback(data, user);
-        listener.callback(data, user).then(function (data) {
-          connection.emit(listener.type + 'Response', data);
-        });
-      });
+      connection.on(listener.type + 'Request', function (data) {});
     });
   }
 
@@ -81,3 +76,8 @@ function Dispatcher() {
 
 // Export Dispatcher module
 module.exports = Dispatcher;
+
+//listener.callback(data, user);
+/*listener.callback(data, user).then(function(data) {
+  connection.emit(listener.type + 'Response', data);
+});*/

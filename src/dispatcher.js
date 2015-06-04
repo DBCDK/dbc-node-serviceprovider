@@ -25,10 +25,10 @@ function Dispatcher() {
     _listeners.map(function(listener) {
       console.log(listener);
       connection.on(listener.type + 'Request', function(data) {
-        listener.callback(data, user);
-        listener.callback(data, user).then(function(data) {
+        //listener.callback(data, user);
+        /*listener.callback(data, user).then(function(data) {
           connection.emit(listener.type + 'Response', data);
-        });
+        });*/
       });
     });
   }

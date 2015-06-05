@@ -9,8 +9,6 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-// import OpenSuggest from '';
-
 var _SocketProviderJs = require('./SocketProvider.js');
 
 var _SocketProviderJs2 = _interopRequireDefault(_SocketProviderJs);
@@ -18,8 +16,6 @@ var _SocketProviderJs2 = _interopRequireDefault(_SocketProviderJs);
 var _apiJs = require('./api.js');
 
 var api = _interopRequireWildcard(_apiJs);
-
-var socketProvider = new _SocketProviderJs2['default']();
 
 function init() {
   var config = arguments[0] === undefined ? null : arguments[0];
@@ -32,8 +28,8 @@ function init() {
   api.init(config);
 
   if (socket) {
-    // if no socket is provided an alternative shuld be set up
+    // if no socket is provided an alternative shuld be set up TODO non-socket.io setup
     console.log('Setting up socket');
-    socketProvider.setUpSocket(socket, api.services);
+    _SocketProviderJs2['default'].setUpSocket(socket, api.services);
   }
 }

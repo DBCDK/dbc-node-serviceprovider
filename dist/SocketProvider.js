@@ -10,26 +10,18 @@ var _dispatcherJs = require('./dispatcher.js');
 
 var _dispatcherJs2 = _interopRequireDefault(_dispatcherJs);
 
-function SocketProvider() {
-  var dispatcher = null;
+var dispatcher = null;
 
-  function setupSocketListeners(services) {
-    console.log('setupSocketListeners');
-    var PopSuggest = services.PopSuggest;
-    PopSuggest.getSuggestions();
-    dispatcher.listen('getPopSuggestions', PopSuggest.getSuggestions); //TODO implement method for retreiving suggestions
-  }
-
-  function setUpSocket(socket, api) {
-    dispatcher = (0, _dispatcherJs2['default'])();
-    dispatcher.init(socket);
-    setupSocketListeners(api);
-  }
-
-  return {
-    setUpSocket: setUpSocket
-  };
+function setupSocketListeners(services) {
+  var PopSuggest = services.PopSuggest;
+  dispatcher.listen('getPopSuggestions', PopSuggest.getSuggestions);
 }
 
-exports['default'] = SocketProvider;
+function setUpSocket(socket, api) {
+  dispatcher = (0, _dispatcherJs2['default'])();
+  dispatcher.init(socket);
+  setupSocketListeners(api);
+}
+
+exports['default'] = { setUpSocket: setUpSocket };
 module.exports = exports['default'];

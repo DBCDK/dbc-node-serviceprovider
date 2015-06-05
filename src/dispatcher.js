@@ -23,12 +23,10 @@ function Dispatcher() {
   function makeConnection(connection) {
     var user = connection.request.session && connection.request.session.passport && connection.request.session.passport.user || null;
     _listeners.map(function(listener) {
-      console.log(listener);
-      connection.on(listener.type + 'Request', function(data) {
-        //listener.callback(data, user);
-        /*listener.callback(data, user).then(function(data) {
+      connection.on(listener.type + 'Request', function(query) {
+        listener.callback(query, user).then(function(data) {
           connection.emit(listener.type + 'Response', data);
-        });*/
+        });
       });
     });
   }

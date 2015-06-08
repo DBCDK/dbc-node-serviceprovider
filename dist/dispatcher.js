@@ -24,8 +24,10 @@ function Dispatcher() {
     var user = connection.request.session && connection.request.session.passport && connection.request.session.passport.user || null;
     _listeners.map(function (listener) {
       connection.on(listener.type + 'Request', function (query) {
-        listener.callback(query, user).then(function (data) {
-          connection.emit(listener.type + 'Response', data);
+        listener.callback(query, user).forEach(function (promise) {
+          promise.then(function (data) {
+            connection.emit(listener.type + 'Response', data);
+          });
         });
       });
     });

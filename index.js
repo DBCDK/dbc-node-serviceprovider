@@ -1,2 +1,2 @@
 'use strict';
-module.exports = require('./dist/provider');
+module.exports = require('./dist/Provider');

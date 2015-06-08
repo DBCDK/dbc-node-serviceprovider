@@ -9,20 +9,29 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _SocketProviderJs = require('./SocketProvider.js');
+var _socketProviderJs = require('./socketProvider.js');
 
-var _SocketProviderJs2 = _interopRequireDefault(_SocketProviderJs);
+var _socketProviderJs2 = _interopRequireDefault(_socketProviderJs);
 
 var _apiJs = require('./api.js');
 
 var api = _interopRequireWildcard(_apiJs);
+
+/**
+ * Initialization of the provider and the underlying services.
+ *
+ * @param {Object || null} config Object containing the necessary parameters.
+ * @param {Socket} socket If communication with the parent application should
+ * go through a socket it should be provided here. Currently there's no
+ * alternative to using socket.
+ */
 
 function init() {
   var config = arguments[0] === undefined ? null : arguments[0];
   var socket = arguments[1] === undefined ? null : arguments[1];
 
   if (!config) {
-    throw new Error('No config provided');
+    throw new Error('No configuration was provided');
   }
 
   api.init(config);
@@ -30,6 +39,6 @@ function init() {
   if (socket) {
     // if no socket is provided an alternative shuld be set up TODO non-socket.io setup
     console.log('Setting up socket');
-    _SocketProviderJs2['default'].setUpSocket(socket, api.services);
+    _socketProviderJs2['default'].setUpSocket(socket, api.services);
   }
 }

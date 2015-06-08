@@ -1,6 +1,6 @@
 'use strict';
 
-import SocketProvider from './SocketProvider.js';
+import SocketProvider from './socketProvider.js';
 
 import * as api from './api.js';
 

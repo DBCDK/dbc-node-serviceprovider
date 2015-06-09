@@ -27,6 +27,7 @@
   "author": "DBC A/S",
   "license": "ISC",
   "dependencies": {
-    "dbc-node-popsuggest": "git+https://github.com/DBCDK/dbc-node-popsuggest#develop"
+    "dbc-node-popsuggest": "git+https://github.com/DBCDK/dbc-node-popsuggest#develop",
+    "lodash": "^3.9.3"
   }
 }

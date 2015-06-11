@@ -3,9 +3,13 @@
 # ============
 node_modules
 
-
 # ============
 # IDEA
 # ============
 .idea
 *.iml
+
+# ============
+# REPORTS
+# ============
+test-results.xml

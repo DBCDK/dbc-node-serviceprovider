@@ -13,3 +13,9 @@ node_modules
 # REPORTS
 # ============
 test-results.xml
+coverage
+
+# ============
+# LOGS
+# ============
+npm-debug.log

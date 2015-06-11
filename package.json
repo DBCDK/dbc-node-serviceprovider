@@ -5,10 +5,11 @@
   "main": "index.js",
   "homepage": "https://github.com/DBCDK/dbc-node-serviceprovider/tree/develop#readme",
   "scripts": {
-    "test": "test",
-    "build": "npm run cleardest && babel ./src -d dist",
+    "test": "mocha --compilers js:babel/register src/__tests__ -w",
+    "test:junit": "mocha --compilers js:babel/register src/__tests__ -R mocha-junit-reporter",
+    "build": "npm run cleardest && babel ./src -d dist --ignore __tests__",
     "cleardest": "rm -rf ./dist",
-    "watch": "npm run cleardest && babel ./src --watch -d dist",
+    "watch": "npm run cleardest && babel ./src --watch -d dist --ignore __tests__",
     "reinstall": "rm -r node_modules && npm install"
   },
   "repository": {
@@ -29,5 +30,14 @@
   "dependencies": {
     "dbc-node-popsuggest": "git+https://github.com/DBCDK/dbc-node-popsuggest#develop",
     "lodash": "^3.9.3"
+  },
+  "devDependencies": {
+    "babel": "^5.5.6",
+    "chai": "^3.0.0",
+    "mocha": "^2.2.5",
+    "mocha-junit-reporter": "^1.4.0",
+    "node-libs-browser": "^0.5.2",
+    "sinon": "^1.15.0",
+    "webpack": "^1.9.10"
   }
 }

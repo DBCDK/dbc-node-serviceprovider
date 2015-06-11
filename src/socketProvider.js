@@ -15,4 +15,4 @@ function setUpSocket(socket, api) {
   setupSocketListeners(api);
 }
 
-export default {setUpSocket: setUpSocket};
+export default {setUpSocket:setUpSocket};

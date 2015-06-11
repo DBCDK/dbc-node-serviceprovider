@@ -12,8 +12,6 @@ let _connections = [];
 /**
  * The Dispatcher is a wrapper for socket.io. It will handle all communication
  * between server and client
- *
- * @param {[Object]} server a node http server is needed to initialize socket.io
  */
 function Dispatcher() {
 
@@ -28,6 +26,8 @@ function Dispatcher() {
   function emitPromise(listener, connection, promise) {
     promise.then((data) => {
       connection.emit(listener.type + 'Response', data);
+    }).catch((err) => {
+      console.log('error: ', err); //TODO better error handling
     });
   }
 

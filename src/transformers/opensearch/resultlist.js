@@ -1,5 +1,7 @@
 'use strict';
 
+import * as prep from './response-preparation.js';
+
 export function transformRequest(query, offset, worksPerPage, sort) {
 
 	if (sort == "default") {
@@ -19,6 +21,12 @@ export function transformResponse(response) {
 
 	let data = {};
 	data.result = [];
+	
+	let result = prep.checkResponse(response);
+	
+	if (result.error) {
+		return data.result.push(result);
+	}
 	
 	let newWork = {};
 	

@@ -35,9 +35,10 @@ export function getResultInfo(response) {
 	}
 }
 
-
 export function checkRecord(record) {
-	//TODO
+	
+	return checkRecordErrors(record.error);
+	
 }
 
 export function checkResponse(response) {
@@ -117,21 +118,57 @@ function checkResultErrors(errorString) {
 
 function parseErrorString(errorString) {
 	
-	if (errorString.match(/Internal problem.*/)) {
+	if (errorString.match(/Internal problem/)) {
 		return 'Service problem';
 	}
 	
-	if (errorString.match(/Error: Unknown agency.*/)) {
+	if (errorString.match(/Error: Unknown agency/)) {
 		return 'Unknown agency';
 	}
 	
-	if (errorString.match(/Error: Cannot fetch profile.*/)) {
+	if (errorString.match(/Error: Cannot fetch profile/)) {
 		return 'Cannot fetch profile';
 	}
 	
-	if (errorString.match(/Unsupported index.*|Query syntax error/)) {
+	if (errorString.match(/Unsupported index|Query syntax error/)) {
 		return 'Error in search query';
 	} 
+
+	return errorString;
+
+}
+
+function checkRecordErrors(errorString) {
+
+	let error = {};
+	
+	let errormessage = parseRecordErrorString(errorString);
+	
+	switch (errormessage) {
+		case "Record missing":
+			error = {
+				errorcode: 1,
+				errormessage: errormessage,
+				serviceerror: errorString
+			}
+			break;
+		default:
+			error = {
+				errorcode: 0,
+				errormessage: 'Error',
+				serviceerror: errorString
+			}
+			break;		
+	}
+		
+	return error;
+}
+
+function parseRecordErrorString(errorString) {
+	
+	if (errorString.match(/Error: deleted record|Error: unknown\/missing record|Error: Cannot fetch record/)) {
+		return 'Record missing';
+	}
 
 	return errorString;
 

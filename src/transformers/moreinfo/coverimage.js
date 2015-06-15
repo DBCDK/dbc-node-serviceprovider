@@ -36,19 +36,26 @@ export function transformResponse(response) {
 	let data = {};
 	data.result = [];
 	
-	response.identifierInformation.forEach((identifier) => {
-		if (identifier.identifierKnown == true) {
-			identifier.coverImage.forEach((size) => {
-				if (size.attributes.imageSize == "detail_500") {
-					url = size.$value;
+	let result = prep.checkResponse(response);
+	
+	if (result.errorcode != undefined) {
+		data.result.push(result);
+	} else {
+		response.identifierInformation.forEach((identifier) => {
+			if (identifier.identifierKnown == true) {
+				let url;
+				identifier.coverImage.forEach((size) => {
+					if (size.attributes.imageSize == "detail_500") {
+						url = size.$value;
+					}
+				});
+				if (url !== "") {
+					data.result.push(url);
+					return data;
 				}
-			});
-			if (url !== "") {
-				data.result.push(url);
-				return data;
 			}
-		}
-	});
+		});
+	}
 	
 	return data;
   

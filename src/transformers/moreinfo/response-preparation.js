@@ -19,8 +19,9 @@ export function checkResponse(response) {
 		serviceError = response.errorText;
 	}
 
-	switch (response.statusEnum) {
+	switch (response.requestStatus.statusEnum) {
 		case "ok":
+			error = {};
 			break;
 		case "authentication_error":
 			error = {

@@ -12,9 +12,9 @@
 export function checkResponse(response) {
 
 	if (hasSearchResult(response) == true) {
-		if (getHitCount(response) == 0) {
-			return getResultInfo(response);
-		}
+		return getResultInfo(response);
+	} else if (getHitCount(response) == 0) {
+		return getResultInfo(response);
 	} else {
 		return checkResultErrors(response.error);
 	}	
@@ -45,8 +45,10 @@ export function hasSearchResult(response) {
 */
 
 export function getHitCount(response) {
-
-	return response.result.hitCount;
+  if (response.hasOwnProperty('result')) {
+	  return response.result.hitCount;
+	}
+	return;
   
 }
 

@@ -42,11 +42,17 @@ export function transformResponse(response) {
 	
 	let result = prep.checkResponse(response);
 	
-	if (result.error) {
-		return data.result.push(result);
+	if (result.hasOwnProperty('errorcode') || result.collections == 0) {
+		data.result.push(result);
+		return data;
 	}
 	
 	let newWork = {};
+	
+	if (result.collections == 1) {
+		let searchResult = response.result.searchResult;
+		response.result.searchResult = [searchResult];
+	}
 	
 	response.result.searchResult.forEach((work) => {
 		let no = work.collection.numberOfObjects;
@@ -67,7 +73,8 @@ export function transformResponse(response) {
 		newWork.identifiers = identifiers;
 		newWork.title = title;
 		newWork.workType = workType;
-		result.data.push(newWork);
+		data.result.push(newWork);
+		
 	});
 	
 	return data;

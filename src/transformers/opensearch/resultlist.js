@@ -2,6 +2,16 @@
 
 import * as prep from './response-preparation.js';
 
+/**
+ * Transforms the request from the application to Open Search request parameters
+ *
+ * @param {String} the query from the user
+ * @param {String} the number of the first collection wanted in the search result
+ * @param {String} the number of works to retrieve
+ * @param {String} which sort to use
+ * @return {Object} request parameters using Open Search terminology
+ */
+
 export function transformRequest(query, offset, worksPerPage, sort) {
 
 	if (sort == "default") {
@@ -16,6 +26,14 @@ export function transformRequest(query, offset, worksPerPage, sort) {
   }
   
 }
+
+/**
+ * Transforms the response from Open Search webservice to a representation 
+ * that can be used by the application
+ *
+ * @param {Object} the response from the webservice
+ * @return {Object} the transformed result
+ */
 
 export function transformResponse(response) {
 

@@ -1,45 +1,13 @@
 'use strict';
 
-export function hasSearchResult(response) {
-
-	if (response.result != undefined) {;
-		return true;
-	}
-	return false;
-	
-}
-
-export function getHitCount(response) {
-
-	return response.result.hitCount;
-  
-}
-
-export function getCollectionCount(response) {
-
-	return response.result.collectionCount;
-  
-}
-
-export function checkIfMore(response) {
-
-	return response.result.more;
-  
-}
-
-export function getResultInfo(response) {
-	return {
-		hits: getHitCount(response),
-		collections: getCollectionCount(response),
-		more: checkIfMore(response)
-	}
-}
-
-export function checkRecord(record) {
-	
-	return checkRecordErrors(record.error);
-	
-}
+/**
+ * Checks the response from the OpenSearch webservice, to see
+ * if any errors are returned from the service
+ *
+ * @param {Object} the response from the webservice
+ * @return {Object} search result information if everything was ok, 
+ * otherwise error code and error messages
+ */
 
 export function checkResponse(response) {
 
@@ -52,6 +20,100 @@ export function checkResponse(response) {
 	}	
 	
 }
+
+/**
+ * Checks if the response has a searchResult (1 or more hits)
+ *
+ * @param {Object} the response from the webservice
+ * @return {Boolean}
+*/
+
+export function hasSearchResult(response) {
+
+	if (response.result != undefined) {;
+		return true;
+	}
+	return false;
+	
+}
+
+/**
+ * Retrives the hit count (number of manifestations) from the response
+ *
+ * @param {Object} the response from the webservice
+ * @return {String}
+*/
+
+export function getHitCount(response) {
+
+	return response.result.hitCount;
+  
+}
+
+/**
+ * Retrives the collection count (number of works (or manifestations)) 
+ * from the response
+ *
+ * @param {Object} the response from the webservice
+ * @return {String}
+*/
+
+export function getCollectionCount(response) {
+
+	return response.result.collectionCount;
+  
+}
+
+/**
+ * Check if there har more collections in the search result to
+ * be retrieved
+ *
+ * @param {Object} the response from the webservice
+ * @return {String}
+*/
+
+export function checkIfMore(response) {
+
+	return response.result.more;
+  
+}
+
+/**
+ * Combines the result information from the webservice
+ *
+ * @param {Object} the response from the webservice
+ * @return {Object} with hit count, collection count
+ * and whether there are more collections to be retrieved
+*/
+
+export function getResultInfo(response) {
+	return {
+		hits: getHitCount(response),
+		collections: getCollectionCount(response),
+		more: checkIfMore(response)
+	}
+}
+
+/**
+ * Checks a record from the OpenSearch webservice, to see
+ * if there were any errors retrieving the record data
+ *
+ * @param {Object} the record from the webservice
+ * @return {Object} record error information
+ */
+
+export function checkRecord(record) {
+	
+	return checkRecordErrors(record.error);
+	
+}
+
+/**
+ * Checks a result error message from the webservice
+ *
+ * @param {String} an error message from the webservice
+ * @return {Object} result error information
+ */
 
 function checkResultErrors(errorString) {
 
@@ -116,6 +178,13 @@ function checkResultErrors(errorString) {
 	return error;
 }
 
+/**
+ * Parses variable result error message string
+ *
+ * @param {String} an error message from the webservice
+ * @return {String} the parsed error message
+ */
+
 function parseErrorString(errorString) {
 	
 	if (errorString.match(/Internal problem/)) {
@@ -137,6 +206,13 @@ function parseErrorString(errorString) {
 	return errorString;
 
 }
+
+/**
+ * Checks a record error message from the webservice
+ *
+ * @param {String} an error message from the webservice
+ * @return {Object} record error information
+ */
 
 function checkRecordErrors(errorString) {
 
@@ -163,6 +239,13 @@ function checkRecordErrors(errorString) {
 		
 	return error;
 }
+
+/**
+ * Parses variable record error message string
+ *
+ * @param {String} an error message from the webservice
+ * @return {String} the parsed error message
+ */
 
 function parseRecordErrorString(errorString) {
 	

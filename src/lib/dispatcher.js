@@ -109,7 +109,6 @@ function Dispatcher() {
    * @return {null}
    */
   function init(io, transforms) {
-    console.log(transforms);
     registerTransformListeners(transforms);
     io.on('connection', makeConnection);
   }

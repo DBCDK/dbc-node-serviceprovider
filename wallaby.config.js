@@ -4,11 +4,11 @@ let babel = require('babel');
 module.exports = function() {
   return {
     files: [
-      {pattern: 'src/*.js', load: false}
+      {pattern: 'src/*.js'}
     ],
 
     tests: [
-      {pattern: 'src/**/*.test.js', load: false}
+      {pattern: 'src/**/*.test.js'}
     ],
 
     preprocessors: {
@@ -17,12 +17,11 @@ module.exports = function() {
       ]
     },
 
-    /*
     env: {
-      type: 'node'2
+      type: 'node',
+      runner: 'node'
     },
-    */
 
-    testFramework: 'mocha@2.0.1'
+    testFramework: 'mocha@2.1.0'
   };
 };

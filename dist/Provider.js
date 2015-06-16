@@ -43,7 +43,7 @@ var TRANSFORMS = [];
  */
 function registerServicesOnTransforms(transforms, services) {
   transforms.forEach(function (transform) {
-    transform._setServices(services);
+    transform.services = services;
   });
 }
 

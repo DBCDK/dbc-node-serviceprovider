@@ -24,7 +24,7 @@ const TRANSFORMS = [];
  */
 function registerServicesOnTransforms(transforms, services) {
   transforms.forEach((transform) => {
-    transform._setServices(services);
+    transform.services = services;
   });
 }
 

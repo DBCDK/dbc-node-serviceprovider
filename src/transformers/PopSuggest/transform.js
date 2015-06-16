@@ -7,6 +7,7 @@ export default Provider.registerTransform({
   events() {
     let eventsArr = [];
 
+    console.log(this.services.has('popsuggest'));
     if (this.services.has('popsuggest')) {
       eventsArr.push('getPopSuggestions');
     }
@@ -43,7 +44,14 @@ export default Provider.registerTransform({
   },
 
   responseTransform(data) {
-    console.log('responseTransform', data);
+    if(data.error){
+      return {
+        error: true,
+        statusCode: data.error.statusCode,
+        statusMessage: data.error.statusMessage
+      };
+    }
+//    console.log(data.response.docs);
     return data;
   }
 });

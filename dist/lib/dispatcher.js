@@ -36,6 +36,11 @@ function Dispatcher() {
       connection.emit(event + 'Response', data);
     })['catch'](function (err) {
       console.log('error: ', err); //TODO better error handling
+      var error = { error: err };
+      if (transform.responseTransform) {
+        error = transform.responseTransform(error);
+      }
+      connection.emit(event + 'Response', error);
     });
   }
 

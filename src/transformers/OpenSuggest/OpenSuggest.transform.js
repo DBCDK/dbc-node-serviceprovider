@@ -24,7 +24,6 @@ export default Provider.registerTransform({
   },
 
   responseTransform(data) {
-    console.log('responseTransform', data);
     return data;
   }
 });

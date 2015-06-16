@@ -32,7 +32,6 @@ exports['default'] = Provider.registerTransform({
   },
 
   responseTransform: function responseTransform(data) {
-    console.log('responseTransform', data);
     return data;
   }
 });

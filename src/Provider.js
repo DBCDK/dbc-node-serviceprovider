@@ -46,7 +46,7 @@ function discoverTransforms() {
       errors: (root, nodeStatsArray, next) => {
         if (nodeStatsArray[0].error) {
           console.log(nodeStatsArray[0].error);
-          console.log('at: ' + path.join(root, nodeStatsArray[0].name));
+          console.log(' at: ' + path.join(root, nodeStatsArray[0].name));
         }
         next();
       }
@@ -62,8 +62,6 @@ function discoverTransforms() {
  * @param {Socket} socket If communication with the parent application should
  * go through a socket it should be provided here. Currently there's no
  * alternative to using socket.
- * @param {Object[]} transforms An array of transforms to register in the
- * serviceprovider.
  */
 export function init(config = null, socket = null) {
   if (!config) {

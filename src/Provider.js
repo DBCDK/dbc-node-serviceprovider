@@ -11,7 +11,7 @@ import walker from 'walk';
 import {merge} from 'lodash';
 import Dispatcher from './lib/dispatcher.js';
 
-import * as Clients from './clients.js';
+import Clients from './clients.js';
 
 const TRANSFORMS = [];
 
@@ -71,7 +71,7 @@ export function init(config = null, socket = null) {
   }
 
   // configure the services based on the given configuration object
-  const services = Clients.init(config);
+  const services = Clients(config);
   discoverTransforms();
   registerServicesOnTransforms(TRANSFORMS, services);
 

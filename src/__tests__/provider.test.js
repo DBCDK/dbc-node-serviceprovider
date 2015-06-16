@@ -32,6 +32,15 @@ describe('Testing methods on the Provider', () => {
     test = {services: []};
     expect(() => Provider.registerTransform(test)).to.throw(Error);
   });
+
+  it('Test the init method', () => {
+    expect(() => Provider.init()).to.throw(Error);
+    expect(() => Provider.init()).to.throw('No configuration was provided');
+
+    expect(() => Provider.init([], null)).to.not.throw(Error);
+
+    expect(() => Provider.init([], {})).to.throw(TypeError);
+  });
 });
 
 

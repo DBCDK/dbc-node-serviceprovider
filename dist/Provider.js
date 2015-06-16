@@ -43,7 +43,7 @@ var TRANSFORMS = [];
  */
 function registerServicesOnTransforms(transforms, services) {
   transforms.every(function (transform) {
-    transform._setServices(services);
+    transform.services = services;
   });
 }
 
@@ -65,7 +65,7 @@ function discoverTransforms() {
       errors: function errors(root, nodeStatsArray, next) {
         if (nodeStatsArray[0].error) {
           console.log(nodeStatsArray[0].error);
-          console.log('at: ' + _path2['default'].join(root, nodeStatsArray[0].name));
+          console.log(' at: ' + _path2['default'].join(root, nodeStatsArray[0].name));
         }
         next();
       }
@@ -81,8 +81,6 @@ function discoverTransforms() {
  * @param {Socket} socket If communication with the parent application should
  * go through a socket it should be provided here. Currently there's no
  * alternative to using socket.
- * @param {Object[]} transforms An array of transforms to register in the
- * serviceprovider.
  */
 
 function init() {
@@ -118,15 +116,8 @@ function registerTransform(transform) {
     throw new Error('services is a protected field and should not be declared manually in transforms');
   }
 
-  if (transform._setServices) {
-    throw new Error('_setServices is a protected method and should not be declared manually in transforms');
-  }
-
   var baseTransform = {
-    services: null,
-    _setServices: function _setServices(services) {
-      this.services = services;
-    }
+    services: null
   };
 
   transform = (0, _lodash.merge)(transform, baseTransform);

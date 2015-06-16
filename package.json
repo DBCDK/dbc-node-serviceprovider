@@ -29,6 +29,7 @@
   "license": "ISC",
   "dependencies": {
     "dbc-node-popsuggest": "git+https://github.com/DBCDK/dbc-node-popsuggest#develop",
+    "dbc-node-opensuggest": "git+https://github.com/DBCDK/dbc-node-opensuggest#develop",
     "lodash": "^3.9.3",
     "walk": "^2.3.9"
   },

@@ -15,7 +15,7 @@ import OpenSuggest from 'dbc-node-opensuggest';
  *
  * @param {Object} config
  */
-export default function Clients(config = []) {
+export default function Clients(config = {}) {
   let services = new Map();
   if (config.popsuggest) {
     PopSuggest.init(config.popsuggest);

@@ -8,7 +8,7 @@ const clients = new Map([
 ]);
 
 /**
- * Should be called upon initialization with an array of object as parameter.
+ * Should be called upon initialization with an array of objects as parameter.
  * Each object in the array represents an webservice implemented by the provider
  * and so each object should contain the config parameters necessary to
  * configure that specific webservice client.
@@ -16,12 +16,16 @@ const clients = new Map([
  * @param {Object[]} config
  */
 export function init(config = []) {
-  config.forEach((service) => {
+  let api = new Map();
+  config.every((service) => {
     if (clients.has(service.name)) {
       const client = clients.get(service.name);
       client.init(service);
+      api.set(service.name, client.METHODS);
     }
   });
+
+  return api;
 }
 
 export const services = {

@@ -3,7 +3,7 @@
 /**
  * @file Testing the Dispatcher class in dispatcher.js
  */
-import Dispatcher from '../dispatcher.js';
+import Dispatcher from '../lib/dispatcher.js';
 import {expect} from 'chai';
 
 describe('Testing the methods in the Dispatcher object', () => {

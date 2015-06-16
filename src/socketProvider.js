@@ -1,18 +1,10 @@
 'use strict';
 
-import Dispatcher from './dispatcher.js';
+import Dispatcher from './lib/dispatcher.js';
 
 let dispatcher = null;
 
-function setupSocketListeners(services) {
-  const PopSuggest = services.PopSuggest;
-  dispatcher.listen('getPopSuggestions', PopSuggest.getSuggestions);
+export function setUpSocket(socket, api, transforms) {
+  dispatcher = new Dispatcher();
+  dispatcher.init(socket, transforms);
 }
-
-function setUpSocket(socket, api) {
-  dispatcher = Dispatcher();
-  dispatcher.init(socket);
-  setupSocketListeners(api);
-}
-
-export default {setUpSocket:setUpSocket};

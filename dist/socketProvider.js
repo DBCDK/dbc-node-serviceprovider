@@ -3,25 +3,17 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
+exports.setUpSocket = setUpSocket;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _dispatcherJs = require('./dispatcher.js');
+var _libDispatcherJs = require('./lib/dispatcher.js');
 
-var _dispatcherJs2 = _interopRequireDefault(_dispatcherJs);
+var _libDispatcherJs2 = _interopRequireDefault(_libDispatcherJs);
 
 var dispatcher = null;
 
-function setupSocketListeners(services) {
-  var PopSuggest = services.PopSuggest;
-  dispatcher.listen('getPopSuggestions', PopSuggest.getSuggestions);
+function setUpSocket(socket, api, transforms) {
+  dispatcher = new _libDispatcherJs2['default']();
+  dispatcher.init(socket, transforms);
 }
-
-function setUpSocket(socket, api) {
-  dispatcher = (0, _dispatcherJs2['default'])();
-  dispatcher.init(socket);
-  setupSocketListeners(api);
-}
-
-exports['default'] = { setUpSocket: setUpSocket };
-module.exports = exports['default'];

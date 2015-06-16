@@ -15,7 +15,7 @@ var PopSuggest = _interopRequireWildcard(_dbcNodePopsuggest);
 var clients = new Map([['popsuggest', PopSuggest]]);
 
 /**
- * Should be called upon initialization with an array of object as parameter.
+ * Should be called upon initialization with an array of objects as parameter.
  * Each object in the array represents an webservice implemented by the provider
  * and so each object should contain the config parameters necessary to
  * configure that specific webservice client.
@@ -26,12 +26,16 @@ var clients = new Map([['popsuggest', PopSuggest]]);
 function init() {
   var config = arguments[0] === undefined ? [] : arguments[0];
 
-  config.forEach(function (service) {
+  var api = new Map();
+  config.every(function (service) {
     if (clients.has(service.name)) {
       var client = clients.get(service.name);
       client.init(service);
+      api.set(service.name, client.METHODS);
     }
   });
+
+  return api;
 }
 
 var services = {

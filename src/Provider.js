@@ -38,7 +38,7 @@ function discoverTransforms() {
   const walkOptions = {
     listeners: {
       file: (root, fileStats, next) => {
-        if (fileStats.name === 'transform.js') {
+        if (fileStats.name.indexOf('transform.js') >= 0) {
           require(path.join(root, fileStats.name));
         }
         next();

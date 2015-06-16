@@ -42,8 +42,8 @@ var TRANSFORMS = [];
  * @return {Object[]}
  */
 function registerServicesOnTransforms(transforms, services) {
-  transforms.every(function (transform) {
-    transform.services = services;
+  transforms.forEach(function (transform) {
+    transform._setServices(services);
   });
 }
 

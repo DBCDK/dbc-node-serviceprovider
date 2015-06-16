@@ -17,15 +17,18 @@ exports['default'] = Provider.registerTransform({
   },
 
   getSuggestions: function getSuggestions(request) {
-    var OpenSuggest = this.services.get('OpenSuggest');
+    var OpenSuggest = this.services.get('opensuggest');
     return OpenSuggest.getSuggestions({
       index: request.index,
       query: request.query
     });
   },
 
-  requestTransform: function requestTransform(event, request) {
-    return request.map(this.getSuggestions);
+  requestTransform: function requestTransform(event, query) {
+    return this.getSuggestions({
+      index: 'scanphrase.subject',
+      query: query
+    });
   },
 
   responseTransform: function responseTransform(data) {

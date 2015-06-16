@@ -22,7 +22,7 @@ export default function Clients(config = {}) {
     services.set('popsuggest', PopSuggest.METHODS);
   }
   if (config.opensuggest) {
-    services.set('opensuggest', OpenSuggest(config.opensuggest));
+    services.set('opensuggest', OpenSuggest(config.opensuggest.endpoint));
   }
   return services;
 }

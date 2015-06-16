@@ -95,7 +95,7 @@ function Dispatcher() {
   }
 
   function registerTransformListeners(transforms) {
-    transforms.every((transform) => {
+    transforms.forEach((transform) => {
       const events = transform.events();
       events.forEach((event) => addTransformListener(event, transform));
     });

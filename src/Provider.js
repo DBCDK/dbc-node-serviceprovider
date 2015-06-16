@@ -23,8 +23,8 @@ const TRANSFORMS = [];
  * @return {Object[]}
  */
 function registerServicesOnTransforms(transforms, services) {
-  transforms.every((transform) => {
-    transform.services = services;
+  transforms.forEach((transform) => {
+    transform._setServices(services);
   });
 }
 

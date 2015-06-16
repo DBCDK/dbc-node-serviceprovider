@@ -97,7 +97,7 @@ function Dispatcher() {
   }
 
   function registerTransformListeners(transforms) {
-    transforms.every(function (transform) {
+    transforms.forEach(function (transform) {
       var events = transform.events();
       events.forEach(function (event) {
         return addTransformListener(event, transform);
@@ -113,7 +113,6 @@ function Dispatcher() {
    * @return {null}
    */
   function init(io, transforms) {
-    console.log(transforms);
     registerTransformListeners(transforms);
     io.on('connection', makeConnection);
   }

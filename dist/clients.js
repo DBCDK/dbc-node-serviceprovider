@@ -31,7 +31,7 @@ var _dbcNodeOpensuggest2 = _interopRequireDefault(_dbcNodeOpensuggest);
  */
 
 function Clients() {
-  var config = arguments[0] === undefined ? [] : arguments[0];
+  var config = arguments[0] === undefined ? {} : arguments[0];
 
   var services = new Map();
   if (config.popsuggest) {
@@ -39,7 +39,7 @@ function Clients() {
     services.set('popsuggest', PopSuggest.METHODS);
   }
   if (config.opensuggest) {
-    services.set('opensuggest', (0, _dbcNodeOpensuggest2['default'])(config.opensuggest));
+    services.set('opensuggest', (0, _dbcNodeOpensuggest2['default'])(config.opensuggest.endpoint));
   }
   return services;
 }

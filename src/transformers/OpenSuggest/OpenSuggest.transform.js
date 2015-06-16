@@ -11,6 +11,8 @@ export default Provider.registerTransform({
   getSuggestions(request) {
     const OpenSuggest = this.services.get('opensuggest');
     return OpenSuggest.getSuggestions({
+      profile: 'opac',
+      agency: '150013',
       index: request.index,
       query: request.query
     });
@@ -19,7 +21,7 @@ export default Provider.registerTransform({
   requestTransform(event, query) {
     this._query = query;
     return this.getSuggestions({
-      index: 'scanphrase.subject',
+      index: 'scanphrase.title',
       query
     })
   },

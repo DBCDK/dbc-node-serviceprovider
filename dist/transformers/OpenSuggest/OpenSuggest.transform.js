@@ -11,7 +11,7 @@ var _ProviderJs = require('../../Provider.js');
 var Provider = _interopRequireWildcard(_ProviderJs);
 
 exports['default'] = Provider.registerTransform({
-
+  _query: '',
   events: function events() {
     return ['getFilterGuides'];
   },
@@ -25,6 +25,7 @@ exports['default'] = Provider.registerTransform({
   },
 
   requestTransform: function requestTransform(event, query) {
+    this._query = query;
     return this.getSuggestions({
       index: 'scanphrase.subject',
       query: query
@@ -32,7 +33,14 @@ exports['default'] = Provider.registerTransform({
   },
 
   responseTransform: function responseTransform(data) {
-    return data;
+    return this.extractWordsForFilter(data.suggestions, this._query);
+  },
+
+  extractWordsForFilter: function extractWordsForFilter(suggestions, query) {
+    return suggestions.map(function (element) {
+      return element.suggestion;
+    });
   }
+
 });
 module.exports = exports['default'];

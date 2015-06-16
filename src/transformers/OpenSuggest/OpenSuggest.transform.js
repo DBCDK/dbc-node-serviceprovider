@@ -3,7 +3,7 @@
 import * as Provider from '../../Provider.js';
 
 export default Provider.registerTransform({
-
+  _query: '',
   events() {
     return ['getFilterGuides'];
   },
@@ -17,6 +17,7 @@ export default Provider.registerTransform({
   },
 
   requestTransform(event, query) {
+    this._query = query;
     return this.getSuggestions({
       index: 'scanphrase.subject',
       query
@@ -24,6 +25,13 @@ export default Provider.registerTransform({
   },
 
   responseTransform(data) {
-    return data;
+    return this.extractWordsForFilter(data.suggestions, this._query);
+  },
+
+  extractWordsForFilter(suggestions, query) {
+    return suggestions.map((element) => {
+      return element.suggestion;
+    });
   }
+
 });

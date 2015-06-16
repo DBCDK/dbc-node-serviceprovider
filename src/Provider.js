@@ -24,7 +24,7 @@ const TRANSFORMS = [];
  */
 function registerServicesOnTransforms(transforms, services) {
   transforms.every((transform) => {
-    transform._setServices(services);
+    transform.services = services;
   });
 }
 
@@ -93,15 +93,8 @@ export function registerTransform(transform) {
     throw new Error('services is a protected field and should not be declared manually in transforms');
   }
 
-  if (transform._setServices) {
-    throw new Error('_setServices is a protected method and should not be declared manually in transforms');
-  }
-
   const baseTransform = {
-    services: null,
-    _setServices(services) {
-      this.services = services;
-    }
+    services: null
   };
 
   transform = merge(transform, baseTransform);

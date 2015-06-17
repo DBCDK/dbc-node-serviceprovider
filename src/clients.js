@@ -2,6 +2,8 @@
 
 import * as PopSuggest from 'dbc-node-popsuggest';
 import OpenSuggest from 'dbc-node-opensuggest';
+import * as OpenSearch from 'dbc-node-opensearch-client';
+import * as MoreInfo from 'dbc-node-moreinfo-client';
 
 /**
  * Initialize Clients with configuration
@@ -23,6 +25,14 @@ export default function Clients(config = {}) {
   }
   if (config.opensuggest) {
     services.set('opensuggest', OpenSuggest(config.opensuggest.endpoint));
+  }
+  if (config.searchresultlist) {
+    OpenSearch.init(config.searchresultlist);
+    services.set('searchresultlist'), OpenSearch.METHODS;
+  }
+  if (config.searchresultlist) {
+    MoreInfo.init(config.coverimage);
+    services.set('coverimage'), MoreInfo.METHODS;
   }
   return services;
 }

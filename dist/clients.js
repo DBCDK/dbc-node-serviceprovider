@@ -17,6 +17,14 @@ var _dbcNodeOpensuggest = require('dbc-node-opensuggest');
 
 var _dbcNodeOpensuggest2 = _interopRequireDefault(_dbcNodeOpensuggest);
 
+var _dbcNodeOpensearchClient = require('dbc-node-opensearch-client');
+
+var OpenSearch = _interopRequireWildcard(_dbcNodeOpensearchClient);
+
+var _dbcNodeMoreinfoClient = require('dbc-node-moreinfo-client');
+
+var MoreInfo = _interopRequireWildcard(_dbcNodeMoreinfoClient);
+
 /**
  * Initialize Clients with configuration
  *
@@ -40,6 +48,14 @@ function Clients() {
   }
   if (config.opensuggest) {
     services.set('opensuggest', (0, _dbcNodeOpensuggest2['default'])(config.opensuggest.endpoint));
+  }
+  if (config.searchresultlist) {
+    OpenSearch.init(config.searchresultlist);
+    services.set('searchresultlist'), OpenSearch.METHODS;
+  }
+  if (config.searchresultlist) {
+    MoreInfo.init(config.coverimage);
+    services.set('coverimage'), MoreInfo.METHODS;
   }
   return services;
 }

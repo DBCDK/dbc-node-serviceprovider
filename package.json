@@ -28,8 +28,10 @@
   "author": "DBC A/S",
   "license": "ISC",
   "dependencies": {
-    "dbc-node-popsuggest": "git+https://github.com/DBCDK/dbc-node-popsuggest#develop",
+    "dbc-node-moreinfo-client": "git+https://github.com/DBCDK/dbc-node-moreinfo-client#develop",
+    "dbc-node-opensearch-client": "git+https://github.com/DBCDK/dbc-node-opensearch-client#develop",
     "dbc-node-opensuggest": "git+https://github.com/DBCDK/dbc-node-opensuggest#develop",
+    "dbc-node-popsuggest": "git+https://github.com/DBCDK/dbc-node-popsuggest#develop",
     "lodash": "^3.9.3",
     "walk": "^2.3.9"
   },

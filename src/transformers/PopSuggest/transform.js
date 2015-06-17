@@ -1,6 +1,7 @@
 'use strict';
 
 import * as Provider from '../../Provider.js';
+import {isArray} from 'lodash';
 
 export default Provider.registerTransform({
 
@@ -32,7 +33,7 @@ export default Provider.registerTransform({
     ]);
   },
 
-  getPopSuggestionsRequestResponse() {
+  getPopSuggestionsRequestResponse() { // eslint-disable-line
     console.log('popSuggestRequestResponse', arguments);
   },
 
@@ -44,14 +45,18 @@ export default Provider.registerTransform({
   },
 
   responseTransform(data) {
-    if(data.error){
-      return {
+    if (data.error) {
+      data = {
         error: true,
         statusCode: data.error.statusCode,
         statusMessage: data.error.statusMessage
       };
     }
-//    console.log(data.response.docs);
+    else if (isArray(data.responseHeader.qf)) {
+      data.responseHeader.qf = data.responseHeader.qf.join();
+    }
+
+    console.log(data);
     return data;
   }
 });

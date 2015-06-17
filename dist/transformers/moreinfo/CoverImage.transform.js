@@ -24,7 +24,7 @@ exports['default'] = Provider.registerTransform({
   getSearchResultList: function getSearchResultList(request) {
     var MoreInfo = this.services.get('coverimage');
     return MoreInfo.getMoreInfoResult({
-      identifiers: identifiers
+      identifiers: identifiers.identifiers
     });
   },
 
@@ -45,7 +45,9 @@ exports['default'] = Provider.registerTransform({
       });
     });
 
-    return identifiers;
+    return this.getMoreInfoResult({
+      identifiers: identifiers
+    });
   },
 
   /**

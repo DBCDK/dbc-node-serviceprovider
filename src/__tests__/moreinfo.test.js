@@ -1,7 +1,7 @@
 'use strict';
 
 import {expect, assert} from 'chai';
-import * as prep from  '../transformers/MoreInfo/CoverImage.js';
+import * as prep from  '../transformers/MoreInfo/CoverImage.transform.js';
 
 describe('Test transform of MoreInfo responses', () => {
 	it('Check positive response', function() {

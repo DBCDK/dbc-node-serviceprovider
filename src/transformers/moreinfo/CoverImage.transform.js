@@ -13,7 +13,7 @@ export default Provider.registerTransform({
   getSearchResultList(request) {
     const MoreInfo = this.services.get('coverimage');
     return MoreInfo.getMoreInfoResult({
-      identifiers: identifiers
+      identifiers: identifiers.identifiers
     });
   },
 
@@ -34,7 +34,9 @@ export default Provider.registerTransform({
       });
     });
   
-    return identifiers;
+    return this.getMoreInfoResult({
+      identifiers: identifiers
+    });
   
   },
 

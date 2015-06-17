@@ -116,6 +116,18 @@ function registerTransform(transform) {
     throw new Error('services is a protected field and should not be declared manually in transforms');
   }
 
+  if (!transform.events) {
+    throw new Error('No events method not found on transform');
+  }
+
+  if (!transform.requestTransform) {
+    throw new Error('No requestTransform method not found on transform');
+  }
+
+  if (!transform.responseTransform) {
+    throw new Error('No responseTransform method not found on transform');
+  }
+
   var baseTransform = {
     services: null
   };

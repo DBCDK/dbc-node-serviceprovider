@@ -10,6 +10,8 @@ var _ProviderJs = require('../../Provider.js');
 
 var Provider = _interopRequireWildcard(_ProviderJs);
 
+var _lodash = require('lodash');
+
 exports['default'] = Provider.registerTransform({
 
   events: function events() {
@@ -50,13 +52,16 @@ exports['default'] = Provider.registerTransform({
 
   responseTransform: function responseTransform(data) {
     if (data.error) {
-      return {
+      data = {
         error: true,
         statusCode: data.error.statusCode,
         statusMessage: data.error.statusMessage
       };
+    } else if ((0, _lodash.isArray)(data.responseHeader.qf)) {
+      data.responseHeader.qf = data.responseHeader.qf.join();
     }
-    //    console.log(data.response.docs);
+
+    console.log(data);
     return data;
   }
 });

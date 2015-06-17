@@ -33,7 +33,7 @@ export default Provider.registerTransform({
     ]);
   },
 
-  getPopSuggestionsRequestResponse() { // eslint-disable-line
+  getPopSuggestionsRequestResponse() {
     console.log('popSuggestRequestResponse', arguments);
   },
 

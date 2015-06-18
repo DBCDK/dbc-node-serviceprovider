@@ -35,12 +35,10 @@ function Dispatcher() {
       }
       connection.emit(event + 'Response', data);
     })['catch'](function (err) {
-      console.log('error: ', err); //TODO better error handling
       var error = { error: err };
-      if (transform.responseTransform) {
-        error = transform.responseTransform(error);
-      }
+      error = transform.responseTransform(error);
       connection.emit(event + 'Response', error);
+      throw new Error('A promise was rejected: ', err); //TODO better error handling
     });
   }
 
@@ -50,7 +48,6 @@ function Dispatcher() {
    * @param {Object} transform The transform object
    * @param event
    * @param {Object || Array} query The query object/array
-   * @param {Object || null} user The user object
    * @param {Socket} connection The socket connection on which the response the
    * event should be emitted.
    */

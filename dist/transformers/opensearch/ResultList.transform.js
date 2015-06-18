@@ -22,7 +22,7 @@ exports['default'] = Provider.registerTransform({
   },
 
   getSearchResultList: function getSearchResultList(request) {
-    var OpenSearch = this.services.get('searchresultlist');
+    var OpenSearch = this.services.get('opensearch');
     return OpenSearch.getSearchResult({
       query: request.query,
       start: request.offset,

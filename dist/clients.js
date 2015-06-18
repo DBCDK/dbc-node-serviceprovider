@@ -49,11 +49,11 @@ function Clients() {
   if (config.opensuggest) {
     services.set('opensuggest', (0, _dbcNodeOpensuggest2['default'])(config.opensuggest.endpoint));
   }
-  if (config.searchresultlist) {
-    OpenSearch.init(config.searchresultlist);
-    services.set('searchresultlist'), OpenSearch.METHODS;
+  if (config.opensearch) {
+    OpenSearch.init(config.opensearch);
+    services.set('opensearch'), OpenSearch.METHODS;
   }
-  if (config.searchresultlist) {
+  if (config.moreinfo) {
     MoreInfo.init(config.coverimage);
     services.set('coverimage'), MoreInfo.METHODS;
   }

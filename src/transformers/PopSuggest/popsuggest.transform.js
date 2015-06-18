@@ -1,14 +1,13 @@
 'use strict';
 
 import * as Provider from '../../Provider.js';
-import {isArray} from 'lodash';
+import {isArray, isEmpty} from 'lodash';
 
 export default Provider.registerTransform({
 
   events() {
     let eventsArr = [];
 
-    console.log(this.services.has('popsuggest'));
     if (this.services.has('popsuggest')) {
       eventsArr.push('getPopSuggestions');
     }
@@ -17,46 +16,59 @@ export default Provider.registerTransform({
   },
 
   getPopSuggestionsRequest(query) {
-    console.log(query);
     const PopSuggest = this.services.get('popsuggest');
     return PopSuggest.getSuggestions([
       {
         index: 'term.creator',
         query: query,
-        fields: ['fedoraPid', 'term.title', 'term.creator']
+        fields: ['display.creator']
       },
       {
         index: 'term.title',
         query: query,
-        fields: ['fedoraPid', 'term.title', 'term.creator']
+        fields: ['fedoraPid', 'display.title']
       }
     ]);
   },
 
-  getPopSuggestionsRequestResponse() {
-    console.log('popSuggestRequestResponse', arguments);
-  },
-
   requestTransform(event, query) {
-    console.log('requestTransform');
     if (event === 'getPopSuggestions') {
       return this.getPopSuggestionsRequest(query);
     }
   },
 
-  responseTransform(data) {
-    if (data.error) {
-      data = {
-        error: true,
-        statusCode: data.error.statusCode,
-        statusMessage: data.error.statusMessage
-      };
+  _getIndex(response) {
+    let index = '';
+    if (isArray(response.responseHeader.qf)) {
+      index = response.responseHeader.qf.join();
     }
-    else if (isArray(data.responseHeader.qf)) {
-      data.responseHeader.qf = data.responseHeader.qf.join();
+    else {
+      index = response.responseHeader.qf.join();
     }
 
-    console.log(data);
+    return index;
+  },
+
+  responseTransform(response) {
+    let data = {};
+    if (response.error) {
+      data = {
+        error: true,
+        statusCode: response.error.statusCode,
+        statusMessage: response.error.statusMessage
+      };
+    }
+    else if (isEmpty(response.response.docs)) {
+      data.isEmpty = true;
+      data.index = this._getIndex(response);
+    }
+    else {
+      data = {
+        index: this._getIndex(response),
+        docs: response.response.docs
+      };
+    }
+
     return data;
   }
 });

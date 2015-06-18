@@ -5,7 +5,6 @@ import * as prep from './response-preparation.js';
 
 export default Provider.registerTransform({
 
-  _query: '',
   events() {
     return ['getOpenSearchResultList'];
   },
@@ -65,7 +64,7 @@ export default Provider.registerTransform({
       return data;
     }
   
-    let newWork = {};
+
   
     if (result.collections == 1) {
       let searchResult = response.result.searchResult;
@@ -73,6 +72,7 @@ export default Provider.registerTransform({
     }
   
     response.result.searchResult.forEach((work) => {
+      let newWork = {};
       let no = work.collection.numberOfObjects;
       let identifiers = [];
       let title;

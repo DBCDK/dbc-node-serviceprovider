@@ -16,7 +16,6 @@ var prep = _interopRequireWildcard(_responsePreparationJs);
 
 exports['default'] = Provider.registerTransform({
 
-  _query: '',
   events: function events() {
     return ['getOpenSearchResultList'];
   },
@@ -75,14 +74,13 @@ exports['default'] = Provider.registerTransform({
       return data;
     }
 
-    var newWork = {};
-
     if (result.collections == 1) {
       var searchResult = response.result.searchResult;
       response.result.searchResult = [searchResult];
     }
 
     response.result.searchResult.forEach(function (work) {
+      var newWork = {};
       var no = work.collection.numberOfObjects;
       var identifiers = [];
       var title = undefined;

@@ -28,11 +28,11 @@ export default function Clients(config = {}) {
   }
   if (config.opensearch) {
     OpenSearch.init(config.opensearch);
-    services.set('opensearch'), OpenSearch.METHODS;
+    services.set('opensearch', OpenSearch.METHODS);
   }
   if (config.moreinfo) {
     MoreInfo.init(config.coverimage);
-    services.set('coverimage'), MoreInfo.METHODS;
+    services.set('coverimage', MoreInfo.METHODS);
   }
   return services;
 }

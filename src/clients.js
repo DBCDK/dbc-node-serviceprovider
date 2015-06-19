@@ -31,8 +31,8 @@ export default function Clients(config = {}) {
     services.set('opensearch', OpenSearch.METHODS);
   }
   if (config.moreinfo) {
-    MoreInfo.init(config.coverimage);
-    services.set('coverimage', MoreInfo.METHODS);
+    MoreInfo.init(config.moreinfo);
+    services.set('coverimage', {getMoreInfoResult : MoreInfo.getMoreInfoResult});
   }
   return services;
 }

@@ -2,6 +2,20 @@
 
 import * as Provider from '../../Provider.js';
 import * as prep from './response-preparation.js';
+import Transform from 'jsonpath-object-transform';
+
+function getImagesFromResponse(result) {
+  var template = {
+    images: ['$.identifierInformation..coverImage.*', {
+      url: '$..$value',
+      size: '$..imageSize',
+      format: '$..imageFormat'
+    }],
+  };
+  var transformed = Transform(result, template);
+  return transformed;
+}
+
 
 export default Provider.registerTransform({
 
@@ -9,12 +23,9 @@ export default Provider.registerTransform({
   events() {
     return ['getCoverImage'];
   },
-  
+
   getSearchResultList(request) {
-    const MoreInfo = this.services.get('coverimage');
-    return MoreInfo.getMoreInfoResult({
-      identifiers: identifiers.identifiers
-    });
+
   },
 
   /**
@@ -24,57 +35,39 @@ export default Provider.registerTransform({
    * @return {Array} request parameters using More Info terminology
    */
 
-  requestTransform(request) {
+    requestTransform(request, data) {
 
-    let identifiers = [];
-  
-    request.forEach((value) => {
-      value.forEach((pid) => {
-        identifiers.push(pid.pid.split(":").pop());
-      });
-    });
-  
-    return this.getMoreInfoResult({
-      identifiers: identifiers
-    });
-  
+    let identifiers = data.map((pid) => pid.split(":").pop());
+    const MoreInfo = this.services.get('coverimage');
+    return MoreInfo.getMoreInfoResult({identifiers}).map(promise => promise.then(response => {
+        return {
+          identifiers: data,
+          result: getImagesFromResponse(response)
+        }
+    }));
   },
 
   /**
-   * Transforms the respone from the MoreInfo webservice to a representation 
+   * Transforms the respone from the MoreInfo webservice to a representation
    * that can be used by the application
    *
    * @param {Object} the response from MoreInfo
    * @return {Object} the transformed result
    */
-
-  responseTransform(response) {
-
+    responseTransform(response) {
+    //@todo fix hack created in requestTransform where
+    return response;
     let data = {};
     data.result = [];
-  
+
     let result = prep.checkResponse(response);
-  
+
     if (result.errorcode != undefined) {
       data.result.push(result);
     } else {
-      response.identifierInformation.forEach((identifier) => {
-        if (identifier.identifierKnown == true) {
-          let url;
-          identifier.coverImage.forEach((size) => {
-            if (size.attributes.imageSize == "detail_500") {
-              url = size.$value;
-            }
-          });
-          if (url !== "") {
-            data.result.push(url);
-            return data;
-          }
-        }
-      });
+      data.result = getImagesFromResponse(response);
     }
-  
     return data;
-  
+
   }
 });

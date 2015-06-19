@@ -4,6 +4,8 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 
 var _ProviderJs = require('../../Provider.js');
@@ -14,6 +16,22 @@ var _responsePreparationJs = require('./response-preparation.js');
 
 var prep = _interopRequireWildcard(_responsePreparationJs);
 
+var _jsonpathObjectTransform = require('jsonpath-object-transform');
+
+var _jsonpathObjectTransform2 = _interopRequireDefault(_jsonpathObjectTransform);
+
+function getImagesFromResponse(result) {
+  var template = {
+    images: ['$.identifierInformation..coverImage.*', {
+      url: '$..$value',
+      size: '$..imageSize',
+      format: '$..imageFormat'
+    }]
+  };
+  var transformed = (0, _jsonpathObjectTransform2['default'])(result, template);
+  return transformed;
+}
+
 exports['default'] = Provider.registerTransform({
 
   _query: '',
@@ -21,12 +39,7 @@ exports['default'] = Provider.registerTransform({
     return ['getCoverImage'];
   },
 
-  getSearchResultList: function getSearchResultList(request) {
-    var MoreInfo = this.services.get('coverimage');
-    return MoreInfo.getMoreInfoResult({
-      identifiers: identifiers.identifiers
-    });
-  },
+  getSearchResultList: function getSearchResultList(request) {},
 
   /**
    * Transforms the request from the app to MoreInfo request parameters
@@ -35,31 +48,32 @@ exports['default'] = Provider.registerTransform({
    * @return {Array} request parameters using More Info terminology
    */
 
-  requestTransform: function requestTransform(request) {
+  requestTransform: function requestTransform(request, data) {
 
-    var identifiers = [];
-
-    request.forEach(function (value) {
-      value.forEach(function (pid) {
-        identifiers.push(pid.pid.split(':').pop());
-      });
+    var identifiers = data.map(function (pid) {
+      return pid.split(':').pop();
     });
-
-    return this.getMoreInfoResult({
-      identifiers: identifiers
+    var MoreInfo = this.services.get('coverimage');
+    return MoreInfo.getMoreInfoResult({ identifiers: identifiers }).map(function (promise) {
+      return promise.then(function (response) {
+        return {
+          identifiers: data,
+          result: getImagesFromResponse(response)
+        };
+      });
     });
   },
 
   /**
-   * Transforms the respone from the MoreInfo webservice to a representation 
+   * Transforms the respone from the MoreInfo webservice to a representation
    * that can be used by the application
    *
    * @param {Object} the response from MoreInfo
    * @return {Object} the transformed result
    */
-
   responseTransform: function responseTransform(response) {
-
+    //@todo fix hack created in requestTransform where
+    return response;
     var data = {};
     data.result = [];
 
@@ -68,22 +82,8 @@ exports['default'] = Provider.registerTransform({
     if (result.errorcode != undefined) {
       data.result.push(result);
     } else {
-      response.identifierInformation.forEach(function (identifier) {
-        if (identifier.identifierKnown == true) {
-          var url = undefined;
-          identifier.coverImage.forEach(function (size) {
-            if (size.attributes.imageSize == 'detail_500') {
-              url = size.$value;
-            }
-          });
-          if (url !== '') {
-            data.result.push(url);
-            return data;
-          }
-        }
-      });
+      data.result = getImagesFromResponse(response);
     }
-
     return data;
   }
 });

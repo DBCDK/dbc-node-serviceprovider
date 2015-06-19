@@ -70,7 +70,7 @@ exports['default'] = Provider.registerTransform({
       data.error.push(result);
       return data;
     } else if (result.collections == 0) {
-      data.result.push(result);
+      //data.result.push(result);
       return data;
     }
 

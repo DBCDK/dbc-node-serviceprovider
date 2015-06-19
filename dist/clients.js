@@ -17,6 +17,10 @@ var _dbcNodeOpensuggest = require('dbc-node-opensuggest');
 
 var _dbcNodeOpensuggest2 = _interopRequireDefault(_dbcNodeOpensuggest);
 
+var _dbcNodeRecommendations = require('dbc-node-recommendations');
+
+var _dbcNodeRecommendations2 = _interopRequireDefault(_dbcNodeRecommendations);
+
 var _dbcNodeOpensearchClient = require('dbc-node-opensearch-client');
 
 var OpenSearch = _interopRequireWildcard(_dbcNodeOpensearchClient);
@@ -48,6 +52,9 @@ function Clients() {
   }
   if (config.opensuggest) {
     services.set('opensuggest', (0, _dbcNodeOpensuggest2['default'])(config.opensuggest.endpoint));
+  }
+  if (config.recommend) {
+    services.set('recommend', (0, _dbcNodeRecommendations2['default'])(config.recommend.endpoint));
   }
   if (config.opensearch) {
     OpenSearch.init(config.opensearch);

@@ -31,6 +31,7 @@
     "dbc-node-moreinfo-client": "git+https://github.com/DBCDK/dbc-node-moreinfo-client#develop",
     "dbc-node-opensearch-client": "git+https://github.com/DBCDK/dbc-node-opensearch-client#develop",
     "dbc-node-opensuggest": "git+https://github.com/DBCDK/dbc-node-opensuggest#develop",
+    "dbc-node-recommendations": "git+https://github.com/DBCDK/dbc-node-recommendations#develop",
     "dbc-node-popsuggest": "git+https://github.com/DBCDK/dbc-node-popsuggest#develop",
     "jsonpath-object-transform": "https://github.com/vibjerg/jsonpath-object-transform/archive/1.0.5.tar.gz",
     "lodash": "^3.9.3",

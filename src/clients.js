@@ -2,6 +2,7 @@
 
 import * as PopSuggest from 'dbc-node-popsuggest';
 import OpenSuggest from 'dbc-node-opensuggest';
+import Recommendations from 'dbc-node-recommendations';
 import * as OpenSearch from 'dbc-node-opensearch-client';
 import * as MoreInfo from 'dbc-node-moreinfo-client';
 
@@ -25,6 +26,9 @@ export default function Clients(config = {}) {
   }
   if (config.opensuggest) {
     services.set('opensuggest', OpenSuggest(config.opensuggest.endpoint));
+  }
+  if (config.recommend) {
+    services.set('recommend', Recommendations(config.recommend.endpoint));
   }
   if (config.opensearch) {
     OpenSearch.init(config.opensearch);

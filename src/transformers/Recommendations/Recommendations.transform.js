@@ -9,7 +9,6 @@ export default Provider.registerTransform({
   },
 
   requestTransform(event, list) {
-    console.log(this.services.get('recommend'));
     return this.services.get('recommend').getRecommendations(list);
   },
 
@@ -18,7 +17,6 @@ export default Provider.registerTransform({
   },
 
   extractWorkInformation(result) {
-    console.log(result);
     return result.map((element) => {
       return {
         identifiers: [element[0]],

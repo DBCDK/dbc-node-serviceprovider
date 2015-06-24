@@ -72,7 +72,7 @@ export default Provider.registerTransform({
       index = response.responseHeader.qf.join();
     }
 
-    return index;
+    return index.replace(',rec.collectionIdentifier', '');
   },
 
   _parseData(response) {

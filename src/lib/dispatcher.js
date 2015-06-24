@@ -23,16 +23,19 @@ function Dispatcher() {
    * @param {Socket} connection The socket connection on which the response the
    * event should be emitted.
    * @param {Promise} promise A promise returned from the client.
+   * @param {string} The query string sent from the client and passed on to the
+   * service.
+   * @throws {Error} Error If a promise is rejected an error is thrown.
    */
-  function emitPromise(transform, event, connection, promise) {
+  function emitPromise(transform, event, connection, promise, query) {
     promise.then((data) => {
       if (transform.responseTransform) {
-        data = transform.responseTransform(data);
+        data = transform.responseTransform(data, query);
       }
       connection.emit(event + 'Response', data);
     }).catch((err) => {
       let error = {error: err};
-      error = transform.responseTransform(error);
+      error = transform.responseTransform(error, query);
       connection.emit(event + 'Response', error);
       throw new Error('A promise was rejected: ', err); //TODO better error handling
     });
@@ -51,11 +54,11 @@ function Dispatcher() {
     const response = transform.requestTransform(event, query);
     if (isArray(response)) {
       response.forEach((promise) => {
-        emitPromise(transform, event, connection, promise);
+        emitPromise(transform, event, connection, promise, query);
       });
     }
     else {
-      emitPromise(transform, event, connection, response);
+      emitPromise(transform, event, connection, response, query);
     }
   }
 

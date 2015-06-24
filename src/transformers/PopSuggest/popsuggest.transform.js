@@ -42,7 +42,7 @@ export default Provider.registerTransform({
     }
   },
 
-  responseTransform(response) {
+  responseTransform(response, query) {
     let data = {};
 
     if (response.error) {
@@ -58,6 +58,7 @@ export default Provider.registerTransform({
     }
     else {
       data = this._parseData(response);
+      data.query = query;
     }
 
     return data;

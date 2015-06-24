@@ -47,7 +47,7 @@ exports['default'] = Provider.registerTransform({
     }
   },
 
-  responseTransform: function responseTransform(response) {
+  responseTransform: function responseTransform(response, query) {
     var data = {};
 
     if (response.error) {
@@ -61,6 +61,7 @@ exports['default'] = Provider.registerTransform({
       data.index = this._getIndex(response);
     } else {
       data = this._parseData(response);
+      data.query = query;
     }
 
     return data;

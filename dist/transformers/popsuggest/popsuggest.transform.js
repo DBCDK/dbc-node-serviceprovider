@@ -34,6 +34,10 @@ exports['default'] = Provider.registerTransform({
       index: 'term.title',
       query: query,
       fields: ['fedoraPid', 'display.title']
+    }, {
+      index: 'term.subject',
+      query: query,
+      fields: ['term.subject']
     }]);
   },
 
@@ -58,7 +62,7 @@ exports['default'] = Provider.registerTransform({
     } else {
       data = this._parseData(response);
     }
-    console.log(data);
+
     return data;
   },
 
@@ -70,7 +74,7 @@ exports['default'] = Provider.registerTransform({
       index = response.responseHeader.qf.join();
     }
 
-    return index;
+    return index.replace(',rec.collectionIdentifier', '');
   },
 
   _parseData: function _parseData(response) {
@@ -92,6 +96,12 @@ exports['default'] = Provider.registerTransform({
         var titles = this._getTitles(response.response.docs);
         if (titles.length >= 1) {
           data.docs = titles;
+        }
+        break;
+      case 'term.subject':
+        var subjects = this._getSubjects(response.response.docs);
+        if (subjects.length >= 1) {
+          data.docs = subjects;
         }
         break;
       default:
@@ -130,6 +140,21 @@ exports['default'] = Provider.registerTransform({
     });
 
     return titles;
+  },
+
+  _getSubjects: function _getSubjects(docs) {
+    var creators = [];
+    var counter = 0;
+    docs.forEach(function (value) {
+      if (value['term.subject'] && counter < 5) {
+        creators.push({
+          text: value['term.subject'].join()
+        });
+        counter++;
+      }
+    });
+
+    return creators;
   }
 });
 module.exports = exports['default'];

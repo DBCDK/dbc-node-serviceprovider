@@ -17,7 +17,6 @@ exports['default'] = Provider.registerTransform({
   },
 
   requestTransform: function requestTransform(event, list) {
-    console.log(this.services.get('recommend'));
     return this.services.get('recommend').getRecommendations(list);
   },
 
@@ -26,7 +25,6 @@ exports['default'] = Provider.registerTransform({
   },
 
   extractWorkInformation: function extractWorkInformation(result) {
-    console.log(result);
     return result.map(function (element) {
       return {
         identifiers: [element[0]],

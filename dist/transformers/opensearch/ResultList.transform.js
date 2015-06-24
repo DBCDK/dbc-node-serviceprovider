@@ -62,7 +62,7 @@ exports['default'] = Provider.registerTransform({
 
     var data = {};
     data.result = [];
-    data.info = [];
+    data.info = {};
     data.error = [];
 
     var result = prep.checkResponse(response);
@@ -71,11 +71,15 @@ exports['default'] = Provider.registerTransform({
       data.error.push(result);
       return data;
     } else if (result.collections == 0) {
-      data.info.push(result);
+      data.info.hits = result.hits;
+      data.info.collections = result.collections;
+      data.info.more = result.more;
       return data;
     }
 
-    data.info.push(result);
+    data.info.hits = result.hits;
+    data.info.collections = result.collections;
+    data.info.more = result.more;
 
     if (result.collections == 1) {
       var searchResult = response.result.searchResult;

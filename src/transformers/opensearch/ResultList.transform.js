@@ -52,7 +52,7 @@ export default Provider.registerTransform({
 
     let data = {};
     data.result = [];
-    data.info = [];
+    data.info = {};
     data.error = [];
   
     let result = prep.checkResponse(response);
@@ -61,11 +61,15 @@ export default Provider.registerTransform({
       data.error.push(result);
       return data;
     } else if (result.collections == 0) {
-      data.info.push(result);
+      data.info.hits = result.hits;
+      data.info.collections = result.collections;
+      data.info.more = result.more;
       return data;
     }
-  
-    data.info.push(result);
+
+    data.info.hits = result.hits;
+    data.info.collections = result.collections;
+    data.info.more = result.more;
   
     if (result.collections == 1) {
       let searchResult = response.result.searchResult;

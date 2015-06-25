@@ -68,6 +68,5 @@ export default Provider.registerTransform({
       data.result = getImagesFromResponse(response);
     }
     return data;
-
   }
 });

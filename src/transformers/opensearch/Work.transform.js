@@ -15,9 +15,9 @@ export default Provider.registerTransform({
   },
 
   requestTransform(event, request) {
-
+    var pid = 'rec.id=' + request.pid;
     return this.getWorkResult({
-      query: request.query,
+      query: pid,
       start: request.offset,
       stepValue: request.worksPerPage,
       allObjects: request.allManifestations

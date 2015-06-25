@@ -1,7 +1,7 @@
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
-	value: true
+  value: true
 });
 exports.checkResponse = checkResponse;
 exports.hasSearchResult = hasSearchResult;
@@ -15,19 +15,19 @@ exports.checkRecord = checkRecord;
  * if any errors are returned from the service
  *
  * @param {Object} the response from the webservice
- * @return {Object} search result information if everything was ok, 
+ * @return {Object} search result information if everything was ok,
  * otherwise error code and error messages
  */
 
 function checkResponse(response) {
 
-	if (hasSearchResult(response) == true) {
-		return getResultInfo(response);
-	} else if (getHitCount(response) == 0) {
-		return getResultInfo(response);
-	} else {
-		return checkResultErrors(response.error);
-	}
+  if (hasSearchResult(response) === true) {
+    return getResultInfo(response);
+  } else if (getHitCount(response) === 0) {
+    return getResultInfo(response);
+  } else {
+    return checkResultErrors(response.error);
+  }
 }
 
 /**
@@ -39,11 +39,10 @@ function checkResponse(response) {
 
 function hasSearchResult(response) {
 
-	if (response.result != undefined) {
-		;
-		return true;
-	}
-	return false;
+  if (response.result !== undefined) {
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -54,14 +53,14 @@ function hasSearchResult(response) {
 */
 
 function getHitCount(response) {
-	if (response.hasOwnProperty('result')) {
-		return response.result.hitCount;
-	}
-	return;
+  if (response.hasOwnProperty('result')) {
+    return response.result.hitCount;
+  }
+  return 0;
 }
 
 /**
- * Retrives the collection count (number of works (or manifestations)) 
+ * Retrives the collection count (number of works (or manifestations))
  * from the response
  *
  * @param {Object} the response from the webservice
@@ -69,8 +68,10 @@ function getHitCount(response) {
 */
 
 function getCollectionCount(response) {
-
-	return response.result.collectionCount;
+  if (response.hasOwnProperty('result')) {
+    return response.result.collectionCount;
+  }
+  return 0;
 }
 
 /**
@@ -82,8 +83,10 @@ function getCollectionCount(response) {
 */
 
 function checkIfMore(response) {
-
-	return response.result.more;
+  if (response.hasOwnProperty('result')) {
+    return response.result.more;
+  }
+  return false;
 }
 
 /**
@@ -95,11 +98,11 @@ function checkIfMore(response) {
 */
 
 function getResultInfo(response) {
-	return {
-		hits: getHitCount(response),
-		collections: getCollectionCount(response),
-		more: checkIfMore(response)
-	};
+  return {
+    hits: getHitCount(response),
+    collections: getCollectionCount(response),
+    more: checkIfMore(response)
+  };
 }
 
 /**
@@ -112,7 +115,7 @@ function getResultInfo(response) {
 
 function checkRecord(record) {
 
-	return checkRecordErrors(record.error);
+  return checkRecordErrors(record.error);
 }
 
 /**
@@ -124,65 +127,65 @@ function checkRecord(record) {
 
 function checkResultErrors(errorString) {
 
-	var error = {};
+  var error = {};
 
-	switch (errorString) {
-		case 'authentication_error':
-			error = {
-				errorcode: 1,
-				errormessage: 'Authentication error',
-				serviceerror: errorString
-			};
-			break;
-		case 'Error: No query found in request':
-			error = {
-				errorcode: 2,
-				errormessage: 'Missing search query',
-				serviceerror: errorString
-			};
-			break;
-		default:
-			var errormessage = parseErrorString(errorString);
-			switch (errormessage) {
-				case 'Error in search query':
-					error = {
-						errorcode: 3,
-						errormessage: errormessage,
-						serviceerror: errorString
-					};
-					break;
-				case 'Cannot fetch profile':
-					error = {
-						errorcode: 4,
-						errormessage: errormessage,
-						serviceerror: errorString
-					};
-					break;
-				case 'Unknown agency':
-					error = {
-						errorcode: 5,
-						errormessage: errormessage,
-						serviceerror: errorString
-					};
-					break;
-				case 'Service problem':
-					error = {
-						errorcode: 6,
-						errormessage: errormessage,
-						serviceerror: errorString
-					};
-					break;
-				default:
-					error = {
-						errorcode: 0,
-						errormessage: 'Error',
-						serviceerror: errorString
-					};
-					break;
-			}
-	}
+  switch (errorString) {
+    case 'authentication_error':
+      error = {
+        errorcode: 1,
+        errormessage: 'Authentication error',
+        serviceerror: errorString
+      };
+      break;
+    case 'Error: No query found in request':
+      error = {
+        errorcode: 2,
+        errormessage: 'Missing search query',
+        serviceerror: errorString
+      };
+      break;
+    default:
+      var errormessage = parseErrorString(errorString);
+      switch (errormessage) {
+        case 'Error in search query':
+          error = {
+            errorcode: 3,
+            errormessage: errormessage,
+            serviceerror: errorString
+          };
+          break;
+        case 'Cannot fetch profile':
+          error = {
+            errorcode: 4,
+            errormessage: errormessage,
+            serviceerror: errorString
+          };
+          break;
+        case 'Unknown agency':
+          error = {
+            errorcode: 5,
+            errormessage: errormessage,
+            serviceerror: errorString
+          };
+          break;
+        case 'Service problem':
+          error = {
+            errorcode: 6,
+            errormessage: errormessage,
+            serviceerror: errorString
+          };
+          break;
+        default:
+          error = {
+            errorcode: 0,
+            errormessage: 'Error',
+            serviceerror: errorString
+          };
+          break;
+      }
+  }
 
-	return error;
+  return error;
 }
 
 /**
@@ -194,23 +197,23 @@ function checkResultErrors(errorString) {
 
 function parseErrorString(errorString) {
 
-	if (errorString.match(/Internal problem/)) {
-		return 'Service problem';
-	}
+  if (errorString.match(/Internal problem/)) {
+    return 'Service problem';
+  }
 
-	if (errorString.match(/Error: Unknown agency/)) {
-		return 'Unknown agency';
-	}
+  if (errorString.match(/Error: Unknown agency/)) {
+    return 'Unknown agency';
+  }
 
-	if (errorString.match(/Error: Cannot fetch profile/)) {
-		return 'Cannot fetch profile';
-	}
+  if (errorString.match(/Error: Cannot fetch profile/)) {
+    return 'Cannot fetch profile';
+  }
 
-	if (errorString.match(/Unsupported index|Query syntax error/)) {
-		return 'Error in search query';
-	}
+  if (errorString.match(/Unsupported index|Query syntax error/)) {
+    return 'Error in search query';
+  }
 
-	return errorString;
+  return errorString;
 }
 
 /**
@@ -222,28 +225,28 @@ function parseErrorString(errorString) {
 
 function checkRecordErrors(errorString) {
 
-	var error = {};
+  var error = {};
 
-	var errormessage = parseRecordErrorString(errorString);
+  var errormessage = parseRecordErrorString(errorString);
 
-	switch (errormessage) {
-		case 'Record missing':
-			error = {
-				errorcode: 1,
-				errormessage: errormessage,
-				serviceerror: errorString
-			};
-			break;
-		default:
-			error = {
-				errorcode: 0,
-				errormessage: 'Error',
-				serviceerror: errorString
-			};
-			break;
-	}
+  switch (errormessage) {
+    case 'Record missing':
+      error = {
+        errorcode: 1,
+        errormessage: errormessage,
+        serviceerror: errorString
+      };
+      break;
+    default:
+      error = {
+        errorcode: 0,
+        errormessage: 'Error',
+        serviceerror: errorString
+      };
+      break;
+  }
 
-	return error;
+  return error;
 }
 
 /**
@@ -255,9 +258,9 @@ function checkRecordErrors(errorString) {
 
 function parseRecordErrorString(errorString) {
 
-	if (errorString.match(/Error: deleted record|Error: unknown\/missing record|Error: Cannot fetch record/)) {
-		return 'Record missing';
-	}
+  if (errorString.match(/Error: deleted record|Error: unknown\/missing record|Error: Cannot fetch record/)) {
+    return 'Record missing';
+  }
 
-	return errorString;
+  return errorString;
 }

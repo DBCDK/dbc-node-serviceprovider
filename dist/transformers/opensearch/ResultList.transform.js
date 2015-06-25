@@ -38,7 +38,7 @@ exports['default'] = Provider.registerTransform({
   requestTransform: function requestTransform(event, request) {
     var sort = request.sort;
 
-    if (request.sort == 'default') {
+    if (request.sort === 'default') {
       sort = 'rank_frequency';
     }
 
@@ -51,7 +51,7 @@ exports['default'] = Provider.registerTransform({
   },
 
   /**
-   * Transforms the response from Open Search webservice to a representation 
+   * Transforms the response from Open Search webservice to a representation
    * that can be used by the application
    *
    * @param {Object} the response from the webservice
@@ -70,7 +70,7 @@ exports['default'] = Provider.registerTransform({
     if (result.hasOwnProperty('errorcode')) {
       data.error.push(result);
       return data;
-    } else if (result.collections == 0) {
+    } else if (result.collections === '0') {
       data.info.hits = result.hits;
       data.info.collections = result.collections;
       data.info.more = result.more;
@@ -81,7 +81,7 @@ exports['default'] = Provider.registerTransform({
     data.info.collections = result.collections;
     data.info.more = result.more;
 
-    if (result.collections == 1) {
+    if (result.collections === '1') {
       var searchResult = response.result.searchResult;
       response.result.searchResult = [searchResult];
     }

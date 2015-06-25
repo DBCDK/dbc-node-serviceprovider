@@ -20,7 +20,7 @@ exports['default'] = Provider.registerTransform({
     return ['getOpenSearchWork'];
   },
 
-  getSearchResultList: function getSearchResultList(request) {
+  getWorkResult: function getWorkResult(request) {
     var OpenSearch = this.services.get('opensearch');
     return OpenSearch.getWorkResult([request]);
   },

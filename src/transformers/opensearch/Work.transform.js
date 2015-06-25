@@ -9,7 +9,7 @@ export default Provider.registerTransform({
     return ['getOpenSearchWork'];
   },
 
-  getSearchResultList(request) {
+  getWorkResult(request) {
     const OpenSearch = this.services.get('opensearch');
     return OpenSearch.getWorkResult([request]);
   },

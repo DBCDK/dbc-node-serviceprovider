@@ -132,7 +132,7 @@ export default Provider.registerTransform({
       if (value['display.title'] && counter < 5) {
         titles.push({
           text: value['display.title'].join(),
-          img: 'http://dummyimage.com/50x50/000/fff'
+          pid: value.fedoraPid
         });
         counter++;
       }

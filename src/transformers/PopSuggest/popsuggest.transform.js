@@ -19,12 +19,12 @@ export default Provider.registerTransform({
     const PopSuggest = this.services.get('popsuggest');
     return PopSuggest.getSuggestions([
       {
-        index: 'term.creator',
+        index: 'display.creator',
         query: query,
         fields: ['display.creator']
       },
       {
-        index: 'term.title',
+        index: 'display.title',
         query: query,
         fields: ['fedoraPid', 'display.title']
       },
@@ -84,14 +84,14 @@ export default Provider.registerTransform({
     };
 
     switch (index) {
-      case 'term.creator':
+      case 'display.creator':
         let creators = this._getCreators(response.response.docs);
         if (creators.length >= 1) {
           data.docs = creators;
         }
 
         break;
-      case 'term.title':
+      case 'display.title':
         let titles = this._getTitles(response.response.docs);
         if (titles.length >= 1) {
           data.docs = titles;

@@ -11,48 +11,48 @@
 
 export function checkResponse(response) {
 
-	let error = {};
-	
-	let serviceError = "";
-	
-	if (response.errorText != undefined) {
-		serviceError = response.errorText;
-	}
+  let error = {};
 
-	switch (response.requestStatus.statusEnum) {
-		case "ok":
-			error = {};
-			break;
-		case "authentication_error":
-			error = {
-				errorcode: 1,
-				errormessage: 'Authentication error',
-				serviceerror: serviceError
-			}
-			break;
-		case "error_in_request":
-			error = {
-				errorcode: 2,
-				errormessage: 'Error in request',
-				serviceerror: serviceError
-			}
-			break;
-		case "service_unavailable":
-			error = {
-				errorcode: 3,
-				errormessage: 'Service unavailable',
-				serviceerror: serviceError
-			}
-			break;
-		default:
-			error = {
-				errorcode: 0,
-				errormessage: 'Error',
-				serviceerror: serviceError
-			}
-			break;	
-	}
+  let serviceError = '';
 
-	return error;
-	
+  if (response.errorText) {
+    serviceError = response.errorText;
+  }
+
+  switch (response.requestStatus.statusEnum) {
+    case 'ok':
+      error = {};
+      break;
+    case 'authentication_error':
+      error = {
+        errorcode: 1,
+        errormessage: 'Authentication error',
+        serviceerror: serviceError
+      };
+      break;
+    case 'error_in_request':
+      error = {
+        errorcode: 2,
+        errormessage: 'Error in request',
+        serviceerror: serviceError
+      };
+      break;
+    case 'service_unavailable':
+      error = {
+        errorcode: 3,
+        errormessage: 'Service unavailable',
+        serviceerror: serviceError
+      };
+      break;
+    default:
+      error = {
+        errorcode: 0,
+        errormessage: 'Error',
+        serviceerror: serviceError
+      };
+      break;
+  }
+
+  return error;
+
 }

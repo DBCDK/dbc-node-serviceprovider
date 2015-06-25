@@ -8,7 +8,7 @@ export default Provider.registerTransform({
   events() {
     return ['getOpenSearchResultList'];
   },
-  
+
   getSearchResultList(request) {
     const OpenSearch = this.services.get('opensearch');
     return OpenSearch.getSearchResult([request]);
@@ -27,21 +27,21 @@ export default Provider.registerTransform({
   requestTransform(event, request) {
     let sort = request.sort;
 
-    if (request.sort == "default") {
-      sort = "rank_frequency";
+    if (request.sort === 'default') {
+      sort = 'rank_frequency';
     }
-    
+
     return this.getSearchResultList({
       query: request.query,
       start: request.offset,
       stepValue: request.worksPerPage,
       sort: sort
     });
-  
+
   },
 
   /**
-   * Transforms the response from Open Search webservice to a representation 
+   * Transforms the response from Open Search webservice to a representation
    * that can be used by the application
    *
    * @param {Object} the response from the webservice
@@ -54,13 +54,13 @@ export default Provider.registerTransform({
     data.result = [];
     data.info = {};
     data.error = [];
-  
+
     let result = prep.checkResponse(response);
-  
+
     if (result.hasOwnProperty('errorcode')) {
       data.error.push(result);
       return data;
-    } else if (result.collections == 0) {
+    } else if (result.collections === '0') {
       data.info.hits = result.hits;
       data.info.collections = result.collections;
       data.info.more = result.more;
@@ -70,19 +70,19 @@ export default Provider.registerTransform({
     data.info.hits = result.hits;
     data.info.collections = result.collections;
     data.info.more = result.more;
-  
-    if (result.collections == 1) {
+
+    if (result.collections === '1') {
       let searchResult = response.result.searchResult;
       response.result.searchResult = [searchResult];
     }
-  
+
     response.result.searchResult.forEach((work) => {
       let newWork = {};
       let no = work.collection.numberOfObjects;
       let identifiers = [];
       let title;
       let workType;
-      if (no === "1") {
+      if (no === '1') {
         identifiers.push(work.collection.object.identifier);
         title = work.formattedCollection.briefDisplay.manifestation.title;
         workType = work.formattedCollection.briefDisplay.manifestation.workType;
@@ -97,11 +97,11 @@ export default Provider.registerTransform({
       newWork.title = title;
       newWork.workType = workType;
       data.result.push(newWork);
-    
+
     });
-  
+
     return data;
-  
+
   }
 
 });

@@ -19,14 +19,14 @@ export default Provider.registerTransform({
     const PopSuggest = this.services.get('popsuggest');
     return PopSuggest.getSuggestions([
       {
-        index: 'display.creator',
-        query: query,
-        fields: ['display.creator']
-      },
-      {
         index: 'display.title',
         query: query,
         fields: ['fedoraPid', 'display.title']
+      },
+      {
+        index: 'display.creator',
+        query: query,
+        fields: ['display.creator']
       },
       {
         index: 'term.subject',
@@ -57,7 +57,7 @@ export default Provider.registerTransform({
       data.index = this._getIndex(response);
     }
     else {
-      data = this._parseData(response);
+      data = this._parseData(response, query);
       data.query = query;
     }
 
@@ -76,14 +76,14 @@ export default Provider.registerTransform({
     return index.replace(',rec.collectionIdentifier', '');
   },
 
-  _parseData(response) {
+  _parseData(response, query) {
     const index = this._getIndex(response);
     let data = {
       index: index,
       docs: []
     };
 
-    const parsedDocs = this.parseDocs(response.response.docs, index);
+    const parsedDocs = this.parseDocs(response.response.docs, index, query);
     if (parsedDocs.length) {
       data.docs = parsedDocs;
     }
@@ -91,13 +91,23 @@ export default Provider.registerTransform({
     return data;
   },
 
-  parseDocs(docs, index) {
+  parseDocs(docs, index, query) {
     let parsedDocs = [];
     let counter = 0;
     docs.forEach((value) => {
+      let shouldStopFilter = false;
       if (value[index] && counter < 5) {
         parsedDocs.push({
-          text: value[index].join(),
+          text: value[index].filter((string) => {
+            if (!this.shouldFilter(index)) {
+              return true;
+            }
+            if (!shouldStopFilter && string.toLowerCase().startsWith(query.toLowerCase(), 0)) {
+              shouldStopFilter = true;
+              return true;
+            }
+            return false;
+          }),
           pid: value.fedoraPid || null
         });
         counter++;
@@ -105,5 +115,9 @@ export default Provider.registerTransform({
     });
 
     return parsedDocs;
+  },
+
+  shouldFilter(index) {
+    return (index === 'display.creator' || index === 'term.subject');
   }
 });

@@ -15,7 +15,7 @@ export default Provider.registerTransform({
   },
 
   requestTransform(event, request) {
-    var pid = 'rec.id=' + request.pid;
+    let pid = 'rec.id=' + request.pid;
     return this.getWorkResult({
       query: pid,
       start: request.offset,
@@ -51,37 +51,52 @@ export default Provider.registerTransform({
       response.result.searchResult = [searchResult];
     }
 
-    response.result.searchResult.forEach((work) => {
+    response.result.searchResult.forEach(function (work) {
       let newWork = {};
       let general = {};
+      if (work.collection.numberOfObjects === '1') {
+        let record = work.collection.object;
+        work.collection.object = [record];
+      }
       let primary = work.collection.object[0].record;
       general.title = primary.title[0];
       let creators = [];
-      primary.creator.forEach((creator) => {
-        if (creator.attributes['xsi:type'] !== 'oss:sort') {
+      primary.creator.forEach(function (creator) {
+        if (!creator.hasOwnProperty('attributes')) {
+          creators.push(creator);
+        } else if (creator.attributes['xsi:type'] !== 'oss:sort') {
           creators.push(creator.$value);
         }
       });
       general.creators = creators;
-      if (primary.abstract !== '') {
+      if (primary.hasOwnProperty('abstract')) {
         general.description = primary.abstract;
+      } else if (primary.hasOwnProperty('description')) {
+        general.description = primary.description;
       }
-      if (primary.description.attributes['xsi:type'] === 'dkdcplus:series') {
-        general.series = primary.description.$value;
+      if (primary.description.hasOwnProperty('attributes')) {
+        if (primary.description.attributes['xsi:type'] === 'dkdcplus:series') {
+          general.series = primary.description.$value;
+        }
       }
       let subjects = [];
-      primary.subject.forEach((subject) => {
-        if (subject.attributes['xsi:type'] === 'dkdcplus:DBCS') {
-          subjects.push(subject.$value);
-        }
-        if (subject.attributes['xsi:type'] === 'dkdcplus:DBCF') {
-          subjects.push(subject.$value);
+      primary.subject.forEach(function (subject) {
+        if (subject.hasOwnProperty('attributes')) {
+          if (subject.attributes['xsi:type'] === 'dkdcplus:DBCS') {
+            subjects.push(subject.$value);
+          }
+          if (subject.attributes['xsi:type'] === 'dkdcplus:DBCF') {
+            subjects.push(subject.$value);
+          }
+          if (subject.attributes['xsi:type'] === 'dkdcplus:DBCM') {
+            subjects.push(subject.$value);
+          }
         }
       });
       general.subjects = subjects;
       let languages = [];
-      primary.language.forEach((language) => {
-        if (!language.attributes) {
+      primary.language.forEach(function (language) {
+        if (!language.hasOwnProperty('attributes')) {
           languages.push(language);
         }
       });
@@ -89,7 +104,7 @@ export default Provider.registerTransform({
       newWork.general = general;
       let specific = [];
       let types = [];
-      work.collection.object.forEach((manifestation) => {
+      work.collection.object.forEach(function (manifestation) {
         let type = manifestation.record.type.$value;
         if (types.indexOf(type) === -1) {
           let minorwork = {};
@@ -103,7 +118,7 @@ export default Provider.registerTransform({
           minorwork.dates = dates;
           specific.push(minorwork);
         } else {
-          specific.forEach((minorwork) => {
+          specific.forEach(function (minorwork) {
             if (type === minorwork.type) {
               minorwork.identifiers.push(manifestation.identifier);
               minorwork.dates.push(manifestation.record.date);
@@ -113,7 +128,6 @@ export default Provider.registerTransform({
       });
       newWork.specific = specific;
       data.result.push(newWork);
-
     });
 
     return data;

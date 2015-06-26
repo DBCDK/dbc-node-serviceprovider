@@ -60,47 +60,53 @@ export default Provider.registerTransform({
       }
       let primary = work.collection.object[0].record;
       general.title = primary.title[0];
-      let creators = [];
-      primary.creator.forEach(function (creator) {
-        if (!creator.hasOwnProperty('attributes')) {
-          creators.push(creator);
-        } else if (creator.attributes['xsi:type'] !== 'oss:sort') {
-          creators.push(creator.$value);
-        }
-      });
-      general.creators = creators;
+      if (primary.hasOwnProperty('creator')) {
+        let creators = [];
+        primary.creator.forEach(function (creator) {
+          if (!creator.hasOwnProperty('attributes')) {
+            creators.push(creator);
+          } else if (creator.attributes['xsi:type'] !== 'oss:sort') {
+            creators.push(creator.$value);
+          }
+        });
+        general.creators = creators;
+      }
       if (primary.hasOwnProperty('abstract')) {
         general.description = primary.abstract;
       } else if (primary.hasOwnProperty('description')) {
         general.description = primary.description;
+        if (primary.description.hasOwnProperty('attributes')) {
+          if (primary.description.attributes['xsi:type'] === 'dkdcplus:series') {
+            general.series = primary.description.$value;
+          }
+        }
       }
-      if (primary.description.hasOwnProperty('attributes')) {
-        if (primary.description.attributes['xsi:type'] === 'dkdcplus:series') {
-          general.series = primary.description.$value;
-        }
+      if (primary.hasOwnProperty('subject')) {
+        let subjects = [];
+        primary.subject.forEach(function (subject) {
+          if (subject.hasOwnProperty('attributes')) {
+            if (subject.attributes['xsi:type'] === 'dkdcplus:DBCS') {
+              subjects.push(subject.$value);
+            }
+            if (subject.attributes['xsi:type'] === 'dkdcplus:DBCF') {
+              subjects.push(subject.$value);
+            }
+            if (subject.attributes['xsi:type'] === 'dkdcplus:DBCM') {
+              subjects.push(subject.$value);
+            }
+          }
+        });
+        general.subjects = subjects;
       }
-      let subjects = [];
-      primary.subject.forEach(function (subject) {
-        if (subject.hasOwnProperty('attributes')) {
-          if (subject.attributes['xsi:type'] === 'dkdcplus:DBCS') {
-            subjects.push(subject.$value);
+      if (primary.hasOwnProperty('language')) {
+        let languages = [];
+        primary.language.forEach(function (language) {
+          if (!language.hasOwnProperty('attributes')) {
+            languages.push(language);
           }
-          if (subject.attributes['xsi:type'] === 'dkdcplus:DBCF') {
-            subjects.push(subject.$value);
-          }
-          if (subject.attributes['xsi:type'] === 'dkdcplus:DBCM') {
-            subjects.push(subject.$value);
-          }
-        }
-      });
-      general.subjects = subjects;
-      let languages = [];
-      primary.language.forEach(function (language) {
-        if (!language.hasOwnProperty('attributes')) {
-          languages.push(language);
-        }
-      });
-      general.languages = languages;
+        });
+        general.languages = languages;
+      }
       newWork.general = general;
       let specific = [];
       let types = [];

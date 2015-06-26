@@ -70,47 +70,59 @@ exports['default'] = Provider.registerTransform({
       }
       var primary = work.collection.object[0].record;
       general.title = primary.title[0];
-      var creators = [];
-      primary.creator.forEach(function (creator) {
-        if (!creator.hasOwnProperty('attributes')) {
-          creators.push(creator);
-        } else if (creator.attributes['xsi:type'] !== 'oss:sort') {
-          creators.push(creator.$value);
-        }
-      });
-      general.creators = creators;
+      if (primary.hasOwnProperty('creator')) {
+        (function () {
+          var creators = [];
+          primary.creator.forEach(function (creator) {
+            if (!creator.hasOwnProperty('attributes')) {
+              creators.push(creator);
+            } else if (creator.attributes['xsi:type'] !== 'oss:sort') {
+              creators.push(creator.$value);
+            }
+          });
+          general.creators = creators;
+        })();
+      }
       if (primary.hasOwnProperty('abstract')) {
         general.description = primary.abstract;
       } else if (primary.hasOwnProperty('description')) {
         general.description = primary.description;
+        if (primary.description.hasOwnProperty('attributes')) {
+          if (primary.description.attributes['xsi:type'] === 'dkdcplus:series') {
+            general.series = primary.description.$value;
+          }
+        }
       }
-      if (primary.description.hasOwnProperty('attributes')) {
-        if (primary.description.attributes['xsi:type'] === 'dkdcplus:series') {
-          general.series = primary.description.$value;
-        }
+      if (primary.hasOwnProperty('subject')) {
+        (function () {
+          var subjects = [];
+          primary.subject.forEach(function (subject) {
+            if (subject.hasOwnProperty('attributes')) {
+              if (subject.attributes['xsi:type'] === 'dkdcplus:DBCS') {
+                subjects.push(subject.$value);
+              }
+              if (subject.attributes['xsi:type'] === 'dkdcplus:DBCF') {
+                subjects.push(subject.$value);
+              }
+              if (subject.attributes['xsi:type'] === 'dkdcplus:DBCM') {
+                subjects.push(subject.$value);
+              }
+            }
+          });
+          general.subjects = subjects;
+        })();
       }
-      var subjects = [];
-      primary.subject.forEach(function (subject) {
-        if (subject.hasOwnProperty('attributes')) {
-          if (subject.attributes['xsi:type'] === 'dkdcplus:DBCS') {
-            subjects.push(subject.$value);
-          }
-          if (subject.attributes['xsi:type'] === 'dkdcplus:DBCF') {
-            subjects.push(subject.$value);
-          }
-          if (subject.attributes['xsi:type'] === 'dkdcplus:DBCM') {
-            subjects.push(subject.$value);
-          }
-        }
-      });
-      general.subjects = subjects;
-      var languages = [];
-      primary.language.forEach(function (language) {
-        if (!language.hasOwnProperty('attributes')) {
-          languages.push(language);
-        }
-      });
-      general.languages = languages;
+      if (primary.hasOwnProperty('language')) {
+        (function () {
+          var languages = [];
+          primary.language.forEach(function (language) {
+            if (!language.hasOwnProperty('attributes')) {
+              languages.push(language);
+            }
+          });
+          general.languages = languages;
+        })();
+      }
       newWork.general = general;
       var specific = [];
       var types = [];

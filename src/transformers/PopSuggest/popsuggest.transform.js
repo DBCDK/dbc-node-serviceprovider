@@ -83,76 +83,27 @@ export default Provider.registerTransform({
       docs: []
     };
 
-    switch (index) {
-      case 'display.creator':
-        let creators = this._getCreators(response.response.docs);
-        if (creators.length >= 1) {
-          data.docs = creators;
-        }
-
-        break;
-      case 'display.title':
-        let titles = this._getTitles(response.response.docs);
-        if (titles.length >= 1) {
-          data.docs = titles;
-        }
-        break;
-      case 'term.subject':
-        let subjects = this._getSubjects(response.response.docs);
-        if (subjects.length >= 1) {
-          data.docs = subjects;
-        }
-        break;
-      default:
-        break;
+    const parsedDocs = this.parseDocs(response.response.docs, index);
+    if (parsedDocs.length) {
+      data.docs = parsedDocs;
     }
 
     return data;
   },
 
-  _getCreators: function(docs) {
-    let creators = [];
+  parseDocs(docs, index) {
+    let parsedDocs = [];
     let counter = 0;
     docs.forEach((value) => {
-      if (value['display.creator'] && counter < 5) {
-        creators.push({
-          text: value['display.creator'].join()
+      if (value[index] && counter < 5) {
+        parsedDocs.push({
+          text: value[index].join(),
+          pid: value.fedoraPid || null
         });
         counter++;
       }
     });
 
-    return creators;
-  },
-
-  _getTitles: function(docs) {
-    let titles = [];
-    let counter = 0;
-    docs.forEach((value) => {
-      if (value['display.title'] && counter < 5) {
-        titles.push({
-          text: value['display.title'].join(),
-          pid: value.fedoraPid
-        });
-        counter++;
-      }
-    });
-
-    return titles;
-  },
-
-  _getSubjects: function(docs) {
-    let creators = [];
-    let counter = 0;
-    docs.forEach((value) => {
-      if (value['term.subject'] && counter < 5) {
-        creators.push({
-          text: value['term.subject'].join()
-        });
-        counter++;
-      }
-    });
-
-    return creators;
+    return parsedDocs;
   }
 });

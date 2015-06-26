@@ -19,14 +19,14 @@ export default Provider.registerTransform({
     const PopSuggest = this.services.get('popsuggest');
     return PopSuggest.getSuggestions([
       {
-        index: 'display.creator',
-        query: query,
-        fields: ['display.creator']
-      },
-      {
         index: 'display.title',
         query: query,
         fields: ['fedoraPid', 'display.title']
+      },
+      {
+        index: 'display.creator',
+        query: query,
+        fields: ['display.creator']
       },
       {
         index: 'term.subject',
@@ -57,7 +57,7 @@ export default Provider.registerTransform({
       data.index = this._getIndex(response);
     }
     else {
-      data = this._parseData(response);
+      data = this._parseData(response, query);
       data.query = query;
     }
 
@@ -76,83 +76,48 @@ export default Provider.registerTransform({
     return index.replace(',rec.collectionIdentifier', '');
   },
 
-  _parseData(response) {
+  _parseData(response, query) {
     const index = this._getIndex(response);
     let data = {
       index: index,
       docs: []
     };
 
-    switch (index) {
-      case 'display.creator':
-        let creators = this._getCreators(response.response.docs);
-        if (creators.length >= 1) {
-          data.docs = creators;
-        }
-
-        break;
-      case 'display.title':
-        let titles = this._getTitles(response.response.docs);
-        if (titles.length >= 1) {
-          data.docs = titles;
-        }
-        break;
-      case 'term.subject':
-        let subjects = this._getSubjects(response.response.docs);
-        if (subjects.length >= 1) {
-          data.docs = subjects;
-        }
-        break;
-      default:
-        break;
+    const parsedDocs = this.parseDocs(response.response.docs, index, query);
+    if (parsedDocs.length) {
+      data.docs = parsedDocs;
     }
 
     return data;
   },
 
-  _getCreators: function(docs) {
-    let creators = [];
+  parseDocs(docs, index, query) {
+    let parsedDocs = [];
     let counter = 0;
     docs.forEach((value) => {
-      if (value['display.creator'] && counter < 5) {
-        creators.push({
-          text: value['display.creator'].join()
+      let shouldStopFilter = false;
+      if (value[index] && counter < 5) {
+        parsedDocs.push({
+          text: value[index].filter((string) => {
+            if (!this.shouldFilter(index)) {
+              return true;
+            }
+            if (!shouldStopFilter && string.toLowerCase().startsWith(query.toLowerCase(), 0)) {
+              shouldStopFilter = true;
+              return true;
+            }
+            return false;
+          }),
+          pid: value.fedoraPid || null
         });
         counter++;
       }
     });
 
-    return creators;
+    return parsedDocs;
   },
 
-  _getTitles: function(docs) {
-    let titles = [];
-    let counter = 0;
-    docs.forEach((value) => {
-      if (value['display.title'] && counter < 5) {
-        titles.push({
-          text: value['display.title'].join(),
-          pid: value.fedoraPid
-        });
-        counter++;
-      }
-    });
-
-    return titles;
-  },
-
-  _getSubjects: function(docs) {
-    let creators = [];
-    let counter = 0;
-    docs.forEach((value) => {
-      if (value['term.subject'] && counter < 5) {
-        creators.push({
-          text: value['term.subject'].join()
-        });
-        counter++;
-      }
-    });
-
-    return creators;
+  shouldFilter(index) {
+    return (index === 'display.creator' || index === 'term.subject');
   }
 });

@@ -27,13 +27,13 @@ exports['default'] = Provider.registerTransform({
   getPopSuggestionsRequest: function getPopSuggestionsRequest(query) {
     var PopSuggest = this.services.get('popsuggest');
     return PopSuggest.getSuggestions([{
-      index: 'display.creator',
-      query: query,
-      fields: ['display.creator']
-    }, {
       index: 'display.title',
       query: query,
       fields: ['fedoraPid', 'display.title']
+    }, {
+      index: 'display.creator',
+      query: query,
+      fields: ['display.creator']
     }, {
       index: 'term.subject',
       query: query,
@@ -60,7 +60,7 @@ exports['default'] = Provider.registerTransform({
       data.isEmpty = true;
       data.index = this._getIndex(response);
     } else {
-      data = this._parseData(response);
+      data = this._parseData(response, query);
       data.query = query;
     }
 
@@ -78,84 +78,51 @@ exports['default'] = Provider.registerTransform({
     return index.replace(',rec.collectionIdentifier', '');
   },
 
-  _parseData: function _parseData(response) {
+  _parseData: function _parseData(response, query) {
     var index = this._getIndex(response);
     var data = {
       index: index,
       docs: []
     };
 
-    switch (index) {
-      case 'display.creator':
-        var creators = this._getCreators(response.response.docs);
-        if (creators.length >= 1) {
-          data.docs = creators;
-        }
-
-        break;
-      case 'display.title':
-        var titles = this._getTitles(response.response.docs);
-        if (titles.length >= 1) {
-          data.docs = titles;
-        }
-        break;
-      case 'term.subject':
-        var subjects = this._getSubjects(response.response.docs);
-        if (subjects.length >= 1) {
-          data.docs = subjects;
-        }
-        break;
-      default:
-        break;
+    var parsedDocs = this.parseDocs(response.response.docs, index, query);
+    if (parsedDocs.length) {
+      data.docs = parsedDocs;
     }
 
     return data;
   },
 
-  _getCreators: function _getCreators(docs) {
-    var creators = [];
+  parseDocs: function parseDocs(docs, index, query) {
+    var _this = this;
+
+    var parsedDocs = [];
     var counter = 0;
     docs.forEach(function (value) {
-      if (value['display.creator'] && counter < 5) {
-        creators.push({
-          text: value['display.creator'].join()
+      var shouldStopFilter = false;
+      if (value[index] && counter < 5) {
+        parsedDocs.push({
+          text: value[index].filter(function (string) {
+            if (!_this.shouldFilter(index)) {
+              return true;
+            }
+            if (!shouldStopFilter && string.toLowerCase().startsWith(query.toLowerCase(), 0)) {
+              shouldStopFilter = true;
+              return true;
+            }
+            return false;
+          }),
+          pid: value.fedoraPid || null
         });
         counter++;
       }
     });
 
-    return creators;
+    return parsedDocs;
   },
 
-  _getTitles: function _getTitles(docs) {
-    var titles = [];
-    var counter = 0;
-    docs.forEach(function (value) {
-      if (value['display.title'] && counter < 5) {
-        titles.push({
-          text: value['display.title'].join(),
-          pid: value.fedoraPid
-        });
-        counter++;
-      }
-    });
-
-    return titles;
-  },
-
-  _getSubjects: function _getSubjects(docs) {
-    var creators = [];
-    var counter = 0;
-    docs.forEach(function (value) {
-      if (value['term.subject'] && counter < 5) {
-        creators.push({
-          text: value['term.subject'].join()
-        });
-        counter++;
-      }
-    });
-
-    return creators;
+  shouldFilter: function shouldFilter(index) {
+    return index === 'display.creator' || index === 'term.subject';
   }
 });
 module.exports = exports['default'];

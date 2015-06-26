@@ -127,7 +127,7 @@ export default Provider.registerTransform({
         }
       });
       newWork.specific = specific;
-      data.result.push(newWork);
+      data.result = newWork;
     });
 
     return data;

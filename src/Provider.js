@@ -6,15 +6,13 @@
  * initializes the dispatcher if sockets are available.
  */
 
-import path from 'path';
-import walker from 'walk';
+import {autoRequire} from './bootstrap';
 import {merge} from 'lodash';
 import Dispatcher from './lib/dispatcher.js';
 
-import Clients from './clients.js';
-
 const TRANSFORMS = [];
-
+const Clients = new Map();
+let _config = {};
 /**
  * Passes the map with webservices to the transforms
  *
@@ -29,33 +27,6 @@ function registerServicesOnTransforms(transforms, services) {
 }
 
 /**
- * Traverses the filetree under ./transformers and looks for files named
- * transform.js. All files found with that name are considered a transform and
- * added to the pool of transforms that later will be passed to the
- * disspatchers.
- */
-function discoverTransforms() {
-  const walkOptions = {
-    listeners: {
-      file: (root, fileStats, next) => {
-        if (fileStats.name.indexOf('transform.js') >= 0) {
-          require(path.join(root, fileStats.name));
-        }
-        next();
-      },
-      errors: (root, nodeStatsArray, next) => {
-        if (nodeStatsArray[0].error) {
-          console.log(nodeStatsArray[0].error);
-          console.log(' at: ' + path.join(root, nodeStatsArray[0].name));
-        }
-        next();
-      }
-    }
-  };
-  walker.walkSync(path.join(__dirname, 'transformers'), walkOptions);
-}
-
-/**
  * Initialization of the provider and the underlying services.
  *
  * @param {Object || null} config Object containing the necessary parameters.
@@ -67,11 +38,12 @@ export function init(config = null, socket = null) {
   if (!config) {
     throw new Error('No configuration was provided');
   }
+  _config = config;
 
   // configure the services based on the given configuration object
-  const services = Clients(config);
-  discoverTransforms();
-  registerServicesOnTransforms(TRANSFORMS, services);
+  autoRequire('transformers', 'transform.js');
+  autoRequire('clients', 'client.js');
+  registerServicesOnTransforms(TRANSFORMS, Clients);
 
   if (socket) { // if no socket is provided an alternative shuld be set up TODO non-socket.io setup
     console.log('Setting up socket');
@@ -111,4 +83,9 @@ export function registerTransform(transform) {
 
   TRANSFORMS.push(transform);
   return transform;
+}
+
+export function registerClient(client) {
+  const methods = client.init(_config[client.name]);
+  Clients.set(client.name, methods);
 }

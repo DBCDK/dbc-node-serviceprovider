@@ -94,7 +94,7 @@ exports['default'] = Provider.registerTransform({
       var workType = undefined;
       if (no === '1') {
         identifiers.push(work.collection.object.identifier);
-        title = work.formattedCollection.briefDisplay.manifestation.title;
+        title = work.formattedCollection.briefDisplay.manifestation.titleFull;
         workType = work.formattedCollection.briefDisplay.manifestation.workType;
       } else {
         work.collection.object.forEach(function (identifier) {

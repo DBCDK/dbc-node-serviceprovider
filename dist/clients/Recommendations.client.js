@@ -8,18 +8,18 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _dbcNodeOpensuggest = require('dbc-node-opensuggest');
+var _dbcNodeRecommendations = require('dbc-node-recommendations');
 
-var _dbcNodeOpensuggest2 = _interopRequireDefault(_dbcNodeOpensuggest);
+var _dbcNodeRecommendations2 = _interopRequireDefault(_dbcNodeRecommendations);
 
 var _ProviderJs = require('../Provider.js');
 
 var ServiceProvider = _interopRequireWildcard(_ProviderJs);
 
 exports['default'] = ServiceProvider.registerClient({
-  name: 'opensuggest',
+  name: 'recommend',
   init: function init(config) {
-    return (0, _dbcNodeOpensuggest2['default'])(config.endpoint);
+    return (0, _dbcNodeRecommendations2['default'])(config.endpoint);
   }
 });
 module.exports = exports['default'];

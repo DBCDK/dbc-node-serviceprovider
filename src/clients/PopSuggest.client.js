@@ -1,11 +1,12 @@
 'use strict';
 
-import OpenSuggestClient from 'dbc-node-opensuggest';
+import * as PopSuggest from 'dbc-node-popsuggest';
 import * as ServiceProvider from '../Provider.js';
 
 export default ServiceProvider.registerClient({
-  name: 'opensuggest',
+  name: 'popsuggest',
   init(config) {
-    return OpenSuggestClient(config.endpoint)
+    PopSuggest.init(config);
+    return PopSuggest.METHODS;
   }
 });

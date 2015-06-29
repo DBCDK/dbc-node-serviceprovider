@@ -75,6 +75,8 @@ export default Provider.registerTransform({
         general.description = primary.abstract;
       } else if (primary.hasOwnProperty('description')) {
         general.description = primary.description;
+      }
+      if (primary.hasOwnProperty('description')) {
         if (primary.description.hasOwnProperty('attributes')) {
           if (primary.description.attributes['xsi:type'] === 'dkdcplus:series') {
             general.series = primary.description.$value;

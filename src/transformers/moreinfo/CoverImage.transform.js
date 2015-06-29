@@ -38,7 +38,7 @@ export default Provider.registerTransform({
     requestTransform(request, data) {
 
     let identifiers = data.map((pid) => pid.split(":").pop());
-    const MoreInfo = this.services.get('coverimage');
+    const MoreInfo = this.services.get('moreinfo');
     return MoreInfo.getMoreInfoResult({identifiers}).map(promise => promise.then(response => {
         return {
           identifiers: data,

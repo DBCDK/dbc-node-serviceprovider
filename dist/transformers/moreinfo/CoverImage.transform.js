@@ -53,7 +53,7 @@ exports['default'] = Provider.registerTransform({
     var identifiers = data.map(function (pid) {
       return pid.split(':').pop();
     });
-    var MoreInfo = this.services.get('coverimage');
+    var MoreInfo = this.services.get('moreinfo');
     return MoreInfo.getMoreInfoResult({ identifiers: identifiers }).map(function (promise) {
       return promise.then(function (response) {
         return {

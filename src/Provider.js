@@ -21,19 +21,26 @@ let _config;
  * go through a socket it should be provided here. Currently there's no
  * alternative to using socket.
  */
-export function init(config, socket) {
+export function init(config) {
   if (!config) {
     throw new Error('No configuration was provided');
   }
   _config = config;
 
-  // configure the services based on the given configuration object
-  autoRequire('transformers', 'transform.js');
+  return {
+    sockets: setupSockets
+  };
+}
 
-  if (socket) { // if no socket is provided an alternative shuld be set up TODO non-socket.io setup
-    const dispatcher = new Dispatcher();
-    dispatcher.init(socket, TRANSFORMS);
-  }
+/**
+ * configure the services based on the given configuration object
+ *
+ * @constructor
+ */
+export function setupSockets(socket) {
+  autoRequire('transformers', 'transform.js');
+  const dispatcher = new Dispatcher();
+  dispatcher.init(socket, TRANSFORMS);
 }
 
 /**
@@ -71,7 +78,7 @@ export function registerTransform(transform) {
 
 /**
  * Register clients on the provider, providing them with configurations
- * 
+ *
  * @param client
  * @returns {*}
  */

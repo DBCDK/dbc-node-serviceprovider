@@ -4,6 +4,7 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 exports.init = init;
+exports.setupSockets = setupSockets;
 exports.registerTransform = registerTransform;
 exports.registerClient = registerClient;
 
@@ -35,20 +36,27 @@ var _config = undefined;
  * alternative to using socket.
  */
 
-function init(config, socket) {
+function init(config) {
   if (!config) {
     throw new Error('No configuration was provided');
   }
   _config = config;
 
-  // configure the services based on the given configuration object
-  (0, _bootstrap.autoRequire)('transformers', 'transform.js');
+  return {
+    sockets: setupSockets
+  };
+}
 
-  if (socket) {
-    // if no socket is provided an alternative shuld be set up TODO non-socket.io setup
-    var dispatcher = new _libDispatcherJs2['default']();
-    dispatcher.init(socket, TRANSFORMS);
-  }
+/**
+ * configure the services based on the given configuration object
+ *
+ * @constructor
+ */
+
+function setupSockets(socket) {
+  (0, _bootstrap.autoRequire)('transformers', 'transform.js');
+  var dispatcher = new _libDispatcherJs2['default']();
+  dispatcher.init(socket, TRANSFORMS);
 }
 
 /**
@@ -87,7 +95,7 @@ function registerTransform(transform) {
 
 /**
  * Register clients on the provider, providing them with configurations
- * 
+ *
  * @param client
  * @returns {*}
  */

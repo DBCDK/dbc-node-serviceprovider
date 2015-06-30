@@ -52,9 +52,7 @@ describe('Testing methods on the Provider', () => {
     expect(() => Provider.init()).to.throw(Error);
     expect(() => Provider.init()).to.throw('No configuration was provided');
 
-    expect(() => Provider.init([], null)).to.not.throw(Error);
-
-    expect(() => Provider.init([], {})).to.throw(TypeError);
+    expect(() => Provider.init([])).to.not.throw(Error);
   });
 });
 

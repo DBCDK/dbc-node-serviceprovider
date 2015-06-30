@@ -6,7 +6,8 @@ module.exports = function() {
     files: [
       {pattern: 'src/*.js'},
       {pattern: 'src/lib/*.js'},
-      {pattern: 'src/transformers/**/*.js'}
+      {pattern: 'src/transformers/**/*.js'},
+      {pattern: 'src/clients/**/*.js'}
     ],
 
     tests: [

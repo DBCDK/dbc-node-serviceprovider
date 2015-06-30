@@ -24,20 +24,7 @@ var _libDispatcherJs = require('./lib/dispatcher.js');
 var _libDispatcherJs2 = _interopRequireDefault(_libDispatcherJs);
 
 var TRANSFORMS = [];
-var Clients = new Map();
-var _config = {};
-/**
- * Passes the map with webservices to the transforms
- *
- * @param {Object[]} transforms Array with transforms
- * @param {Map} services The available webservice clients
- * @return {Object[]}
- */
-function registerServicesOnTransforms(transforms, services) {
-  transforms.forEach(function (transform) {
-    transform.services = services;
-  });
-}
+var _config = undefined;
 
 /**
  * Initialization of the provider and the underlying services.
@@ -48,10 +35,7 @@ function registerServicesOnTransforms(transforms, services) {
  * alternative to using socket.
  */
 
-function init() {
-  var config = arguments[0] === undefined ? null : arguments[0];
-  var socket = arguments[1] === undefined ? null : arguments[1];
-
+function init(config, socket) {
   if (!config) {
     throw new Error('No configuration was provided');
   }
@@ -59,12 +43,9 @@ function init() {
 
   // configure the services based on the given configuration object
   (0, _bootstrap.autoRequire)('transformers', 'transform.js');
-  (0, _bootstrap.autoRequire)('clients', 'client.js');
-  registerServicesOnTransforms(TRANSFORMS, Clients);
 
   if (socket) {
     // if no socket is provided an alternative shuld be set up TODO non-socket.io setup
-    console.log('Setting up socket');
     var dispatcher = new _libDispatcherJs2['default']();
     dispatcher.init(socket, TRANSFORMS);
   }
@@ -104,7 +85,24 @@ function registerTransform(transform) {
   return transform;
 }
 
+/**
+ * Register clients on the provider, providing them with configurations
+ * 
+ * @param client
+ * @returns {*}
+ */
+
 function registerClient(client) {
+  if (!client.init) {
+    throw new Error('No init method not found on client ' + client.name);
+  }
+  if (!_config) {
+    throw new Error('Config.js needs to be initialized on ServiceProvider before initializing ' + client.name + ' client');
+  }
+  if (!_config[client.name]) {
+    throw new Error('No Config for ' + client.name + ' client in config.js');
+  }
+
   var methods = client.init(_config[client.name]);
-  Clients.set(client.name, methods);
+  return methods;
 }

@@ -1,6 +1,8 @@
 'use strict';
 
 import * as Provider from '../../Provider.js';
+import OpenSuggest from '../../clients/OpenSuggest.client.js';
+
 
 export default Provider.registerTransform({
   _query: '',
@@ -9,7 +11,6 @@ export default Provider.registerTransform({
   },
 
   getSuggestions(request) {
-    const OpenSuggest = this.services.get('opensuggest');
     return OpenSuggest.getSuggestions({
       profile: 'opac',
       agency: '150013',

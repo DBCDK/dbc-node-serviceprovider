@@ -1,6 +1,7 @@
 'use strict';
 
 import * as Provider from '../../Provider.js';
+import Recommendations from '../../clients/Recommendations.client.js';
 
 export default Provider.registerTransform({
   _query: '',
@@ -9,7 +10,7 @@ export default Provider.registerTransform({
   },
 
   requestTransform(event, list) {
-    return this.services.get('recommend').getRecommendations(list);
+    return Recommendations.getRecommendations(list);
   },
 
   responseTransform(data) {

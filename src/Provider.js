@@ -6,54 +6,12 @@
  * initializes the dispatcher if sockets are available.
  */
 
-import path from 'path';
-import walker from 'walk';
+import {autoRequire} from './bootstrap';
 import {merge} from 'lodash';
 import Dispatcher from './lib/dispatcher.js';
 
-import Clients from './clients.js';
-
 const TRANSFORMS = [];
-
-/**
- * Passes the map with webservices to the transforms
- *
- * @param {Object[]} transforms Array with transforms
- * @param {Map} services The available webservice clients
- * @return {Object[]}
- */
-function registerServicesOnTransforms(transforms, services) {
-  transforms.forEach((transform) => {
-    transform.services = services;
-  });
-}
-
-/**
- * Traverses the filetree under ./transformers and looks for files named
- * transform.js. All files found with that name are considered a transform and
- * added to the pool of transforms that later will be passed to the
- * disspatchers.
- */
-function discoverTransforms() {
-  const walkOptions = {
-    listeners: {
-      file: (root, fileStats, next) => {
-        if (fileStats.name.indexOf('transform.js') >= 0) {
-          require(path.join(root, fileStats.name));
-        }
-        next();
-      },
-      errors: (root, nodeStatsArray, next) => {
-        if (nodeStatsArray[0].error) {
-          console.log(nodeStatsArray[0].error);
-          console.log(' at: ' + path.join(root, nodeStatsArray[0].name));
-        }
-        next();
-      }
-    }
-  };
-  walker.walkSync(path.join(__dirname, 'transformers'), walkOptions);
-}
+let _config;
 
 /**
  * Initialization of the provider and the underlying services.
@@ -63,21 +21,26 @@ function discoverTransforms() {
  * go through a socket it should be provided here. Currently there's no
  * alternative to using socket.
  */
-export function init(config = null, socket = null) {
+export function init(config) {
   if (!config) {
     throw new Error('No configuration was provided');
   }
+  _config = config;
 
-  // configure the services based on the given configuration object
-  const services = Clients(config);
-  discoverTransforms();
-  registerServicesOnTransforms(TRANSFORMS, services);
+  return {
+    sockets: setupSockets
+  };
+}
 
-  if (socket) { // if no socket is provided an alternative shuld be set up TODO non-socket.io setup
-    console.log('Setting up socket');
-    const dispatcher = new Dispatcher();
-    dispatcher.init(socket, TRANSFORMS);
-  }
+/**
+ * configure the services based on the given configuration object
+ *
+ * @constructor
+ */
+export function setupSockets(socket) {
+  autoRequire('transformers', 'transform.js');
+  const dispatcher = new Dispatcher();
+  dispatcher.init(socket, TRANSFORMS);
 }
 
 /**
@@ -111,4 +74,25 @@ export function registerTransform(transform) {
 
   TRANSFORMS.push(transform);
   return transform;
+}
+
+/**
+ * Register clients on the provider, providing them with configurations
+ *
+ * @param client
+ * @returns {*}
+ */
+export function registerClient(client) {
+  if (!client.init) {
+    throw new Error(`No init method not found on client ${client.name}`);
+  }
+  if(!_config) {
+    throw new Error(`Config.js needs to be initialized on ServiceProvider before initializing ${client.name} client`);
+  }
+  if(!_config[client.name]) {
+    throw new Error(`No Config for ${client.name} client in config.js`);
+  }
+
+  const methods = client.init(_config[client.name]);
+  return methods;
 }

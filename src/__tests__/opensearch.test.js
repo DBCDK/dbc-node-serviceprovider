@@ -1,8 +1,10 @@
 'use strict';
 
 import {expect, assert} from 'chai';
-import * as transform from  '../transformers/OpenSearch/ResultList.transform.js';
-import * as worktransform from  '../transformers/OpenSearch/Work.transform.js';
+import * as Provider from '../Provider.js';
+Provider.init({opensearch: {}});
+const transform = require('../transformers/OpenSearch/ResultList.transform.js');
+const worktransform = require('../transformers/OpenSearch/Work.transform.js');
 
 /*describe('Test transform of OpenSearch requests', () => {
   it('Sort default', function() {

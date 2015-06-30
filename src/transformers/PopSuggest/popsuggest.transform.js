@@ -2,21 +2,15 @@
 
 import * as Provider from '../../Provider.js';
 import {isArray, isEmpty} from 'lodash';
+import PopSuggest from '../../clients/PopSuggest.client.js';
 
 export default Provider.registerTransform({
 
   events() {
-    let eventsArr = [];
-
-    if (this.services.has('popsuggest')) {
-      eventsArr.push('getPopSuggestions');
-    }
-
-    return eventsArr;
+    return ['getPopSuggestions'];
   },
 
   getPopSuggestionsRequest(query) {
-    const PopSuggest = this.services.get('popsuggest');
     return PopSuggest.getSuggestions([
       {
         index: 'display.title',

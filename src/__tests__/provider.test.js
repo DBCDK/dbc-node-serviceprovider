@@ -52,9 +52,13 @@ describe('Testing methods on the Provider', () => {
     expect(() => Provider.init()).to.throw(Error);
     expect(() => Provider.init()).to.throw('No configuration was provided');
 
-    expect(() => Provider.init([], null)).to.not.throw(Error);
-
-    expect(() => Provider.init([], {})).to.throw(TypeError);
+    expect(() => Provider.init([])).to.not.throw(Error);
+  });
+  it('Test the registerClient method', () => {
+    expect(() => Provider.createClient({})).to.throw(Error);
+    expect(() => Provider.init({}).createClient({})).to.throw(Error);
+    expect(() => Provider.init({test: {}}).createClient({name: 'test'})).to.throw(Error);
+    //expect(() => Provider.init({test: {}}).createClient({name: 'test', init() {}})).to.not.throw(Error);
   });
 });
 

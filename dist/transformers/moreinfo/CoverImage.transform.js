@@ -20,6 +20,10 @@ var _jsonpathObjectTransform = require('jsonpath-object-transform');
 
 var _jsonpathObjectTransform2 = _interopRequireDefault(_jsonpathObjectTransform);
 
+var _clientsMoreInfoClientJs = require('../../clients/MoreInfo.client.js');
+
+var _clientsMoreInfoClientJs2 = _interopRequireDefault(_clientsMoreInfoClientJs);
+
 function getImagesFromResponse(result) {
   var template = {
     images: ['$.identifierInformation..coverImage.*', {
@@ -53,8 +57,7 @@ exports['default'] = Provider.registerTransform({
     var identifiers = data.map(function (pid) {
       return pid.split(':').pop();
     });
-    var MoreInfo = this.services.get('moreinfo');
-    return MoreInfo.getMoreInfoResult({ identifiers: identifiers }).map(function (promise) {
+    return _clientsMoreInfoClientJs2['default'].getMoreInfoResult({ identifiers: identifiers }).map(function (promise) {
       return promise.then(function (response) {
         return {
           identifiers: data,

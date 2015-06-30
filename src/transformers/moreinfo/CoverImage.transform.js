@@ -3,6 +3,7 @@
 import * as Provider from '../../Provider.js';
 import * as prep from './response-preparation.js';
 import Transform from 'jsonpath-object-transform';
+import MoreInfo from  '../../clients/MoreInfo.client.js';
 
 function getImagesFromResponse(result) {
   var template = {
@@ -38,7 +39,6 @@ export default Provider.registerTransform({
     requestTransform(request, data) {
 
     let identifiers = data.map((pid) => pid.split(":").pop());
-    const MoreInfo = this.services.get('moreinfo');
     return MoreInfo.getMoreInfoResult({identifiers}).map(promise => promise.then(response => {
         return {
           identifiers: data,

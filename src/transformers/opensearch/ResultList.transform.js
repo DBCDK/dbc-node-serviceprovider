@@ -2,6 +2,7 @@
 
 import * as Provider from '../../Provider.js';
 import * as prep from './response-preparation.js';
+import OpenSearch from '../../clients/OpenSearch.client.js';
 
 export default Provider.registerTransform({
 
@@ -10,7 +11,6 @@ export default Provider.registerTransform({
   },
 
   getSearchResultList(request) {
-    const OpenSearch = this.services.get('opensearch');
     return OpenSearch.getSearchResult([request]);
   },
 

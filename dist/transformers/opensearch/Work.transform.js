@@ -75,6 +75,15 @@ exports['default'] = Provider.registerTransform({
       }
       var primary = work.collection.object[0].record;
       general.title = primary.title[0];
+      if (primary.hasOwnProperty('title')) {
+        primary.title.forEach(function (title) {
+          if (title.hasOwnProperty('attributes')) {
+            if (title.attributes['xsi:type'] === 'dkdcplus:series') {
+              general.series = title.$value;
+            }
+          }
+        });
+      }
       if (primary.hasOwnProperty('creator')) {
         (function () {
           var creators = [];

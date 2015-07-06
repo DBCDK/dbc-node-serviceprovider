@@ -3,8 +3,8 @@
 import {expect, assert} from 'chai';
 import * as Provider from '../Provider.js';
 Provider.init({opensearch: {}});
-const transform = require('../transformers/OpenSearch/ResultList.transform.js');
-const worktransform = require('../transformers/OpenSearch/Work.transform.js');
+const transform = require('../transformers/opensearch/ResultList.transform');
+const worktransform = require('../transformers/opensearch/Work.transform');
 
 /*describe('Test transform of OpenSearch requests', () => {
   it('Sort default', function() {

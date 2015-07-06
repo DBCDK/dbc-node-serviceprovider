@@ -101,16 +101,19 @@ function registerTransform(transform) {
  */
 
 function registerClient(client) {
-  if (!client.init) {
-    throw new Error('No init method not found on client ' + client.name);
-  }
   if (!_config) {
     throw new Error('Config.js needs to be initialized on ServiceProvider before initializing ' + client.name + ' client');
   }
   if (!_config[client.name]) {
     throw new Error('No Config for ' + client.name + ' client in config.js');
   }
-
+  if (!client.init) {
+    throw new Error('No init method not found on client ' + client.name);
+  }
   var methods = client.init(_config[client.name]);
+  if (typeof methods !== 'object') {
+    throw new Error('No Config for ' + client.name + ' client in config.js');
+  }
+
   return methods;
 }

@@ -35,16 +35,10 @@ export default Provider.registerTransform({
    * @param {Array} the pid from Open Search
    * @return {Array} request parameters using More Info terminology
    */
-
-    requestTransform(request, data) {
+  requestTransform(request, data) {
 
     let identifiers = data.map((pid) => pid.split(":").pop());
-    return MoreInfo.getMoreInfoResult({identifiers}).map(promise => promise.then(response => {
-        return {
-          identifiers: data,
-          result: getImagesFromResponse(response)
-        }
-    }));
+    return MoreInfo.getMoreInfoResult({identifiers});
   },
 
   /**
@@ -54,19 +48,11 @@ export default Provider.registerTransform({
    * @param {Object} the response from MoreInfo
    * @return {Object} the transformed result
    */
-    responseTransform(response) {
-    //@todo fix hack created in requestTransform where
-    return response;
-    let data = {};
-    data.result = [];
-
-    let result = prep.checkResponse(response);
-
-    if (result.errorcode != undefined) {
-      data.result.push(result);
-    } else {
-      data.result = getImagesFromResponse(response);
+   responseTransform(response, identifiers) {
+    let result = prep.checkResponse(response) || getImagesFromResponse(response);
+    return {
+      identifiers,
+      result
     }
-    return data;
   }
 });

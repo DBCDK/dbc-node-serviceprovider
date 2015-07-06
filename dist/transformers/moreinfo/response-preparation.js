@@ -15,8 +15,7 @@ exports.checkResponse = checkResponse;
 
 function checkResponse(response) {
 
-  var error = {};
-
+  var error = null;
   var serviceError = '';
 
   if (response.errorText) {
@@ -25,7 +24,6 @@ function checkResponse(response) {
 
   switch (response.requestStatus.statusEnum) {
     case 'ok':
-      error = {};
       break;
     case 'authentication_error':
       error = {

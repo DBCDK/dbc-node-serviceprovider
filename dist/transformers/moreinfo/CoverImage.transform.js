@@ -51,20 +51,12 @@ exports['default'] = Provider.registerTransform({
    * @param {Array} the pid from Open Search
    * @return {Array} request parameters using More Info terminology
    */
-
   requestTransform: function requestTransform(request, data) {
 
     var identifiers = data.map(function (pid) {
       return pid.split(':').pop();
     });
-    return _clientsMoreInfoClientJs2['default'].getMoreInfoResult({ identifiers: identifiers }).map(function (promise) {
-      return promise.then(function (response) {
-        return {
-          identifiers: data,
-          result: getImagesFromResponse(response)
-        };
-      });
-    });
+    return _clientsMoreInfoClientJs2['default'].getMoreInfoResult({ identifiers: identifiers });
   },
 
   /**
@@ -74,20 +66,12 @@ exports['default'] = Provider.registerTransform({
    * @param {Object} the response from MoreInfo
    * @return {Object} the transformed result
    */
-  responseTransform: function responseTransform(response) {
-    //@todo fix hack created in requestTransform where
-    return response;
-    var data = {};
-    data.result = [];
-
-    var result = prep.checkResponse(response);
-
-    if (result.errorcode != undefined) {
-      data.result.push(result);
-    } else {
-      data.result = getImagesFromResponse(response);
-    }
-    return data;
+  responseTransform: function responseTransform(response, identifiers) {
+    var result = prep.checkResponse(response) || getImagesFromResponse(response);
+    return {
+      identifiers: identifiers,
+      result: result
+    };
   }
 });
 module.exports = exports['default'];

@@ -35,8 +35,8 @@ describe('Test transform of MoreInfo responses', () => {
         }]
       }]
     };
-
-    assert.equal(JSON.stringify(prep.responseTransform(response)), JSON.stringify({"result": ["http://moreinfo.addi.dk/2.1/more_info_get.php?id=24571249&type=forside_500&key=661a92dd3ce513876192"]}), "Cover image found");
+    let result = prep.responseTransform(response, ['identifiers']);
+    expect(result.result.images).to.have.length(6);
 
   });
   it('Check negative response', function () {
@@ -46,21 +46,18 @@ describe('Test transform of MoreInfo responses', () => {
       "identifierInformation": [{"identifierKnown": false, "identifier": {"faust": "12345678"}}]
     };
 
-    assert.equal(JSON.stringify(prep.responseTransform(response)), JSON.stringify({"result": []}), "No cover image found");
+    assert.equal(JSON.stringify(prep.responseTransform(response)), JSON.stringify({"result": {images: []}}), "No cover image found");
 
   });
   it('Check authentication error', function () {
 
     let response = {"requestStatus": {"statusEnum": "authentication_error", "errorText": "Unknown user"}};
 
-    assert.equal(JSON.stringify(prep.responseTransform(response)), JSON.stringify({
-      "result": [{
-        "errorcode": 1,
-        "errormessage": "Authentication error",
-        "serviceerror": ""
-      }]
-    }), "Authentication error");
-
+    expect(prep.responseTransform(response).result).to.be.deep.equal({
+      errorcode: 1,
+      errormessage: "Authentication error",
+      serviceerror: ""
+    });
   });
 
 });

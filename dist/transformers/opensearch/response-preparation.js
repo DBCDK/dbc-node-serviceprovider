@@ -56,7 +56,7 @@ function getHitCount(response) {
   if (response.hasOwnProperty('result')) {
     return response.result.hitCount;
   }
-  return 0;
+  return null;
 }
 
 /**

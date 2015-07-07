@@ -3,15 +3,23 @@
   "version": "0.0.1",
   "description": "Provider for the Node modules that accesesthe DBC webservices",
   "main": "index.js",
+  "homepage": "https://github.com/DBCDK/dbc-node-serviceprovider/tree/develop#readme",
   "scripts": {
-    "test": "test",
-    "build": "npm run cleardest && babel ./src -d dist",
+    "test:watch": "mocha --compilers js:babel/register src/__tests__ -w",
+    "test": "mocha --compilers js:babel/register src/__tests__ -R mocha-junit-reporter",
+    "build": "npm run cleardest && babel ./src -d dist --ignore __tests__",
     "cleardest": "rm -rf ./dist",
-    "watch": "npm run cleardest && babel ./src --watch -d dist"
+    "lint": "eslint ./src",
+    "lint:checkstyle": "eslint ./src  -o report.xml -f checkstyle",
+    "watch": "npm run cleardest && babel ./src --watch -d dist --ignore __tests__",
+    "reinstall": "rm -r node_modules && npm install"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DBCDK/dbc-node-serviceprovider.git#develop"
+  },
+  "bugs": {
+    "url": "https://github.com/DBCDK/dbc-node-serviceprovider/issues"
   },
   "keywords": [
     "dbc",
@@ -21,8 +29,25 @@
   ],
   "author": "DBC A/S",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/DBCDK/dbc-node-serviceprovider/issues"
+  "dependencies": {
+    "dbc-node-moreinfo-client": "git+https://github.com/DBCDK/dbc-node-moreinfo-client#develop",
+    "dbc-node-opensearch-client": "git+https://github.com/DBCDK/dbc-node-opensearch-client#develop",
+    "dbc-node-opensuggest": "git+https://github.com/DBCDK/dbc-node-opensuggest#develop",
+    "dbc-node-recommendations": "git+https://github.com/DBCDK/dbc-node-recommendations#develop",
+    "dbc-node-popsuggest": "git+https://github.com/DBCDK/dbc-node-popsuggest#develop",
+    "jsonpath-object-transform": "https://github.com/vibjerg/jsonpath-object-transform/archive/1.0.5.tar.gz",
+    "lodash": "^3.9.3",
+    "walk": "^2.3.9"
   },
-  "homepage": "https://github.com/DBCDK/dbc-node-serviceprovider/tree/develop#readme"
+  "devDependencies": {
+    "babel": "^5.5.6",
+    "babel-eslint": "^3.1.9",
+    "chai": "^3.0.0",
+    "eslint": "^0.21.0",
+    "mocha": "^2.2.5",
+    "mocha-junit-reporter": "^1.4.0",
+    "node-libs-browser": "^0.5.2",
+    "sinon": "^1.15.0",
+    "webpack": "^1.9.10"
+  }
 }

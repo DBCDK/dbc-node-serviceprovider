@@ -12,7 +12,6 @@
   },
   "globals": {},
   "plugins": [
-    "react"
   ],
   "rules": {
     // Possible Errors
@@ -116,7 +115,7 @@
         "indentSwitchCase": true
       }
     ],
-    "brace-style": 2,
+    "brace-style": 1,
     "camelcase": 0,
     "comma-spacing": 2,
     "comma-style": 2,

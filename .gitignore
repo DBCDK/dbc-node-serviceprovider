@@ -1,0 +1,22 @@
+# ============
+# NODE_MODULES
+# ============
+node_modules
+
+# ============
+# IDEA
+# ============
+.idea
+*.iml
+
+# ============
+# REPORTS
+# ============
+test-results.xml
+coverage
+
+# ============
+# LOGS
+# ============
+npm-debug.log
+report.xml

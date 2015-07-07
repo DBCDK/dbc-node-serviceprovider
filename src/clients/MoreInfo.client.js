@@ -7,6 +7,6 @@ export default ServiceProvider.registerClient({
   name: 'moreinfo',
   init(config) {
     MoreInfo.init(config);
-    return {getMoreInfoResult : MoreInfo.getMoreInfoResult};
+    return {getMoreInfoResult: MoreInfo.getMoreInfoResult};
   }
 });

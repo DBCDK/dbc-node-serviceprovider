@@ -1,50 +1,29 @@
 'use strict';
 
-/**
- * Checks the response from the OpenSearch webservice, to see
- * if any errors are returned from the service
- *
- * @param {Object} the response from the webservice
- * @return {Object} search result information if everything was ok,
- * otherwise error code and error messages
- */
-
-export function checkResponse(response) {
-
-  if (hasSearchResult(response) === true) {
-    return getResultInfo(response);
-  } else if (getHitCount(response) === 0) {
-    return getResultInfo(response);
-  } else {
-    return checkResultErrors(response.error);
-  }
-
-}
 
 /**
  * Checks if the response has a searchResult (1 or more hits)
  *
  * @param {Object} the response from the webservice
  * @return {Boolean}
-*/
+ */
+function hasSearchResult(response) {
 
-export function hasSearchResult(response) {
-
-  if (response.result !== undefined) {
+  if (typeof response.result !== 'undefined') {
     return true;
   }
   return false;
 
 }
 
+
 /**
  * Retrives the hit count (number of manifestations) from the response
  *
  * @param {Object} the response from the webservice
  * @return {String}
-*/
-
-export function getHitCount(response) {
+ */
+function getHitCount(response) {
   if (response.hasOwnProperty('result')) {
     return response.result.hitCount;
   }
@@ -57,9 +36,8 @@ export function getHitCount(response) {
  *
  * @param {Object} the response from the webservice
  * @return {String}
-*/
-
-export function getCollectionCount(response) {
+ */
+function getCollectionCount(response) {
   if (response.hasOwnProperty('result')) {
     return response.result.collectionCount;
   }
@@ -72,9 +50,8 @@ export function getCollectionCount(response) {
  *
  * @param {Object} the response from the webservice
  * @return {String}
-*/
-
-export function checkIfMore(response) {
+ */
+function checkIfMore(response) {
   if (response.hasOwnProperty('result')) {
     return response.result.more;
   }
@@ -87,9 +64,8 @@ export function checkIfMore(response) {
  * @param {Object} the response from the webservice
  * @return {Object} with hit count, collection count
  * and whether there are more collections to be retrieved
-*/
-
-export function getResultInfo(response) {
+ */
+function getResultInfo(response) {
   return {
     hits: getHitCount(response),
     collections: getCollectionCount(response),
@@ -97,17 +73,32 @@ export function getResultInfo(response) {
   };
 }
 
+
 /**
- * Checks a record from the OpenSearch webservice, to see
- * if there were any errors retrieving the record data
+ * Parses variable result error message string
  *
- * @param {Object} the record from the webservice
- * @return {Object} record error information
+ * @param {String} an error message from the webservice
+ * @return {String} the parsed error message
  */
+function parseErrorString(errorString) {
 
-export function checkRecord(record) {
+  if (errorString.match(/Internal problem/)) {
+    return 'Service problem';
+  }
 
-  return checkRecordErrors(record.error);
+  if (errorString.match(/Error: Unknown agency/)) {
+    return 'Unknown agency';
+  }
+
+  if (errorString.match(/Error: Cannot fetch profile/)) {
+    return 'Cannot fetch profile';
+  }
+
+  if (errorString.match(/Unsupported index|Query syntax error/)) {
+    return 'Error in search query';
+  }
+
+  return errorString;
 
 }
 
@@ -117,7 +108,6 @@ export function checkRecord(record) {
  * @param {String} an error message from the webservice
  * @return {Object} result error information
  */
-
 function checkResultErrors(errorString) {
 
   let error = {};
@@ -182,28 +172,15 @@ function checkResultErrors(errorString) {
 }
 
 /**
- * Parses variable result error message string
+ * Parses variable record error message string
  *
  * @param {String} an error message from the webservice
  * @return {String} the parsed error message
  */
+function parseRecordErrorString(errorString) {
 
-function parseErrorString(errorString) {
-
-  if (errorString.match(/Internal problem/)) {
-    return 'Service problem';
-  }
-
-  if (errorString.match(/Error: Unknown agency/)) {
-    return 'Unknown agency';
-  }
-
-  if (errorString.match(/Error: Cannot fetch profile/)) {
-    return 'Cannot fetch profile';
-  }
-
-  if (errorString.match(/Unsupported index|Query syntax error/)) {
-    return 'Error in search query';
+  if (errorString.match(/Error: deleted record|Error: unknown\/missing record|Error: Cannot fetch record/)) {
+    return 'Record missing';
   }
 
   return errorString;
@@ -216,7 +193,6 @@ function parseErrorString(errorString) {
  * @param {String} an error message from the webservice
  * @return {Object} record error information
  */
-
 function checkRecordErrors(errorString) {
 
   let error = {};
@@ -244,18 +220,35 @@ function checkRecordErrors(errorString) {
 }
 
 /**
- * Parses variable record error message string
+ * Checks a record from the OpenSearch webservice, to see
+ * if there were any errors retrieving the record data
  *
- * @param {String} an error message from the webservice
- * @return {String} the parsed error message
+ * @param {Object} the record from the webservice
+ * @return {Object} record error information
  */
+export function checkRecord(record) {
 
-function parseRecordErrorString(errorString) {
+  return checkRecordErrors(record.error);
+}
 
-  if (errorString.match(/Error: deleted record|Error: unknown\/missing record|Error: Cannot fetch record/)) {
-    return 'Record missing';
+/**
+ * Checks the response from the OpenSearch webservice, to see
+ * if any errors are returned from the service
+ *
+ * @param {Object} the response from the webservice
+ * @return {Object} search result information if everything was ok,
+ * otherwise error code and error messages
+ */
+export function checkResponse(response) {
+  let returnValue;
+
+  if (hasSearchResult(response) === true) {
+    returnValue = getResultInfo(response);
+  } else if (getHitCount(response) === 0) {
+    returnValue = getResultInfo(response);
+  } else {
+    returnValue = checkResultErrors(response.error);
   }
 
-  return errorString;
-
+  return returnValue;
 }

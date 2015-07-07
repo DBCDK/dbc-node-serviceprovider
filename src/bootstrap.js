@@ -10,7 +10,7 @@ import walker from 'walk';
  * disspatchers.
  */
 function discoverFiles(folder, namespace) {
-  let files = new Array();
+  let files = [];
   const walkOptions = {
     listeners: {
       file: (root, fileStats, next) => {
@@ -21,8 +21,8 @@ function discoverFiles(folder, namespace) {
       },
       errors: (root, nodeStatsArray, next) => {
         if (nodeStatsArray[0].error) {
-          console.log(nodeStatsArray[0].error);
-          console.log(' at: ' + path.join(root, nodeStatsArray[0].name));
+          console.error(nodeStatsArray[0].error); // eslint-disable-line
+          console.error(' at: ' + path.join(root, nodeStatsArray[0].name)); // eslint-disable-line
         }
         next();
       }
@@ -33,6 +33,6 @@ function discoverFiles(folder, namespace) {
 }
 
 
-export function autoRequire (folder, namespace) {
+export function autoRequire(folder, namespace) {
   discoverFiles(folder, namespace).map(require);
 }

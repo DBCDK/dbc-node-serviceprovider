@@ -10,6 +10,7 @@
     "build": "npm run cleardest && babel ./src -d dist --ignore __tests__",
     "cleardest": "rm -rf ./dist",
     "lint": "eslint ./src",
+    "lint:checkstyle": "eslint ./src  -o report.xml -f checkstyle",
     "watch": "npm run cleardest && babel ./src --watch -d dist --ignore __tests__",
     "reinstall": "rm -r node_modules && npm install"
   },

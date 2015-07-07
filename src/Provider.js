@@ -13,6 +13,18 @@ import Dispatcher from './lib/dispatcher.js';
 const TRANSFORMS = [];
 let _config;
 
+
+/**
+ * configure the services based on the given configuration object
+ *
+ * @constructor
+ */
+export function setupSockets(socket) {
+  autoRequire('transformers', 'transform.js');
+  const dispatcher = new Dispatcher();
+  dispatcher.init(socket, TRANSFORMS);
+}
+
 /**
  * Initialization of the provider and the underlying services.
  *
@@ -30,17 +42,6 @@ export function init(config) {
   return {
     sockets: setupSockets
   };
-}
-
-/**
- * configure the services based on the given configuration object
- *
- * @constructor
- */
-export function setupSockets(socket) {
-  autoRequire('transformers', 'transform.js');
-  const dispatcher = new Dispatcher();
-  dispatcher.init(socket, TRANSFORMS);
 }
 
 /**
@@ -83,17 +84,17 @@ export function registerTransform(transform) {
  * @returns {*}
  */
 export function registerClient(client) {
-  if(!_config) {
+  if (!_config) {
     throw new Error(`Config.js needs to be initialized on ServiceProvider before initializing ${client.name} client`);
   }
-  if(!_config[client.name]) {
+  if (!_config[client.name]) {
     throw new Error(`No Config for ${client.name} client in config.js`);
   }
   if (!client.init) {
     throw new Error(`No init method not found on client ${client.name}`);
   }
   const methods = client.init(_config[client.name]);
-  if (typeof methods !== 'object'){
+  if (typeof methods !== 'object') {
     throw new Error(`No Config for ${client.name} client in config.js`);
   }
 

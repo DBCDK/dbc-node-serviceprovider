@@ -13,7 +13,6 @@ function Dispatcher() {
    * @type {Map}
    */
   let _listeners = new Map();
-  let _connections = [];
 
   /**
    * When the given promise is completed an event will be emitted.
@@ -37,7 +36,7 @@ function Dispatcher() {
       let error = {error: err};
       error = transform.responseTransform(error, query);
       connection.emit(event + 'Response', error);
-      throw new Error('A promise was rejected: ', err); //TODO better error handling
+      throw new Error('A promise was rejected: ', err);
     });
   }
 
@@ -56,8 +55,7 @@ function Dispatcher() {
       response.forEach((promise) => {
         emitPromise(transform, event, connection, promise, query);
       });
-    }
-    else {
+    } else {
       emitPromise(transform, event, connection, response, query);
     }
   }
@@ -87,16 +85,9 @@ function Dispatcher() {
   function addTransformListener(event, transform) {
     if (_listeners.has(event)) {
       throw new Error('Event already exsists: ' + event);
-    }
-    else {
+    } else {
       _listeners.set(event, transform);
     }
-  }
-
-  function getUserConnections(user) {
-    return _connections.filter((connection) => {
-      return connection.user === user;
-    });
   }
 
   function registerTransformListeners(transforms) {

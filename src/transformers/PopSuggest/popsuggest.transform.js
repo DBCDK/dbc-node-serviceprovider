@@ -45,12 +45,10 @@ export default Provider.registerTransform({
         statusCode: response.error.statusCode,
         statusMessage: response.error.statusMessage
       };
-    }
-    else if (isEmpty(response.response.docs)) {
+    } else if (isEmpty(response.response.docs)) {
       data.isEmpty = true;
       data.index = this._getIndex(response);
-    }
-    else {
+    } else {
       data = this._parseData(response, query);
       data.query = query;
     }
@@ -62,8 +60,7 @@ export default Provider.registerTransform({
     let index = '';
     if (isArray(response.responseHeader.qf)) {
       index = response.responseHeader.qf.join();
-    }
-    else {
+    } else {
       index = response.responseHeader.qf.join();
     }
 

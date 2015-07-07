@@ -24,14 +24,14 @@ export default Provider.registerTransform({
     return this.getSuggestions({
       index: 'scanphrase.title',
       query
-    })
+    });
   },
 
   responseTransform(data) {
     return this.extractWordsForFilter(data.suggestions, this._query);
   },
 
-  extractWordsForFilter(suggestions, query) {
+  extractWordsForFilter(suggestions) {
     return suggestions.map((element) => {
       return element.suggestion;
     });

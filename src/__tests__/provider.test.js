@@ -27,7 +27,7 @@ describe('Testing methods on the Provider', () => {
       events: true,
       requestTransform: true,
       responseTransform: true,
-      someMethod(){
+      someMethod() {
       }
     };
     expect(Provider.registerTransform(test)).to.have.keys('services', 'someMethod', 'events', 'requestTransform', 'responseTransform');
@@ -62,13 +62,14 @@ describe('Testing methods on the Provider', () => {
     Provider.init({test: {}});
     client.name = 'test';
     expect(() => Provider.registerClient(client)).to.throw(Error);
-    client.init = config => {};
+    client.init = () => {
+    };
     expect(() => Provider.registerClient(client)).to.throw(Error);
-    client.init = (config) => {
-      return {}
+    client.init = () => {
+      return {};
     };
     expect(() => Provider.registerClient(client)).to.not.throw(Error);
     let methods = Provider.registerClient(client);
-    expect(methods).to.be.object;
+    expect(methods).to.be.object; // eslint-disable-line no-unused-expressions
   });
 });

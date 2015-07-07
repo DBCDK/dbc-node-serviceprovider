@@ -3,7 +3,7 @@
 import * as Provider from '../../Provider.js';
 import * as prep from './response-preparation.js';
 import Transform from 'jsonpath-object-transform';
-import MoreInfo from  '../../clients/MoreInfo.client.js';
+import MoreInfo from '../../clients/MoreInfo.client.js';
 
 function getImagesFromResponse(result) {
   var template = {
@@ -11,7 +11,7 @@ function getImagesFromResponse(result) {
       url: '$..$value',
       size: '$..imageSize',
       format: '$..imageFormat'
-    }],
+    }]
   };
   var transformed = Transform(result, template);
   return transformed;
@@ -25,19 +25,14 @@ export default Provider.registerTransform({
     return ['getCoverImage'];
   },
 
-  getSearchResultList(request) {
-
-  },
-
   /**
    * Transforms the request from the app to MoreInfo request parameters
    *
    * @param {Array} the pid from Open Search
    * @return {Array} request parameters using More Info terminology
    */
-  requestTransform(request, data) {
-
-    let identifiers = data.map((pid) => pid.split(":").pop());
+  requestTransform(request, data) { // eslint-disable-line
+    let identifiers = data.map((pid) => pid.split(':').pop());
     return MoreInfo.getMoreInfoResult({identifiers});
   },
 
@@ -48,11 +43,11 @@ export default Provider.registerTransform({
    * @param {Object} the response from MoreInfo
    * @return {Object} the transformed result
    */
-   responseTransform(response, identifiers) {
+  responseTransform(response, identifiers) {
     let result = prep.checkResponse(response) || getImagesFromResponse(response);
     return {
       identifiers,
       result
-    }
+    };
   }
 });

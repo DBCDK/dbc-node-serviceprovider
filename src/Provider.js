@@ -7,12 +7,55 @@
  */
 
 import {autoRequire} from './bootstrap';
-import {merge} from 'lodash';
+import {merge, isArray} from 'lodash';
 import Dispatcher from './lib/dispatcher.js';
 
 const TRANSFORMS = [];
+const _events = new Map();
 let _config;
 
+/**
+ * Registers all events on a transform
+ *
+ * if an event already exists. An error is thrown
+ *
+ * @param events
+ * @param transform
+ */
+function registerEvents(events, transform) {
+  if (events) {
+    events.forEach((event)=> {
+      if (_events.has(event)) {
+        const name = _events.get(event).name || 'unnamed transform';
+        throw new Error(`Event '${event}' already registered by ${name}`);
+      }
+      _events.set(event, transform);
+    });
+  }
+}
+
+/**
+ * Handles the request and response transform callback and returns a promise, which resolves to the final
+ * response.
+ *
+ * @param {Object} transform The transform object
+ * @param {String} event
+ * @param {Object || Array} query The query object/array
+ */
+function handleListenerCallback(transform, event, query) {
+
+  const request = transform.requestTransform(event, query);
+  // make sure requests are an array
+  const requestArray = isArray(request) && request || [request];
+
+  // An array of promises is returned, one for each request in the request array
+  // When each promise is resolved the transform response method is called.
+  return requestArray.map((promise) => {
+    return promise.then((response) => {
+      return transform.responseTransform(response, event);
+    });
+  });
+}
 
 /**
  * configure the services based on the given configuration object
@@ -73,6 +116,8 @@ export function registerTransform(transform) {
 
   transform = merge(transform, baseTransform);
 
+  registerEvents(transform.events(), transform);
+
   TRANSFORMS.push(transform);
   return transform;
 }
@@ -99,4 +144,20 @@ export function registerClient(client) {
   }
 
   return methods;
+}
+
+/**
+ * Triggers an event with the given parameters. Returns an array of promises that resolves the request
+ *
+ * @param {String} event
+ * @param {Object} params
+ * @returns {Array}
+ */
+export function trigger(event, params) {
+  if (!_events.has(event)) {
+    throw new Error(`unsupported Event of type ${event}`);
+  }
+
+  let transform = _events.get(event);
+  return handleListenerCallback(transform, event, params);
 }

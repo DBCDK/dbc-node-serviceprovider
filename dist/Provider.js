@@ -7,6 +7,7 @@ exports.setupSockets = setupSockets;
 exports.init = init;
 exports.registerTransform = registerTransform;
 exports.registerClient = registerClient;
+exports.trigger = trigger;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -25,7 +26,51 @@ var _libDispatcherJs = require('./lib/dispatcher.js');
 var _libDispatcherJs2 = _interopRequireDefault(_libDispatcherJs);
 
 var TRANSFORMS = [];
+var _events = new Map();
 var _config = undefined;
+
+/**
+ * Registers all events on a transform
+ *
+ * if an event already exists. An error is thrown
+ *
+ * @param events
+ * @param transform
+ */
+function registerEvents(events, transform) {
+  if (events) {
+    events.forEach(function (event) {
+      if (_events.has(event)) {
+        var _name = _events.get(event).name || 'unnamed transform';
+        throw new Error('Event \'' + event + '\' already registered by ' + _name);
+      }
+      _events.set(event, transform);
+    });
+  }
+}
+
+/**
+ * Handles the request and response transform callback and returns a promise, which resolves to the final
+ * response.
+ *
+ * @param {Object} transform The transform object
+ * @param {String} event
+ * @param {Object || Array} query The query object/array
+ */
+function handleListenerCallback(transform, event, query) {
+
+  var request = transform.requestTransform(event, query);
+  // make sure requests are an array
+  var requestArray = (0, _lodash.isArray)(request) && request || [request];
+
+  // An array of promises is returned, one for each request in the request array
+  // When each promise is resolved the transform response method is called.
+  return requestArray.map(function (promise) {
+    return promise.then(function (response) {
+      return transform.responseTransform(response, event);
+    });
+  });
+}
 
 /**
  * configure the services based on the given configuration object
@@ -89,6 +134,8 @@ function registerTransform(transform) {
 
   transform = (0, _lodash.merge)(transform, baseTransform);
 
+  registerEvents(transform.events(), transform);
+
   TRANSFORMS.push(transform);
   return transform;
 }
@@ -116,4 +163,21 @@ function registerClient(client) {
   }
 
   return methods;
+}
+
+/**
+ * Triggers an event with the given parameters. Returns an array of promises that resolves the request
+ *
+ * @param {String} event
+ * @param {Object} params
+ * @returns {Array}
+ */
+
+function trigger(event, params) {
+  if (!_events.has(event)) {
+    throw new Error('unsupported Event of type ' + event);
+  }
+
+  var transform = _events.get(event);
+  return handleListenerCallback(transform, event, params);
 }

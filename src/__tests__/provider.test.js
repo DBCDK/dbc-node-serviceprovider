@@ -5,6 +5,7 @@
  */
 import * as Provider from '../Provider.js';
 import {expect, assert} from 'chai';
+import {extend} from 'lodash';
 
 describe('Testing methods on the Provider', () => {
 
@@ -19,12 +20,13 @@ describe('Testing methods on the Provider', () => {
   });
 
   it('Test the registerTransform method', () => {
-    let expected = {services: null, events: true, requestTransform: true, responseTransform: true};
-    let test = {events: true, requestTransform: true, responseTransform: true};
+    let events = function () {};
+    let expected = {events, requestTransform: true, responseTransform: true, services: null};
+    let test = {events, requestTransform: true, responseTransform: true};
     expect(Provider.registerTransform(test)).to.eql(expected);
 
     test = {
-      events: true,
+      events() {},
       requestTransform: true,
       responseTransform: true,
       someMethod() {
@@ -38,13 +40,13 @@ describe('Testing methods on the Provider', () => {
     test = {};
     expect(() => Provider.registerTransform(test)).to.throw(Error);
 
-    test = {events: true};
+    test = {events};
     expect(() => Provider.registerTransform(test)).to.throw(Error);
 
-    test = {events: true, requestTransform: true};
+    test = {events, requestTransform: true};
     expect(() => Provider.registerTransform(test)).to.throw(Error);
 
-    test = {events: true, requestTransform: true, responseTransform: true};
+    test = {events, requestTransform: true, responseTransform: true};
     expect(() => Provider.registerTransform(test)).to.not.throw(Error);
   });
 
@@ -71,5 +73,48 @@ describe('Testing methods on the Provider', () => {
     expect(() => Provider.registerClient(client)).to.not.throw(Error);
     let methods = Provider.registerClient(client);
     expect(methods).to.be.object; // eslint-disable-line no-unused-expressions
+  });
+
+  describe('Test registerEvent', () => {
+    let provider = extend(Provider, {});
+    it('throws error on duplicate eventnames', () => {
+      let baseTransform = {requestTransform: true, responseTransform: true};
+      let transform = extend(baseTransform, {
+        name: 'testTransform',
+        events() {
+          return ['testRegisterEvent'];
+        }
+      });
+
+      provider.registerTransform(transform);
+      expect(() => provider.registerTransform(transform)).to.throw(Error);
+
+    });
+  });
+
+  describe('Test the trigger function', () => {
+    // No event has been reqistered
+    it('Throws an error on unsupported events', () => {
+      expect(() => Provider.trigger('testEvent', {test: 'testEvent is triggered'})).to.throw(Error);
+    });
+    it('Triggers an event', (done) => {
+      Provider.registerTransform({
+        events() {
+          return ['testEvent'];
+        },
+        requestTransform(event, request) {
+          return Promise.resolve(request);
+        },
+        responseTransform(response) {
+          return response.test;
+        }
+      });
+      let trigger = Provider.trigger('testEvent', {test: 'testEvent is triggered'});
+      expect(trigger).to.have.length(1);
+      trigger[0].then((result) => {
+        expect(result).to.be.equal('testEvent is triggered');
+        done();
+      });
+    });
   });
 });

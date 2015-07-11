@@ -80,21 +80,25 @@ export default Provider.registerTransform({
       let newWork = {};
       let no = work.collection.numberOfObjects;
       let identifiers = [];
-      let title;
-      let workType;
+      let title,
+        creator,
+        workType;
       if (no === '1') {
         identifiers.push(work.collection.object.identifier);
         title = work.formattedCollection.briefDisplay.manifestation.titleFull;
+        creator = work.formattedCollection.briefDisplay.manifestation.creator;
         workType = work.formattedCollection.briefDisplay.manifestation.workType;
       } else {
         work.collection.object.forEach((identifier) => {
           identifiers.push(identifier.identifier);
-          title = work.formattedCollection.briefDisplay.manifestation[0].title;
+          title = work.formattedCollection.briefDisplay.manifestation[0].titleFull;
+          creator = work.formattedCollection.briefDisplay.manifestation[0].creator;
           workType = work.formattedCollection.briefDisplay.manifestation[0].workType;
         });
       }
       newWork.identifiers = identifiers;
       newWork.title = title;
+      newWork.creator = creator;
       newWork.workType = workType;
       data.result.push(newWork);
 

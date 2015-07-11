@@ -95,21 +95,25 @@ exports['default'] = Provider.registerTransform({
       var newWork = {};
       var no = work.collection.numberOfObjects;
       var identifiers = [];
-      var title = undefined;
-      var workType = undefined;
+      var title = undefined,
+          creator = undefined,
+          workType = undefined;
       if (no === '1') {
         identifiers.push(work.collection.object.identifier);
         title = work.formattedCollection.briefDisplay.manifestation.titleFull;
+        creator = work.formattedCollection.briefDisplay.manifestation.creator;
         workType = work.formattedCollection.briefDisplay.manifestation.workType;
       } else {
         work.collection.object.forEach(function (identifier) {
           identifiers.push(identifier.identifier);
-          title = work.formattedCollection.briefDisplay.manifestation[0].title;
+          title = work.formattedCollection.briefDisplay.manifestation[0].titleFull;
+          creator = work.formattedCollection.briefDisplay.manifestation[0].creator;
           workType = work.formattedCollection.briefDisplay.manifestation[0].workType;
         });
       }
       newWork.identifiers = identifiers;
       newWork.title = title;
+      newWork.creator = creator;
       newWork.workType = workType;
       data.result.push(newWork);
     });

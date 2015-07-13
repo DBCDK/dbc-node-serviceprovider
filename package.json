@@ -30,11 +30,11 @@
   "author": "DBC A/S",
   "license": "ISC",
   "dependencies": {
-    "dbc-node-moreinfo-client": "git+https://github.com/DBCDK/dbc-node-moreinfo-client#develop",
-    "dbc-node-opensearch-client": "git+https://github.com/DBCDK/dbc-node-opensearch-client#develop",
+    "dbc-node-moreinfo-client": "git+https://github.com/DBCDK/dbc-node-moreinfo-client#master",
+    "dbc-node-opensearch-client": "git+https://github.com/DBCDK/dbc-node-opensearch-client#master",
     "dbc-node-opensuggest": "git+https://github.com/DBCDK/dbc-node-opensuggest#develop",
     "dbc-node-recommendations": "git+https://github.com/DBCDK/dbc-node-recommendations#develop",
-    "dbc-node-popsuggest": "git+https://github.com/DBCDK/dbc-node-popsuggest#develop",
+    "dbc-node-popsuggest": "git+https://github.com/DBCDK/dbc-node-popsuggest#master",
     "jsonpath-object-transform": "https://github.com/vibjerg/jsonpath-object-transform/archive/1.0.5.tar.gz",
     "lodash": "^3.9.3",
     "walk": "^2.3.9"

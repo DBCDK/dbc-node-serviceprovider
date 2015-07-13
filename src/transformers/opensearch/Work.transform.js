@@ -178,7 +178,7 @@ export default Provider.registerTransform({
   },
 
   getWorkResult(request) {
-    return OpenSearch.getWorkResult([request]);
+    return OpenSearch.getWorkResult(request);
   },
 
   requestTransform(event, request) {

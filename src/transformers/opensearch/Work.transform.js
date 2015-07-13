@@ -92,8 +92,8 @@ export default Provider.registerTransform({
           }
         }
       }
+      let subjects = [];
       if (primary.hasOwnProperty('subject')) {
-        let subjects = [];
         primary.subject.forEach(function (subject) {
           if (subject.hasOwnProperty('attributes')) {
             if (subject.attributes['xsi:type'] === 'dkdcplus:DBCS') {
@@ -105,8 +105,31 @@ export default Provider.registerTransform({
             if (subject.attributes['xsi:type'] === 'dkdcplus:DBCM') {
               subjects.push(subject.$value);
             }
+            if (subject.attributes['xsi:type'] === 'dkdcplus:DBCO') {
+              subjects.push(subject.$value);
+            }
           }
         });
+      }
+      if (primary.hasOwnProperty('spatial')) {
+        if (primary.spatial instanceof Array === false) {
+          let spatial = primary.spatial;
+          primary.spatial = [spatial];
+        }
+        primary.spatial.forEach(function (subject) {
+          subjects.push(subject.$value);
+        });
+      }
+      if (primary.hasOwnProperty('temporal')) {
+        if (primary.temporal instanceof Array === false) {
+          let temporal = primary.temporal;
+          primary.temporal = [temporal];
+        }
+        primary.temporal.forEach(function (subject) {
+          subjects.push(subject.$value);
+        });
+      }
+      if (subjects.length > 0) {
         general.subjects = subjects;
       }
       if (primary.hasOwnProperty('hasPart')) {

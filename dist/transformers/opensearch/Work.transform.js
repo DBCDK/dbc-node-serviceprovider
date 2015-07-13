@@ -128,6 +128,21 @@ exports['default'] = Provider.registerTransform({
           general.subjects = subjects;
         })();
       }
+      if (primary.hasOwnProperty('hasPart')) {
+        (function () {
+          var tracks = [];
+          primary.hasPart.forEach(function (track) {
+            if (track.hasOwnProperty('attributes')) {
+              if (track.attributes['xsi:type'] === 'dkdcplus:track') {
+                tracks.push(track.$value);
+              }
+            }
+          });
+          if (tracks.length > 0) {
+            general.tracks = tracks;
+          }
+        })();
+      }
       if (primary.hasOwnProperty('language')) {
         (function () {
           var languages = [];

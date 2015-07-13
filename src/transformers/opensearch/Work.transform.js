@@ -224,6 +224,7 @@ export default Provider.registerTransform({
       newWork.general = getWorkData(work);
       newWork.specific = getManifestationData(work);
       data.result = newWork;
+
     });
 
     return data;

@@ -109,24 +109,45 @@ exports['default'] = Provider.registerTransform({
           }
         }
       }
+      var subjects = [];
       if (primary.hasOwnProperty('subject')) {
-        (function () {
-          var subjects = [];
-          primary.subject.forEach(function (subject) {
-            if (subject.hasOwnProperty('attributes')) {
-              if (subject.attributes['xsi:type'] === 'dkdcplus:DBCS') {
-                subjects.push(subject.$value);
-              }
-              if (subject.attributes['xsi:type'] === 'dkdcplus:DBCF') {
-                subjects.push(subject.$value);
-              }
-              if (subject.attributes['xsi:type'] === 'dkdcplus:DBCM') {
-                subjects.push(subject.$value);
-              }
+        primary.subject.forEach(function (subject) {
+          if (subject.hasOwnProperty('attributes')) {
+            if (subject.attributes['xsi:type'] === 'dkdcplus:DBCS') {
+              subjects.push(subject.$value);
             }
-          });
-          general.subjects = subjects;
-        })();
+            if (subject.attributes['xsi:type'] === 'dkdcplus:DBCF') {
+              subjects.push(subject.$value);
+            }
+            if (subject.attributes['xsi:type'] === 'dkdcplus:DBCM') {
+              subjects.push(subject.$value);
+            }
+            if (subject.attributes['xsi:type'] === 'dkdcplus:DBCO') {
+              subjects.push(subject.$value);
+            }
+          }
+        });
+      }
+      if (primary.hasOwnProperty('spatial')) {
+        if (primary.spatial instanceof Array === false) {
+          var spatial = primary.spatial;
+          primary.spatial = [spatial];
+        }
+        primary.spatial.forEach(function (subject) {
+          subjects.push(subject.$value);
+        });
+      }
+      if (primary.hasOwnProperty('temporal')) {
+        if (primary.temporal instanceof Array === false) {
+          var temporal = primary.temporal;
+          primary.temporal = [temporal];
+        }
+        primary.temporal.forEach(function (subject) {
+          subjects.push(subject.$value);
+        });
+      }
+      if (subjects.length > 0) {
+        general.subjects = subjects;
       }
       if (primary.hasOwnProperty('hasPart')) {
         (function () {

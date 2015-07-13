@@ -45,58 +45,58 @@ function getWorkData(work) {
     }
   }
   let subjects = [];
-    if (primary.hasOwnProperty('subject')) {
-      primary.subject.forEach(function (subject) {
-        if (subject.hasOwnProperty('attributes')) {
-          if (subject.attributes['xsi:type'] === 'dkdcplus:DBCS') {
-            subjects.push(subject.$value);
-          }
-          if (subject.attributes['xsi:type'] === 'dkdcplus:DBCF') {
-            subjects.push(subject.$value);
-          }
-          if (subject.attributes['xsi:type'] === 'dkdcplus:DBCM') {
-            subjects.push(subject.$value);
-          }
-          if (subject.attributes['xsi:type'] === 'dkdcplus:DBCO') {
-            subjects.push(subject.$value);
-          }
+  if (primary.hasOwnProperty('subject')) {
+    primary.subject.forEach(function (subject) {
+      if (subject.hasOwnProperty('attributes')) {
+        if (subject.attributes['xsi:type'] === 'dkdcplus:DBCS') {
+          subjects.push(subject.$value);
         }
-      });
-    }
-    if (primary.hasOwnProperty('spatial')) {
-      if (primary.spatial instanceof Array === false) {
-        let spatial = primary.spatial;
-        primary.spatial = [spatial];
-      }
-      primary.spatial.forEach(function (subject) {
-        subjects.push(subject.$value);
-      });
-    }
-    if (primary.hasOwnProperty('temporal')) {
-      if (primary.temporal instanceof Array === false) {
-        let temporal = primary.temporal;
-        primary.temporal = [temporal];
-      }
-      primary.temporal.forEach(function (subject) {
-        subjects.push(subject.$value);
-      });
-    }
-    if (subjects.length > 0) {
-      general.subjects = subjects;
-    }
-    if (primary.hasOwnProperty('hasPart')) {
-      let tracks = [];
-      primary.hasPart.forEach(function (track) {
-        if (track.hasOwnProperty('attributes')) {
-          if (track.attributes['xsi:type'] === 'dkdcplus:track') {
-            tracks.push(track.$value);
-          }
+        if (subject.attributes['xsi:type'] === 'dkdcplus:DBCF') {
+          subjects.push(subject.$value);
         }
-      });
-      if (tracks.length > 0) {
-        general.tracks = tracks;
+        if (subject.attributes['xsi:type'] === 'dkdcplus:DBCM') {
+          subjects.push(subject.$value);
+        }
+        if (subject.attributes['xsi:type'] === 'dkdcplus:DBCO') {
+          subjects.push(subject.$value);
+        }
       }
+    });
+  }
+  if (primary.hasOwnProperty('spatial')) {
+    if (primary.spatial instanceof Array === false) {
+      let spatial = primary.spatial;
+      primary.spatial = [spatial];
     }
+    primary.spatial.forEach(function (subject) {
+      subjects.push(subject.$value);
+    });
+  }
+  if (primary.hasOwnProperty('temporal')) {
+    if (primary.temporal instanceof Array === false) {
+      let temporal = primary.temporal;
+      primary.temporal = [temporal];
+    }
+    primary.temporal.forEach(function (subject) {
+      subjects.push(subject.$value);
+    });
+  }
+  if (subjects.length > 0) {
+    general.subjects = subjects;
+  }
+  if (primary.hasOwnProperty('hasPart')) {
+    let tracks = [];
+    primary.hasPart.forEach(function (track) {
+      if (track.hasOwnProperty('attributes')) {
+        if (track.attributes['xsi:type'] === 'dkdcplus:track') {
+          tracks.push(track.$value);
+        }
+      }
+    });
+    if (tracks.length > 0) {
+      general.tracks = tracks;
+    }
+  }
   if (primary.hasOwnProperty('contributor')) {
     let actors = [];
     const cont = primary.contributor;

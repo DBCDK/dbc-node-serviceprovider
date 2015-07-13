@@ -25,19 +25,24 @@ exports['default'] = Provider.registerTransform({
   },
 
   getPopSuggestionsRequest: function getPopSuggestionsRequest(query) {
-    return _clientsPopSuggestClientJs2['default'].getSuggestions([{
+    var requests = [];
+    requests.push(_clientsPopSuggestClientJs2['default'].getSuggestions({
       index: 'display.title',
       query: query,
       fields: ['fedoraPid', 'display.title']
-    }, {
+    }));
+    requests.push(_clientsPopSuggestClientJs2['default'].getSuggestions({
       index: 'display.creator',
       query: query,
       fields: ['display.creator']
-    }, {
+    }));
+    requests.push(_clientsPopSuggestClientJs2['default'].getSuggestions({
       index: 'term.subject',
       query: query,
       fields: ['term.subject']
-    }]);
+    }));
+
+    return requests;
   },
 
   requestTransform: function requestTransform(event, query) {

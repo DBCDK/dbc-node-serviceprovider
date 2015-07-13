@@ -11,23 +11,24 @@ export default Provider.registerTransform({
   },
 
   getPopSuggestionsRequest(query) {
-    return PopSuggest.getSuggestions([
-      {
-        index: 'display.title',
-        query: query,
-        fields: ['fedoraPid', 'display.title']
-      },
-      {
-        index: 'display.creator',
-        query: query,
-        fields: ['display.creator']
-      },
-      {
-        index: 'term.subject',
-        query: query,
-        fields: ['term.subject']
-      }
-    ]);
+    let requests = [];
+    requests.push(PopSuggest.getSuggestions({
+      index: 'display.title',
+      query: query,
+      fields: ['fedoraPid', 'display.title']
+    }));
+    requests.push(PopSuggest.getSuggestions({
+      index: 'display.creator',
+      query: query,
+      fields: ['display.creator']
+    }));
+    requests.push(PopSuggest.getSuggestions({
+      index: 'term.subject',
+      query: query,
+      fields: ['term.subject']
+    }));
+
+    return requests;
   },
 
   requestTransform(event, query) {

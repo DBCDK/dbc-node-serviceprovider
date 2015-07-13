@@ -11,7 +11,7 @@ export default Provider.registerTransform({
   },
 
   getSearchResultList(request) {
-    return OpenSearch.getSearchResult([request]);
+    return OpenSearch.getSearchResult(request);
   },
 
   /**

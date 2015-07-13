@@ -202,7 +202,7 @@ exports['default'] = Provider.registerTransform({
   },
 
   getWorkResult: function getWorkResult(request) {
-    return _clientsOpenSearchClientJs2['default'].getWorkResult([request]);
+    return _clientsOpenSearchClientJs2['default'].getWorkResult(request);
   },
 
   requestTransform: function requestTransform(event, request) {

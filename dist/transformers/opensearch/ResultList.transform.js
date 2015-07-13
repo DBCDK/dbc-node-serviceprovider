@@ -27,7 +27,7 @@ exports['default'] = Provider.registerTransform({
   },
 
   getSearchResultList: function getSearchResultList(request) {
-    return _clientsOpenSearchClientJs2['default'].getSearchResult([request]);
+    return _clientsOpenSearchClientJs2['default'].getSearchResult(request);
   },
 
   /**

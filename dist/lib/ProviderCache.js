@@ -32,10 +32,10 @@ function cachePromiseCallback(params) {
   if (err) {
     reject(err);
   } else if (result) {
-    resolve(result);
+    resolve(JSON.parse(result));
   } else {
     resolve(cb().then(function (value) {
-      store.set(key, value, ttl && { ttl: ttl });
+      store.set(key, JSON.stringify(value), ttl && { ttl: ttl });
       return value;
     }));
   }

@@ -8,11 +8,13 @@
 
 import {autoRequire} from './bootstrap';
 import {merge, isArray} from 'lodash';
-import Dispatcher from './lib/dispatcher.js';
+import Dispatcher from './lib/dispatcher';
+import CacheManager from './lib/ProviderCache';
 
 const TRANSFORMS = [];
 const _events = new Map();
 let _config;
+let cache;
 
 /**
  * Registers all events on a transform
@@ -42,19 +44,23 @@ function registerEvents(events, transform) {
  * @param {String} event
  * @param {Object || Array} query The query object/array
  */
-function handleListenerCallback(transform, event, query) {
-
+function handleTriggerEvents(event, query) {
+  const transform = _events.get(event);
   const request = transform.requestTransform(event, query);
+
   // make sure requests are an array
   const requestArray = isArray(request) && request || [request];
 
   // An array of promises is returned, one for each request in the request array
   // When each promise is resolved the transform response method is called.
-  return requestArray.map((promise) => {
+  let result = requestArray.map((promise) => {
     return promise.then((response) => {
-      return transform.responseTransform(response, event);
+      const responseValue = transform.responseTransform(response, event);
+      return responseValue;
     });
   });
+
+  return result;
 }
 
 /**
@@ -81,6 +87,10 @@ export function init(config) {
     throw new Error('No configuration was provided');
   }
   _config = config;
+
+  if (config.cache) {
+    cache = CacheManager(config.cache);
+  }
 
   return {
     sockets: setupSockets
@@ -129,18 +139,25 @@ export function registerTransform(transform) {
  * @returns {*}
  */
 export function registerClient(client) {
-  if (!_config) {
+  if (!_config && !_config.services) {
     throw new Error(`Config.js needs to be initialized on ServiceProvider before initializing ${client.name} client`);
   }
-  if (!_config[client.name]) {
+
+  if (!_config.services[client.name]) {
     throw new Error(`No Config for ${client.name} client in config.js`);
   }
+
   if (!client.init) {
     throw new Error(`No init method not found on client ${client.name}`);
   }
-  const methods = client.init(_config[client.name]);
+
+  let methods = client.init(_config.services[client.name]);
   if (typeof methods !== 'object') {
     throw new Error(`No Config for ${client.name} client in config.js`);
+  }
+
+  if (cache) {
+    methods = cache.wrap(methods);
   }
 
   return methods;
@@ -154,10 +171,9 @@ export function registerClient(client) {
  * @returns {Array}
  */
 export function trigger(event, params) {
+
   if (!_events.has(event)) {
     throw new Error(`unsupported Event of type ${event}`);
   }
-
-  let transform = _events.get(event);
-  return handleListenerCallback(transform, event, params);
+  return handleTriggerEvents(event, params);
 }

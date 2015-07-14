@@ -1,6 +1,6 @@
 'use strict';
 
-import Dispatcher from './lib/dispatcher.js';
+import Dispatcher from './dispatcher.js';
 
 let dispatcher = null;
 

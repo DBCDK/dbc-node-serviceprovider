@@ -30,6 +30,7 @@
   "author": "DBC A/S",
   "license": "ISC",
   "dependencies": {
+    "cache-manager": "^1.0.0",
     "dbc-node-moreinfo-client": "git+https://github.com/DBCDK/dbc-node-moreinfo-client#master",
     "dbc-node-opensearch-client": "git+https://github.com/DBCDK/dbc-node-opensearch-client#master",
     "dbc-node-opensuggest": "git+https://github.com/DBCDK/dbc-node-opensuggest#develop",

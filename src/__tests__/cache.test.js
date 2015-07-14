@@ -1,0 +1,38 @@
+'use strict';
+import CacheManager from '../lib/ProviderCache.js';
+import {expect} from 'chai';
+
+describe('CacheManager wrap method', () => {
+  const manager = CacheManager({store: 'memory', ttl: 100});
+  let returnText;
+  const methods = {
+    test() {
+      return Promise.resolve(returnText);
+    }
+  };
+  const wrapped = manager.wrap(methods);
+
+  it('uses callback when no cache', (done) => {
+    returnText = 'no cache';
+    wrapped.test({test: 'test'}).then(() => {
+      done();
+    });
+  });
+
+  it('returns cached value', (done) => {
+    returnText = 'has it been cached?';
+    wrapped.test({test: 'test'}).then((result) => {
+      expect(result).to.equal('no cache');
+      done();
+    });
+  });
+
+  it('uses callback when arguments change', (done) => {
+    returnText = 'has it been cached?';
+    wrapped.test({test: 'test2'}).then((result) => {
+      expect(result).to.equal(returnText);
+      done();
+    });
+  });
+
+});

@@ -21,13 +21,18 @@ var _bootstrap = require('./bootstrap');
 
 var _lodash = require('lodash');
 
-var _libDispatcherJs = require('./lib/dispatcher.js');
+var _libDispatcher = require('./lib/dispatcher');
 
-var _libDispatcherJs2 = _interopRequireDefault(_libDispatcherJs);
+var _libDispatcher2 = _interopRequireDefault(_libDispatcher);
+
+var _libProviderCache = require('./lib/ProviderCache');
+
+var _libProviderCache2 = _interopRequireDefault(_libProviderCache);
 
 var TRANSFORMS = [];
 var _events = new Map();
 var _config = undefined;
+var cache = undefined;
 
 /**
  * Registers all events on a transform
@@ -57,19 +62,23 @@ function registerEvents(events, transform) {
  * @param {String} event
  * @param {Object || Array} query The query object/array
  */
-function handleListenerCallback(transform, event, query) {
-
+function handleTriggerEvents(event, query) {
+  var transform = _events.get(event);
   var request = transform.requestTransform(event, query);
+
   // make sure requests are an array
   var requestArray = (0, _lodash.isArray)(request) && request || [request];
 
   // An array of promises is returned, one for each request in the request array
   // When each promise is resolved the transform response method is called.
-  return requestArray.map(function (promise) {
+  var result = requestArray.map(function (promise) {
     return promise.then(function (response) {
-      return transform.responseTransform(response, event);
+      var responseValue = transform.responseTransform(response, event);
+      return responseValue;
     });
   });
+
+  return result;
 }
 
 /**
@@ -80,7 +89,7 @@ function handleListenerCallback(transform, event, query) {
 
 function setupSockets(socket) {
   (0, _bootstrap.autoRequire)('transformers', 'transform.js');
-  var dispatcher = new _libDispatcherJs2['default']();
+  var dispatcher = new _libDispatcher2['default']();
   dispatcher.init(socket, TRANSFORMS);
 }
 
@@ -98,6 +107,10 @@ function init(config) {
     throw new Error('No configuration was provided');
   }
   _config = config;
+
+  if (config.cache) {
+    cache = (0, _libProviderCache2['default'])(config.cache);
+  }
 
   return {
     sockets: setupSockets
@@ -148,18 +161,25 @@ function registerTransform(transform) {
  */
 
 function registerClient(client) {
-  if (!_config) {
+  if (!_config && !_config.services) {
     throw new Error('Config.js needs to be initialized on ServiceProvider before initializing ' + client.name + ' client');
   }
-  if (!_config[client.name]) {
+
+  if (!_config.services[client.name]) {
     throw new Error('No Config for ' + client.name + ' client in config.js');
   }
+
   if (!client.init) {
     throw new Error('No init method not found on client ' + client.name);
   }
-  var methods = client.init(_config[client.name]);
+
+  var methods = client.init(_config.services[client.name]);
   if (typeof methods !== 'object') {
     throw new Error('No Config for ' + client.name + ' client in config.js');
+  }
+
+  if (cache) {
+    methods = cache.wrap(methods);
   }
 
   return methods;
@@ -174,10 +194,9 @@ function registerClient(client) {
  */
 
 function trigger(event, params) {
+
   if (!_events.has(event)) {
     throw new Error('unsupported Event of type ' + event);
   }
-
-  var transform = _events.get(event);
-  return handleListenerCallback(transform, event, params);
+  return handleTriggerEvents(event, params);
 }

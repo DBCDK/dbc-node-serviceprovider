@@ -5,6 +5,7 @@ Object.defineProperty(exports, '__esModule', {
 });
 exports.checkRecord = checkRecord;
 exports.checkResponse = checkResponse;
+exports.restructureRecords = restructureRecords;
 /**
  * Checks if the response has a searchResult (1 or more hits)
  *
@@ -252,4 +253,66 @@ function checkResponse(response) {
   }
 
   return returnValue;
+}
+
+function stringToObject(element) {
+  if (typeof element === 'string') {
+    element = { $value: element };
+  }
+  return element;
+}
+
+/**
+ * Creates a uniform record structure for each record
+ * in a work collection
+ *
+ * @param {Object} a work collection from OpenSearch
+ * @return {Object} restructured work collection
+ */
+
+function restructureRecords(work) {
+
+  var manifest = work.formattedCollection.briefDisplay.manifestation;
+  if (work.formattedCollection.briefDisplay.manifestation instanceof Array) {
+    work.formattedCollection.briefDisplay.manifestation = manifest;
+  } else {
+    work.formattedCollection.briefDisplay.manifestation = [manifest];
+  }
+  if (work.collection.numberOfObjects === '1') {
+    var record = work.collection.object;
+    work.collection.object = [record];
+  }
+  var workCollection = work.collection.object;
+  var i = 0;
+  for (var record in workCollection) {
+    if (workCollection.hasOwnProperty(record)) {
+      var newRecord = {};
+      var rec = workCollection[record].record;
+      for (var element in rec) {
+        if (rec.hasOwnProperty(element)) {
+          newRecord[element] = stringToObject(rec[element]);
+        }
+      }
+      for (var key in newRecord) {
+        if (newRecord.hasOwnProperty(key)) {
+          var el = newRecord[key];
+          if (newRecord[key] instanceof Array) {
+            newRecord[key] = el;
+          } else {
+            newRecord[key] = [el];
+          }
+          var subElement = newRecord[key];
+          for (var subKey in subElement) {
+            if (subElement.hasOwnProperty(subKey)) {
+              var newElement = stringToObject(subElement[subKey]);
+              newRecord[key][subKey] = newElement;
+            }
+          }
+        }
+      }
+      work.collection.object[i].record = newRecord;
+      i++;
+    }
+  }
+  return work;
 }

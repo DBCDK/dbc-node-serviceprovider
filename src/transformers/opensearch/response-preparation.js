@@ -252,3 +252,65 @@ export function checkResponse(response) {
 
   return returnValue;
 }
+
+function stringToObject(element) {
+  if (typeof (element) === 'string') {
+    element = {$value: element};
+  }
+  return element;
+}
+
+/**
+ * Creates a uniform record structure for each record
+ * in a work collection
+ *
+ * @param {Object} a work collection from OpenSearch
+ * @return {Object} restructured work collection
+ */
+export function restructureRecords(work) {
+
+  const manifest = work.formattedCollection.briefDisplay.manifestation;
+  if (work.formattedCollection.briefDisplay.manifestation instanceof Array) {
+    work.formattedCollection.briefDisplay.manifestation = manifest;
+  } else {
+    work.formattedCollection.briefDisplay.manifestation = [manifest];
+  }
+  if (work.collection.numberOfObjects === '1') {
+    let record = work.collection.object;
+    work.collection.object = [record];
+  }
+  const workCollection = work.collection.object;
+  let i = 0;
+  for (let record in workCollection) {
+    if (workCollection.hasOwnProperty(record)) {
+      let newRecord = {};
+      let rec = workCollection[record].record;
+      for (let element in rec) {
+        if (rec.hasOwnProperty(element)) {
+          newRecord[element] = stringToObject(rec[element]);
+        }
+      }
+      for (let key in newRecord) {
+        if (newRecord.hasOwnProperty(key)) {
+          const el = newRecord[key];
+          if (newRecord[key] instanceof Array) {
+            newRecord[key] = el;
+          } else {
+            newRecord[key] = [el];
+          }
+          let subElement = newRecord[key];
+          for (let subKey in subElement) {
+            if (subElement.hasOwnProperty(subKey)) {
+              let newElement = stringToObject(subElement[subKey]);
+              newRecord[key][subKey] = newElement;
+            }
+          }
+        }
+      }
+      work.collection.object[i].record = newRecord;
+      i++;
+    }
+  }
+  return work;
+
+}

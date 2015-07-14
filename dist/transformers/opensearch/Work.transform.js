@@ -20,29 +20,55 @@ var _clientsOpenSearchClientJs = require('../../clients/OpenSearch.client.js');
 
 var _clientsOpenSearchClientJs2 = _interopRequireDefault(_clientsOpenSearchClientJs);
 
-function getWorkData(work) {
-  var general = {};
-  if (work.collection.numberOfObjects === '1') {
-    var record = work.collection.object;
-    work.collection.object = [record];
-  }
-  var primary = work.collection.object[0].record;
-  general.title = primary.title[0];
-  if (primary.hasOwnProperty('title')) {
-    primary.title.forEach(function (title) {
-      if (title.hasOwnProperty('attributes')) {
-        if (title.attributes['xsi:type'] === 'dkdcplus:series') {
-          general.series = title.$value;
+function getRecordData(record, element, attribute, attValue) {
+  var dataElement = [];
+
+  if (record.hasOwnProperty(element)) {
+    record[element].forEach(function (elem) {
+      if (elem.hasOwnProperty('attributes')) {
+        if (elem.attributes[attribute] === attValue) {
+          dataElement.push(elem.$value);
         }
       }
     });
   }
+
+  return dataElement;
+}
+
+function getRecordDataNoAttribute(record, element) {
+  var dataElement = [];
+  if (record.hasOwnProperty(element)) {
+    record[element].forEach(function (elem) {
+      dataElement.push(elem.$value);
+    });
+  }
+
+  return dataElement;
+}
+
+function getWorkData(work) {
+  var general = {};
+  var primary = work.collection.object[0].record;
+
+  general.title = getRecordData(primary, 'title', 'xsi:type', 'dkdcplus:full')[0];
+
+  var series = getRecordData(primary, 'title', 'xsi:type', 'dkdcplus:series');
+  if (series.length > 0) {
+    general.series = series;
+  } else {
+    series = getRecordData(primary, 'description', 'xsi:type', 'dkdcplus:series');
+    if (series.length > 0) {
+      general.series = series;
+    }
+  }
+
   if (primary.hasOwnProperty('creator')) {
     (function () {
       var creators = [];
       primary.creator.forEach(function (creator) {
         if (!creator.hasOwnProperty('attributes')) {
-          creators.push(creator);
+          creators.push(creator.$value);
         } else if (creator.attributes['xsi:type'] !== 'oss:sort') {
           creators.push(creator.$value);
         }
@@ -50,18 +76,17 @@ function getWorkData(work) {
       general.creators = creators;
     })();
   }
-  if (primary.hasOwnProperty('abstract')) {
-    general.description = primary.abstract;
-  } else if (primary.hasOwnProperty('description')) {
-    general.description = primary.description;
-  }
-  if (primary.hasOwnProperty('description')) {
-    if (primary.description.hasOwnProperty('attributes')) {
-      if (primary.description.attributes['xsi:type'] === 'dkdcplus:series') {
-        general.series = primary.description.$value;
-      }
+
+  var description = getRecordDataNoAttribute(primary, 'abstract');
+  if (description.length > 0) {
+    general.description = description;
+  } else {
+    description = getRecordDataNoAttribute(primary, 'description');
+    if (description.length > 0) {
+      general.description = description;
     }
   }
+
   var subjects = [];
   if (primary.hasOwnProperty('subject')) {
     primary.subject.forEach(function (subject) {
@@ -102,30 +127,13 @@ function getWorkData(work) {
   if (subjects.length > 0) {
     general.subjects = subjects;
   }
-  if (primary.hasOwnProperty('hasPart')) {
-    (function () {
-      var tracks = [];
-      primary.hasPart.forEach(function (track) {
-        if (track.hasOwnProperty('attributes')) {
-          if (track.attributes['xsi:type'] === 'dkdcplus:track') {
-            tracks.push(track.$value);
-          }
-        }
-      });
-      if (tracks.length > 0) {
-        general.tracks = tracks;
-      }
-    })();
+  var tracks = getRecordData(primary, 'hasPart', 'xsi:type', 'dkdcplus:track');
+  if (tracks.length > 0) {
+    general.tracks = tracks;
   }
   if (primary.hasOwnProperty('contributor')) {
     (function () {
       var actors = [];
-      var cont = primary.contributor;
-      if (primary.contributor instanceof Array) {
-        primary.contributor = cont;
-      } else {
-        primary.contributor = [cont];
-      }
       primary.contributor.forEach(function (contributor) {
         if (contributor.hasOwnProperty('attributes')) {
           if (contributor.attributes['xsi:type'] === 'dkdcplus:act') {
@@ -146,7 +154,7 @@ function getWorkData(work) {
       var languages = [];
       primary.language.forEach(function (language) {
         if (!language.hasOwnProperty('attributes')) {
-          languages.push(language);
+          languages.push(language.$value);
         }
       });
       general.languages = languages;
@@ -160,15 +168,9 @@ function getManifestationData(work) {
   var specific = [];
   var types = [];
   var i = 0;
-  var manifest = work.formattedCollection.briefDisplay.manifestation;
-  if (work.formattedCollection.briefDisplay.manifestation instanceof Array) {
-    work.formattedCollection.briefDisplay.manifestation = manifest;
-  } else {
-    work.formattedCollection.briefDisplay.manifestation = [manifest];
-  }
   work.collection.object.forEach(function (manifestation) {
     var accessType = work.formattedCollection.briefDisplay.manifestation[i].accessType;
-    var type = manifestation.record.type.$value;
+    var type = manifestation.record.type[0].$value;
     if (types.indexOf(type) === -1) {
       var minorwork = {};
       types.push(type);
@@ -178,14 +180,14 @@ function getManifestationData(work) {
       identifiers.push(manifestation.identifier);
       minorwork.identifiers = identifiers;
       var dates = [];
-      dates.push(manifestation.record.date);
+      dates.push(manifestation.record.date[0].$value);
       minorwork.dates = dates;
       specific.push(minorwork);
     } else {
       specific.forEach(function (minorwork) {
         if (type === minorwork.type) {
           minorwork.identifiers.push(manifestation.identifier);
-          minorwork.dates.push(manifestation.record.date);
+          minorwork.dates.push(manifestation.record.date[0].$value);
         }
       });
     }
@@ -244,6 +246,7 @@ exports['default'] = Provider.registerTransform({
     response.result.searchResult.forEach(function (work) {
 
       var newWork = {};
+      work = prep.restructureRecords(work);
       newWork.general = getWorkData(work);
       newWork.specific = getManifestationData(work);
       data.result = newWork;

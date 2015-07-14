@@ -6,7 +6,7 @@
   "homepage": "https://github.com/DBCDK/dbc-node-serviceprovider/tree/develop#readme",
   "scripts": {
     "test:watch": "mocha --compilers js:babel/register src/__tests__ -w",
-    "test": "mocha --compilers js:babel/register src/__tests__ -R mocha-junit-reporter",
+    "test": "mocha --compilers js:babel/register src/__tests__ -R mocha-jenkins-reporter",
     "build": "npm run cleardest && babel ./src -d dist --ignore __tests__",
     "cleardest": "rm -rf ./dist",
     "lint": "eslint ./src",
@@ -46,7 +46,7 @@
     "chai": "^3.0.0",
     "eslint": "^0.21.0",
     "mocha": "^2.2.5",
-    "mocha-junit-reporter": "^1.4.0",
+    "mocha-jenkins-reporter": "^0.1.9",
     "node-libs-browser": "^0.5.2",
     "sinon": "^1.15.0",
     "webpack": "^1.9.10"

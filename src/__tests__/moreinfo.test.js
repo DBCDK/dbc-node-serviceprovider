@@ -4,7 +4,7 @@
 
 import {expect, assert} from 'chai';
 import * as Provider from '../Provider.js';
-Provider.init({moreinfo: {}});
+Provider.init({services: {moreinfo: {}}});
 
 const prep = require('../transformers/moreinfo/CoverImage.transform.js');
 

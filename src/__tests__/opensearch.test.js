@@ -2,7 +2,7 @@
 /*eslint-disable */
 import {expect, assert} from 'chai';
 import * as Provider from '../Provider.js';
-Provider.init({opensearch: {}});
+Provider.init({services: {opensearch: {}}});
 const transform = require('../transformers/opensearch/ResultList.transform');
 const worktransform = require('../transformers/opensearch/Work.transform');
 

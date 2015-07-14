@@ -59,9 +59,9 @@ describe('Testing methods on the Provider', () => {
   it('Test the registerClient method', () => {
     let client = {};
     expect(() => Provider.registerClient(client)).to.throw(Error);
-    Provider.init({});
+    Provider.init({services: {}});
     expect(() => Provider.registerClient(client)).to.throw(Error);
-    Provider.init({test: {}});
+    Provider.init({services: {test: {}}});
     client.name = 'test';
     expect(() => Provider.registerClient(client)).to.throw(Error);
     client.init = () => {

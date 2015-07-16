@@ -10,15 +10,13 @@ var _dbcNodeMoreinfoClient = require('dbc-node-moreinfo-client');
 
 var MoreInfo = _interopRequireWildcard(_dbcNodeMoreinfoClient);
 
-var _ProviderJs = require('../Provider.js');
-
-var ServiceProvider = _interopRequireWildcard(_ProviderJs);
-
-exports['default'] = ServiceProvider.registerClient({
+var MoreInfoClient = {
   name: 'moreinfo',
   init: function init(config) {
     MoreInfo.init(config);
     return { getMoreInfoResult: MoreInfo.getMoreInfoResult };
   }
-});
+};
+
+exports['default'] = MoreInfoClient;
 module.exports = exports['default'];

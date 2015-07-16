@@ -3,27 +3,13 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _ProviderJs = require('../../Provider.js');
-
-var Provider = _interopRequireWildcard(_ProviderJs);
-
-var _clientsRecommendationsClientJs = require('../../clients/Recommendations.client.js');
-
-var _clientsRecommendationsClientJs2 = _interopRequireDefault(_clientsRecommendationsClientJs);
-
-exports['default'] = Provider.registerTransform({
-  _query: '',
+var RecommendationsTransform = {
   events: function events() {
     return ['getRecommendations'];
   },
 
   requestTransform: function requestTransform(event, list) {
-    return _clientsRecommendationsClientJs2['default'].getRecommendations(list);
+    return this.callClient('recommend::getRecommendations', list);
   },
 
   responseTransform: function responseTransform(data) {
@@ -40,6 +26,7 @@ exports['default'] = Provider.registerTransform({
       };
     });
   }
+};
 
-});
+exports['default'] = RecommendationsTransform;
 module.exports = exports['default'];

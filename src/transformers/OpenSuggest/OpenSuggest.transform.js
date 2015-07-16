@@ -1,17 +1,13 @@
 'use strict';
 
-import * as Provider from '../../Provider.js';
-import OpenSuggest from '../../clients/OpenSuggest.client.js';
-
-
-export default Provider.registerTransform({
+const OpenSuggestTransform = {
   _query: '',
   events() {
     return ['getFilterGuides'];
   },
 
   getSuggestions(request) {
-    return OpenSuggest.getSuggestions({
+    return this.callClient('opensuggest::getSuggestions', {
       profile: 'opac',
       agency: '150013',
       index: request.index,
@@ -36,5 +32,6 @@ export default Provider.registerTransform({
       return element.suggestion;
     });
   }
+};
 
-});
+export default OpenSuggestTransform;

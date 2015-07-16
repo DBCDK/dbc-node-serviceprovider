@@ -10,15 +10,13 @@ var _dbcNodeOpensearchClient = require('dbc-node-opensearch-client');
 
 var OpenSearch = _interopRequireWildcard(_dbcNodeOpensearchClient);
 
-var _ProviderJs = require('../Provider.js');
-
-var ServiceProvider = _interopRequireWildcard(_ProviderJs);
-
-exports['default'] = ServiceProvider.registerClient({
+var OpenSearchClient = {
   name: 'opensearch',
   init: function init(config) {
     OpenSearch.init(config);
     return OpenSearch.METHODS;
   }
-});
+};
+
+exports['default'] = OpenSearchClient;
 module.exports = exports['default'];

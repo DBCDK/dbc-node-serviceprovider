@@ -4,21 +4,11 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _ProviderJs = require('../../Provider.js');
-
-var Provider = _interopRequireWildcard(_ProviderJs);
 
 var _responsePreparationJs = require('./response-preparation.js');
 
 var prep = _interopRequireWildcard(_responsePreparationJs);
-
-var _clientsOpenSearchClientJs = require('../../clients/OpenSearch.client.js');
-
-var _clientsOpenSearchClientJs2 = _interopRequireDefault(_clientsOpenSearchClientJs);
 
 function getRecordData(record, element, attribute, attValue) {
   var dataElement = [];
@@ -197,14 +187,14 @@ function getManifestationData(work) {
   return specific;
 }
 
-exports['default'] = Provider.registerTransform({
+var WorkTransform = {
 
   events: function events() {
     return ['getOpenSearchWork'];
   },
 
   getWorkResult: function getWorkResult(request) {
-    return _clientsOpenSearchClientJs2['default'].getWorkResult(request);
+    return this.callClient('opensearch::getWorkResult', request);
   },
 
   requestTransform: function requestTransform(event, request) {
@@ -254,6 +244,7 @@ exports['default'] = Provider.registerTransform({
 
     return data;
   }
+};
 
-});
+exports['default'] = WorkTransform;
 module.exports = exports['default'];

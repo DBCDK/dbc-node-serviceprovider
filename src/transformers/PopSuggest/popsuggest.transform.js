@@ -1,10 +1,8 @@
 'use strict';
 
-import * as Provider from '../../Provider.js';
 import {isArray, isEmpty} from 'lodash';
-import PopSuggest from '../../clients/PopSuggest.client.js';
 
-export default Provider.registerTransform({
+const PopSuggestTransform = {
 
   events() {
     return ['getPopSuggestions'];
@@ -12,17 +10,17 @@ export default Provider.registerTransform({
 
   getPopSuggestionsRequest(query) {
     let requests = [];
-    requests.push(PopSuggest.getSuggestions({
+    requests.push(this.callClient('popsuggest::getSuggestions', {
       index: 'display.title',
       query: query,
       fields: ['fedoraPid', 'display.title']
     }));
-    requests.push(PopSuggest.getSuggestions({
+    requests.push(this.callClient('popsuggest::getSuggestions', {
       index: 'display.creator',
       query: query,
       fields: ['display.creator']
     }));
-    requests.push(PopSuggest.getSuggestions({
+    requests.push(this.callClient('popsuggest::getSuggestions', {
       index: 'term.subject',
       query: query,
       fields: ['term.subject']
@@ -112,4 +110,6 @@ export default Provider.registerTransform({
   shouldFilter(index) {
     return (index === 'display.creator' || index === 'term.subject');
   }
-});
+};
+
+export default PopSuggestTransform;

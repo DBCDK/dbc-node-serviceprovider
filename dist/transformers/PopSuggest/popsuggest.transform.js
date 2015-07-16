@@ -4,21 +4,9 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _ProviderJs = require('../../Provider.js');
-
-var Provider = _interopRequireWildcard(_ProviderJs);
-
 var _lodash = require('lodash');
 
-var _clientsPopSuggestClientJs = require('../../clients/PopSuggest.client.js');
-
-var _clientsPopSuggestClientJs2 = _interopRequireDefault(_clientsPopSuggestClientJs);
-
-exports['default'] = Provider.registerTransform({
+var PopSuggestTransform = {
 
   events: function events() {
     return ['getPopSuggestions'];
@@ -26,17 +14,17 @@ exports['default'] = Provider.registerTransform({
 
   getPopSuggestionsRequest: function getPopSuggestionsRequest(query) {
     var requests = [];
-    requests.push(_clientsPopSuggestClientJs2['default'].getSuggestions({
+    requests.push(this.callClient('popsuggest::getSuggestions', {
       index: 'display.title',
       query: query,
       fields: ['fedoraPid', 'display.title']
     }));
-    requests.push(_clientsPopSuggestClientJs2['default'].getSuggestions({
+    requests.push(this.callClient('popsuggest::getSuggestions', {
       index: 'display.creator',
       query: query,
       fields: ['display.creator']
     }));
-    requests.push(_clientsPopSuggestClientJs2['default'].getSuggestions({
+    requests.push(this.callClient('popsuggest::getSuggestions', {
       index: 'term.subject',
       query: query,
       fields: ['term.subject']
@@ -128,5 +116,7 @@ exports['default'] = Provider.registerTransform({
   shouldFilter: function shouldFilter(index) {
     return index === 'display.creator' || index === 'term.subject';
   }
-});
+};
+
+exports['default'] = PopSuggestTransform;
 module.exports = exports['default'];

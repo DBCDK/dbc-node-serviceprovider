@@ -8,10 +8,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 
-var _ProviderJs = require('../../Provider.js');
-
-var Provider = _interopRequireWildcard(_ProviderJs);
-
 var _responsePreparationJs = require('./response-preparation.js');
 
 var prep = _interopRequireWildcard(_responsePreparationJs);
@@ -19,10 +15,6 @@ var prep = _interopRequireWildcard(_responsePreparationJs);
 var _jsonpathObjectTransform = require('jsonpath-object-transform');
 
 var _jsonpathObjectTransform2 = _interopRequireDefault(_jsonpathObjectTransform);
-
-var _clientsMoreInfoClientJs = require('../../clients/MoreInfo.client.js');
-
-var _clientsMoreInfoClientJs2 = _interopRequireDefault(_clientsMoreInfoClientJs);
 
 function getImagesFromResponse(result) {
   var template = {
@@ -36,7 +28,7 @@ function getImagesFromResponse(result) {
   return transformed;
 }
 
-exports['default'] = Provider.registerTransform({
+var CoverImageTransform = {
 
   _query: '',
   events: function events() {
@@ -54,7 +46,7 @@ exports['default'] = Provider.registerTransform({
     var identifiers = data.map(function (pid) {
       return pid.split(':').pop();
     });
-    return _clientsMoreInfoClientJs2['default'].getMoreInfoResult({ identifiers: identifiers });
+    return this.callClient('moreinfo::getMoreInfoResult', { identifiers: identifiers });
   },
 
   /**
@@ -71,5 +63,7 @@ exports['default'] = Provider.registerTransform({
       result: result
     };
   }
-});
+};
+
+exports['default'] = CoverImageTransform;
 module.exports = exports['default'];

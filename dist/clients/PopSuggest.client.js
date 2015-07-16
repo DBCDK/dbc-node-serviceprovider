@@ -10,15 +10,13 @@ var _dbcNodePopsuggest = require('dbc-node-popsuggest');
 
 var PopSuggest = _interopRequireWildcard(_dbcNodePopsuggest);
 
-var _ProviderJs = require('../Provider.js');
-
-var ServiceProvider = _interopRequireWildcard(_ProviderJs);
-
-exports['default'] = ServiceProvider.registerClient({
+var PopSuggestClient = {
   name: 'popsuggest',
   init: function init(config) {
     PopSuggest.init(config);
     return PopSuggest.METHODS;
   }
-});
+};
+
+exports['default'] = PopSuggestClient;
 module.exports = exports['default'];

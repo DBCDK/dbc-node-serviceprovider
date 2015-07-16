@@ -1,25 +1,52 @@
 'use strict';
 
-import {forEach} from 'lodash';
-import cacheManager from 'cache-manager';
-let store;
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+exports['default'] = CacheManager;
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+/**
+ * @file
+ * Cache wrapper for Provider Client Methods
+ */
+
+var _lodash = require('lodash');
+
+var _cacheManager = require('cache-manager');
+
+var _cacheManager2 = _interopRequireDefault(_cacheManager);
+
+/**
+ * Central cache store object
+ */
+var store = undefined;
 
 /**
  * Handles the callback from cachePromiseWrapper
  *
  * @param {Object} params
+ * @api private
  */
 function cachePromiseCallback(params) {
-  const {cb, ttl, key, err, result, resolve, reject} = params;
+  var cb = params.cb;
+  var ttl = params.ttl;
+  var key = params.key;
+  var err = params.err;
+  var result = params.result;
+  var resolve = params.resolve;
+  var reject = params.reject;
 
   if (err) {
     reject(err);
   } else if (result) {
+    // Cached version exists
     resolve(JSON.parse(result));
   } else {
-    resolve(cb().then((value) => {
-      store.set(key, JSON.stringify(value), ttl && {ttl});
+    // No cache exists
+    resolve(cb().then(function (value) {
+      store.set(key, JSON.stringify(value), ttl && { ttl: ttl });
       return value;
     }));
   }
@@ -33,12 +60,12 @@ function cachePromiseCallback(params) {
  * @param {Function} cb Callback method. Required to return a Promise
  * @param {Number} ttl optional cache time
  * @returns {Promise}
+ * @api private
  */
 function cachePromiseWrapper(key, cb, ttl) {
-
-  return new Promise((resolve, reject) => {
-    store.get(key, (err, result) => {
-      cachePromiseCallback({cb, ttl, key, resolve, reject, err, result});
+  return new Promise(function (resolve, reject) {
+    store.get(key, function (err, result) {
+      cachePromiseCallback({ cb: cb, ttl: ttl, key: key, resolve: resolve, reject: reject, err: err, result: result });
     });
   });
 }
@@ -51,11 +78,14 @@ function cachePromiseWrapper(key, cb, ttl) {
  * @param fn
  * @param ttl
  * @returns {Function}
+ * @api private
  */
 function methodCacheWrap(fn, ttl) {
-  return (args) => {
-    const key = JSON.stringify(args);
-    return cachePromiseWrapper(key, () => fn(args), ttl);
+  return function (args) {
+    var key = JSON.stringify(args);
+    return cachePromiseWrapper(key, function () {
+      return fn(args);
+    }, ttl);
   };
 }
 
@@ -65,14 +95,14 @@ function methodCacheWrap(fn, ttl) {
  * @param {Object} methods the methods of a client
  * @param {Number} ttl optional cache time in seconds
  * @returns {Object} returns the methods wrapped in a cache layer
+ * @api public
  */
 function wrap(methods, ttl) {
-  forEach(methods, (fn, key) => {
+  (0, _lodash.forEach)(methods, function (fn, key) {
     methods[key] = methodCacheWrap(fn, ttl);
   });
   return methods;
 }
-
 
 /**
  * Constructor for a CacheManager.
@@ -93,11 +123,10 @@ function wrap(methods, ttl) {
  * @returns {{wrap: wrap, store: *}}
  * @constructor
  */
-export default function CacheManager(config) {
-  store = cacheManager.caching(config);
 
-  return {
-    wrap,
-    store
-  };
+function CacheManager(config) {
+  store = _cacheManager2['default'].caching(config);
+  return { wrap: wrap };
 }
+
+module.exports = exports['default'];

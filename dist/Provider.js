@@ -3,11 +3,7 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
-exports.setupSockets = setupSockets;
-exports.init = init;
-exports.registerTransform = registerTransform;
-exports.registerClient = registerClient;
-exports.trigger = trigger;
+exports['default'] = ProviderFactory;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -17,186 +13,76 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
  * initializes the dispatcher if sockets are available.
  */
 
-var _bootstrap = require('./bootstrap');
+var _path = require('path');
 
-var _lodash = require('lodash');
+var _path2 = _interopRequireDefault(_path);
+
+var _libAutoRequireJs = require('./lib/AutoRequire.js');
+
+var _libAutoRequireJs2 = _interopRequireDefault(_libAutoRequireJs);
 
 var _libDispatcher = require('./lib/dispatcher');
 
 var _libDispatcher2 = _interopRequireDefault(_libDispatcher);
 
-var _libProviderCache = require('./lib/ProviderCache');
+var _libTransformsJs = require('./lib/Transforms.js');
 
-var _libProviderCache2 = _interopRequireDefault(_libProviderCache);
+var _libTriggerJs = require('./lib/Trigger.js');
 
-var TRANSFORMS = [];
-var _events = new Map();
-var _config = undefined;
-var cache = undefined;
+var _libTriggerJs2 = _interopRequireDefault(_libTriggerJs);
 
+var _libClientsJs = require('./lib/Clients.js');
+
+var _libClientsJs2 = _interopRequireDefault(_libClientsJs);
+
+var Provider = {};
 /**
- * Registers all events on a transform
+ * Initializes the use of sockets
  *
- * if an event already exists. An error is thrown
- *
- * @param events
- * @param transform
+ * @param {Socket} socket If communication with the parent application should
+ * go through a socket it should be provided here. Currently there's no
+ * alternative to using socket.
+ * @api public
  */
-function registerEvents(events, transform) {
-  if (events) {
-    events.forEach(function (event) {
-      if (_events.has(event)) {
-        var _name = _events.get(event).name || 'unnamed transform';
-        throw new Error('Event \'' + event + '\' already registered by ' + _name);
-      }
-      _events.set(event, transform);
-    });
-  }
-}
-
-/**
- * Handles the request and response transform callback and returns a promise, which resolves to the final
- * response.
- *
- * @param {Object} transform The transform object
- * @param {String} event
- * @param {Object || Array} query The query object/array
- */
-function handleTriggerEvents(event, query) {
-  var transform = _events.get(event);
-  var request = transform.requestTransform(event, query);
-
-  // make sure requests are an array
-  var requestArray = (0, _lodash.isArray)(request) && request || [request];
-
-  // An array of promises is returned, one for each request in the request array
-  // When each promise is resolved the transform response method is called.
-  var result = requestArray.map(function (promise) {
-    return promise.then(function (response) {
-      var responseValue = transform.responseTransform(response, event);
-      return responseValue;
-    });
-  });
-
-  return result;
-}
-
-/**
- * configure the services based on the given configuration object
- *
- * @constructor
- */
-
 function setupSockets(socket) {
-  (0, _bootstrap.autoRequire)('transformers', 'transform.js');
+  this.bootstrap();
   var dispatcher = new _libDispatcher2['default']();
-  dispatcher.init(socket, TRANSFORMS);
+  dispatcher.init(socket, (0, _libTransformsJs.getTransforms)());
+}
+
+/**
+ * Loads the bundles transforms and clients
+ * @api public
+ */
+function bootstrap() {
+  (0, _libAutoRequireJs2['default'])(_path2['default'].join(__dirname, 'transformers'), 'transform.js').map(Provider.registerTransform);
+  (0, _libAutoRequireJs2['default'])(_path2['default'].join(__dirname, 'clients'), 'client.js').map(Provider.registerClient);
 }
 
 /**
  * Initialization of the provider and the underlying services.
  *
- * @param {Object || null} config Object containing the necessary parameters.
- * @param {Socket} socket If communication with the parent application should
- * go through a socket it should be provided here. Currently there's no
- * alternative to using socket.
+ * @param {Object} config Object containing the necessary parameters.
+ *
+ * @api public
  */
 
-function init(config) {
+function ProviderFactory(config) {
   if (!config) {
     throw new Error('No configuration was provided');
   }
-  _config = config;
 
-  if (config.cache) {
-    cache = (0, _libProviderCache2['default'])(config.cache);
-  }
+  var registerClient = (0, _libClientsJs2['default'])(config).registerClient;
 
-  return {
-    sockets: setupSockets
-  };
-}
-
-/**
- * Factory method for the transforms defined in /transformers
- *
- * @param {Object} transform
- * @return {Object}
- */
-
-function registerTransform(transform) {
-  if (transform.services) {
-    throw new Error('services is a protected field and should not be declared manually in transforms');
-  }
-
-  if (!transform.events) {
-    throw new Error('No events method not found on transform');
-  }
-
-  if (!transform.requestTransform) {
-    throw new Error('No requestTransform method not found on transform');
-  }
-
-  if (!transform.responseTransform) {
-    throw new Error('No responseTransform method not found on transform');
-  }
-
-  var baseTransform = {
-    services: null
+  Provider = {
+    setupSockets: setupSockets,
+    bootstrap: bootstrap,
+    registerTransform: _libTransformsJs.registerTransform,
+    registerClient: registerClient,
+    trigger: _libTriggerJs2['default']
   };
 
-  transform = (0, _lodash.merge)(transform, baseTransform);
-
-  registerEvents(transform.events(), transform);
-
-  TRANSFORMS.push(transform);
-  return transform;
+  return Provider;
 }
 
-/**
- * Register clients on the provider, providing them with configurations
- *
- * @param client
- * @returns {*}
- */
-
-function registerClient(client) {
-  if (!_config && !_config.services) {
-    throw new Error('Config.js needs to be initialized on ServiceProvider before initializing ' + client.name + ' client');
-  }
-
-  if (!_config.services[client.name]) {
-    throw new Error('No Config for ' + client.name + ' client in config.js');
-  }
-
-  if (!client.init) {
-    throw new Error('No init method not found on client ' + client.name);
-  }
-
-  var methods = client.init(_config.services[client.name]);
-  if (typeof methods !== 'object') {
-    throw new Error('No Config for ' + client.name + ' client in config.js');
-  }
-
-  if (cache) {
-    methods = cache.wrap(methods);
-  }
-
-  return methods;
-}
-
-/**
- * Triggers an event with the given parameters. Returns an array of promises that resolves the request
- *
- * @param {String} event
- * @param {Object} params
- * @returns {Array}
- */
-
-function trigger(event, params) {
-
-  if (!_events.has(event)) {
-    throw new Error('unsupported Event of type ' + event);
-  }
-  return handleTriggerEvents(event, params);
-}
+module.exports = exports['default'];

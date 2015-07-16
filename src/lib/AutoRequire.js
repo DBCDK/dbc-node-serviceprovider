@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * @file
+ * Module for requiring all modules in a folder with a specified namespace
+ */
+
 import path from 'path';
 import walker from 'walk';
 
@@ -28,11 +33,17 @@ function discoverFiles(folder, namespace) {
       }
     }
   };
-  walker.walkSync(path.join(__dirname, folder), walkOptions);
+  walker.walkSync(folder, walkOptions);
   return files;
 }
 
-
-export function autoRequire(folder, namespace) {
-  discoverFiles(folder, namespace).map(require);
+/**
+ * Returns required modules in a folder specific namespace
+ *
+ * @param {String} folder Folder to search
+ * @param {String} namespace filename pattern e.g 'transform.js'. Not a regex
+ * @returns {Array}
+ */
+export default function autoRequire(folder, namespace) {
+  return discoverFiles(folder, namespace).map(require);
 }

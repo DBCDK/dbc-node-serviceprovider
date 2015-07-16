@@ -1,8 +1,6 @@
 'use strict';
 
-import * as Provider from '../../Provider.js';
 import * as prep from './response-preparation.js';
-import OpenSearch from '../../clients/OpenSearch.client.js';
 
 function getRecordData(record, element, attribute, attValue) {
   let dataElement = [];
@@ -175,14 +173,14 @@ function getManifestationData(work) {
   return specific;
 }
 
-export default Provider.registerTransform({
+const WorkTransform = {
 
   events() {
     return ['getOpenSearchWork'];
   },
 
   getWorkResult(request) {
-    return OpenSearch.getWorkResult(request);
+    return this.callClient('opensearch::getWorkResult', request);
   },
 
   requestTransform(event, request) {
@@ -235,5 +233,6 @@ export default Provider.registerTransform({
     return data;
 
   }
+};
 
-});
+export default WorkTransform;

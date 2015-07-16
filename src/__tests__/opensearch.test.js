@@ -1,27 +1,26 @@
 'use strict';
 /*eslint-disable */
 import {expect, assert} from 'chai';
-import * as Provider from '../Provider.js';
-Provider.init({services: {opensearch: {}}});
+
 const transform = require('../transformers/opensearch/ResultList.transform');
 const worktransform = require('../transformers/opensearch/Work.transform');
 
-/*describe('Test transform of OpenSearch requests', () => {
-  it('Sort default', function() {
+describe('Test transform of OpenSearch requests', () => {
+  xit('Sort default', function() {
 		
 		let request = {'query':'harry potter','offset':'1','worksPerPage':'10','sort':'default'};
 
 		assert.equal(JSON.stringify(transform.requestTransform('getSearchResultList', request)), JSON.stringify({'query':'harry potter','start':'1','stepValue':'10','sort':'rank_frequency'}), 'Search query with default sort');
 
 	});
-	it('Sort rank on title', function() {
+	xit('Sort rank on title', function() {
 
 		let request = {'query':'harry potter','offset':'1','worksPerPage':'10','sort':'rank_title'};
 
 		assert.equal(JSON.stringify(transform.requestTransform('getSearchResultList', request)), JSON.stringify({'query':'harry potter','start':'1','stepValue':'10','sort':'rank_title'}), 'Search query with default sort');
 
 	});
-});*/
+});
 
 describe('Test transform of OpenSearch responses', () => {
 	it('Check one hit', function() {

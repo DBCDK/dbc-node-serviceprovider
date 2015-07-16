@@ -1,9 +1,7 @@
 'use strict';
 
-import * as Provider from '../../Provider.js';
 import * as prep from './response-preparation.js';
 import Transform from 'jsonpath-object-transform';
-import MoreInfo from '../../clients/MoreInfo.client.js';
 
 function getImagesFromResponse(result) {
   var template = {
@@ -18,7 +16,7 @@ function getImagesFromResponse(result) {
 }
 
 
-export default Provider.registerTransform({
+const CoverImageTransform = {
 
   _query: '',
   events() {
@@ -33,7 +31,7 @@ export default Provider.registerTransform({
    */
   requestTransform(request, data) { // eslint-disable-line
     let identifiers = data.map((pid) => pid.split(':').pop());
-    return MoreInfo.getMoreInfoResult({identifiers});
+    return this.callClient('moreinfo::getMoreInfoResult', {identifiers});
   },
 
   /**
@@ -50,4 +48,6 @@ export default Provider.registerTransform({
       result
     };
   }
-});
+};
+
+export default CoverImageTransform;

@@ -1,5 +1,5 @@
 'use strict';
-import CacheManager from '../lib/ProviderCache.js';
+import CacheManager from '../lib/ClientCache.js';
 import {expect} from 'chai';
 
 describe('CacheManager wrap method', () => {

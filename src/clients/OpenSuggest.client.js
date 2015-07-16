@@ -1,11 +1,12 @@
 'use strict';
 
-import OpenSuggestClient from 'dbc-node-opensuggest';
-import * as ServiceProvider from '../Provider.js';
+import OpenSuggest from 'dbc-node-opensuggest';
 
-export default ServiceProvider.registerClient({
+const OpenSuggestClient = {
   name: 'opensuggest',
   init(config) {
-    return OpenSuggestClient(config.endpoint);
+    return OpenSuggest(config.endpoint);
   }
-});
+};
+
+export default OpenSuggestClient;

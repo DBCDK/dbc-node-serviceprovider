@@ -1,14 +1,23 @@
 'use strict';
 
+/**
+ * @file
+ * Cache wrapper for Provider Client Methods
+ */
+
 import {forEach} from 'lodash';
 import cacheManager from 'cache-manager';
-let store;
 
+/**
+ * Central cache store object
+ */
+let store;
 
 /**
  * Handles the callback from cachePromiseWrapper
  *
  * @param {Object} params
+ * @api private
  */
 function cachePromiseCallback(params) {
   const {cb, ttl, key, err, result, resolve, reject} = params;
@@ -16,8 +25,10 @@ function cachePromiseCallback(params) {
   if (err) {
     reject(err);
   } else if (result) {
+    // Cached version exists
     resolve(JSON.parse(result));
   } else {
+    // No cache exists
     resolve(cb().then((value) => {
       store.set(key, JSON.stringify(value), ttl && {ttl});
       return value;
@@ -33,9 +44,9 @@ function cachePromiseCallback(params) {
  * @param {Function} cb Callback method. Required to return a Promise
  * @param {Number} ttl optional cache time
  * @returns {Promise}
+ * @api private
  */
 function cachePromiseWrapper(key, cb, ttl) {
-
   return new Promise((resolve, reject) => {
     store.get(key, (err, result) => {
       cachePromiseCallback({cb, ttl, key, resolve, reject, err, result});
@@ -51,6 +62,7 @@ function cachePromiseWrapper(key, cb, ttl) {
  * @param fn
  * @param ttl
  * @returns {Function}
+ * @api private
  */
 function methodCacheWrap(fn, ttl) {
   return (args) => {
@@ -65,6 +77,7 @@ function methodCacheWrap(fn, ttl) {
  * @param {Object} methods the methods of a client
  * @param {Number} ttl optional cache time in seconds
  * @returns {Object} returns the methods wrapped in a cache layer
+ * @api public
  */
 function wrap(methods, ttl) {
   forEach(methods, (fn, key) => {
@@ -95,9 +108,5 @@ function wrap(methods, ttl) {
  */
 export default function CacheManager(config) {
   store = cacheManager.caching(config);
-
-  return {
-    wrap,
-    store
-  };
+  return {wrap};
 }

@@ -1,16 +1,12 @@
 'use strict';
 
-import * as Provider from '../../Provider.js';
-import Recommendations from '../../clients/Recommendations.client.js';
-
-export default Provider.registerTransform({
-  _query: '',
+const RecommendationsTransform = {
   events() {
     return ['getRecommendations'];
   },
 
   requestTransform(event, list) {
-    return Recommendations.getRecommendations(list);
+    return this.callClient('recommend::getRecommendations', list);
   },
 
   responseTransform(data) {
@@ -27,5 +23,6 @@ export default Provider.registerTransform({
       };
     });
   }
+};
 
-});
+export default RecommendationsTransform;

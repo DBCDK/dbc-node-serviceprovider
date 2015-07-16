@@ -1,17 +1,15 @@
 'use strict';
 
-import * as Provider from '../../Provider.js';
 import * as prep from './response-preparation.js';
-import OpenSearch from '../../clients/OpenSearch.client.js';
 
-export default Provider.registerTransform({
+const ResultListTransform = {
 
   events() {
     return ['getOpenSearchResultList'];
   },
 
   getSearchResultList(request) {
-    return OpenSearch.getSearchResult(request);
+    return this.callClient('opensearch::getSearchResult', request);
   },
 
   /**
@@ -107,5 +105,6 @@ export default Provider.registerTransform({
     return data;
 
   }
+};
 
-});
+export default ResultListTransform;

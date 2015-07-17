@@ -136,6 +136,22 @@ function getWorkData(work) {
     });
     general.languages = languages;
   }
+  if (primary.hasOwnProperty('isPartOf')) {
+    let partOf = [];
+    let issn = [];
+    primary.isPartOf.forEach(function (isPartOf) {
+      if (!isPartOf.hasOwnProperty('attributes')) {
+        partOf.push(isPartOf.$value);
+      }
+      if (isPartOf.hasOwnProperty('attributes')) {
+        if (isPartOf.attributes['xsi:type'] === 'dkdcplus:ISSN') {
+          issn.push(isPartOf.$value);
+        }
+      }
+    });
+    general.partOf = partOf;
+    general.issn = issn;
+  }
 
   return general;
 }
@@ -195,7 +211,7 @@ const WorkTransform = {
   },
 
   responseTransform(response) {
-
+  
     let data = {};
     data.result = [];
     data.info = {};

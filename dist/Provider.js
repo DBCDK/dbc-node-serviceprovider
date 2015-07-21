@@ -35,6 +35,8 @@ var _libClientsJs = require('./lib/Clients.js');
 
 var _libClientsJs2 = _interopRequireDefault(_libClientsJs);
 
+var _libEventsJs = require('./lib/Events.js');
+
 var Provider = {};
 /**
  * Initializes the use of sockets
@@ -46,8 +48,8 @@ var Provider = {};
  */
 function setupSockets(socket) {
   this.bootstrap();
-  var dispatcher = new _libDispatcher2['default']();
-  dispatcher.init(socket, (0, _libTransformsJs.getTransforms)());
+  (0, _libDispatcher2['default'])(socket, Provider);
+  return Provider;
 }
 
 /**
@@ -57,6 +59,7 @@ function setupSockets(socket) {
 function bootstrap() {
   (0, _libAutoRequireJs2['default'])(_path2['default'].join(__dirname, 'transformers'), 'transform.js').map(Provider.registerTransform);
   (0, _libAutoRequireJs2['default'])(_path2['default'].join(__dirname, 'clients'), 'client.js').map(Provider.registerClient);
+  return Provider;
 }
 
 /**
@@ -79,7 +82,8 @@ function ProviderFactory(config) {
     bootstrap: bootstrap,
     registerTransform: _libTransformsJs.registerTransform,
     registerClient: registerClient,
-    trigger: _libTriggerJs2['default']
+    trigger: _libTriggerJs2['default'],
+    getEventsOfType: _libEventsJs.getEventsOfType
   };
 
   return Provider;

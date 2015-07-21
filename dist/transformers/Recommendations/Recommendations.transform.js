@@ -4,12 +4,12 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 var RecommendationsTransform = {
-  events: function events() {
-    return ['getRecommendations'];
+  event: function event() {
+    return 'getRecommendations';
   },
 
   requestTransform: function requestTransform(event, list) {
-    return this.callClient('recommend::getRecommendations', list);
+    return this.callClient('recommend', 'getRecommendations', list);
   },
 
   responseTransform: function responseTransform(data) {

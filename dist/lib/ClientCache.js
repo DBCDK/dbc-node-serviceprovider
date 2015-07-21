@@ -109,7 +109,7 @@ function wrap(methods, ttl) {
  *
  * Sets up a cache store using the applied configurations.
  *
- * usage:
+ * @example
  * const manager = CacheManager({
  *    store: 'memory',
  *    ttl: 3600 //minutes

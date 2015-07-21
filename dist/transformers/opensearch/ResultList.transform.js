@@ -12,12 +12,12 @@ var prep = _interopRequireWildcard(_responsePreparationJs);
 
 var ResultListTransform = {
 
-  events: function events() {
-    return ['getOpenSearchResultList'];
+  event: function event() {
+    return 'getOpenSearchResultList';
   },
 
   getSearchResultList: function getSearchResultList(request) {
-    return this.callClient('opensearch::getSearchResult', request);
+    return this.callClient('opensearch', 'getSearchResult', request);
   },
 
   /**

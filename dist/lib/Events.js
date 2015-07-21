@@ -9,8 +9,7 @@ Object.defineProperty(exports, '__esModule', {
  * @todo look into extending Node::EventEmitter
  */
 
-var eventMap = new Map();
-var Events = {};
+var events = {};
 
 /**
  *  Add event to event map
@@ -20,13 +19,14 @@ var Events = {};
  * @param {*} value
  * @throws {Error}
  */
-Events.add = function (type, event, value) {
-  var name = type + '::' + event;
-  if (eventMap.has(name)) {
+function addEvent(type, event, value) {
+  events[type] = events[type] || new Map();
+  var name = '' + event;
+  if (events[type].has(name)) {
     throw new Error('Event \'' + event + '\' already registered');
   }
-  eventMap.set(name, value);
-};
+  events[type].set(name, value);
+}
 
 /**
  * Retrieve event
@@ -35,13 +35,35 @@ Events.add = function (type, event, value) {
  * @param {String} event
  * @returns {null|*}
  */
-Events.get = function (type, event) {
-  var name = type + '::' + event;
-  if (!eventMap.has(name)) {
+function getEvent(type, event) {
+  var name = '' + event;
+  if (!events[type]) {
+    throw new Error('No events of type ' + type + ' is registered');
+  }
+  if (!events[type].has(name)) {
     throw new Error(event + ' of type ' + type + ' is not a registered event');
   }
-  return eventMap.get(name);
-};
+  return events[type].get(name);
+}
 
-exports['default'] = Events;
+/**
+ * Get events of a certain type
+ *
+ * @param type
+ * @returns {*}
+ */
+function getEventsOfType(type) {
+  return events[type];
+}
+
+/**
+ * unset all registered events
+ */
+function resetEvents() {
+  events = {};
+}
+
+exports['default'] = {
+  addEvent: addEvent, getEvent: getEvent, resetEvents: resetEvents, getEventsOfType: getEventsOfType
+};
 module.exports = exports['default'];

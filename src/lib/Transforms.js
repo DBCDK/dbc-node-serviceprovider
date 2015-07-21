@@ -5,17 +5,20 @@
  * Module for registering all transforms
  */
 
+import {extend} from 'lodash';
 import Events from './Events.js';
 
-let _transforms = [];
-
 /**
- * Exported transform object
+ * Base Transform Methods that are inherited
  *
- * @type {Object}
- * @api public
+ * @type {{callClient: Function}}
  */
-const Transform = {};
+const BaseTransform = {
+  callClient(client, method, params) {
+    const event = `${client}::${method}`;
+    return Events.getEvent('client', event)(params);
+  }
+};
 
 /**
  * Registers all events on a transform
@@ -26,11 +29,9 @@ const Transform = {};
  * @param transform
  * @api private
  */
-function registerEvents(events, transform) {
-  if (events) {
-    events.forEach((event)=> {
-      Events.add('transform', event, transform);
-    });
+function registerEvents(event, transform) {
+  if (event) {
+    Events.addEvent('transform', event, transform);
   }
 }
 
@@ -42,9 +43,9 @@ function registerEvents(events, transform) {
  * @throws {Error}
  * @api public
  */
-Transform.registerTransform = function registerTransform(transform) {
-  if (!transform.events) {
-    throw new Error('No events method not found on transform');
+function registerTransform(transform) {
+  if (!transform.event) {
+    throw new Error('No event method not found on transform');
   }
 
   if (!transform.requestTransform) {
@@ -55,25 +56,12 @@ Transform.registerTransform = function registerTransform(transform) {
     throw new Error('No responseTransform method not found on transform');
   }
 
-  registerEvents(transform.events(), transform);
+  registerEvents(transform.event(), transform);
 
-  transform.callClient = (event, params) => {
-    return Events.get('client', event)(params);
-  };
-  _transforms.push(transform);
+  extend(transform, BaseTransform);
 
   return transform;
-};
+}
 
 
-/**
- * Get transforms Array
- * @todo remove when dispatcher has been refactored
- *
- * @returns {Array}
- */
-Transform.getTransforms = function getTransforms () {
-  return _transforms;
-};
-
-export default Transform;
+export default {registerTransform};

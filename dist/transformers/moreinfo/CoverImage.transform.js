@@ -30,9 +30,8 @@ function getImagesFromResponse(result) {
 
 var CoverImageTransform = {
 
-  _query: '',
-  events: function events() {
-    return ['getCoverImage'];
+  event: function event() {
+    return 'getCoverImage';
   },
 
   /**
@@ -46,7 +45,7 @@ var CoverImageTransform = {
     var identifiers = data.map(function (pid) {
       return pid.split(':').pop();
     });
-    return this.callClient('moreinfo::getMoreInfoResult', { identifiers: identifiers });
+    return this.callClient('moreinfo', 'getMoreInfoResult', { identifiers: identifiers });
   },
 
   /**

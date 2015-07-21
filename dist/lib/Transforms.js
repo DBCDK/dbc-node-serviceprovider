@@ -11,19 +11,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
  * Module for registering all transforms
  */
 
+var _lodash = require('lodash');
+
 var _EventsJs = require('./Events.js');
 
 var _EventsJs2 = _interopRequireDefault(_EventsJs);
 
-var _transforms = [];
-
 /**
- * Exported transform object
+ * Base Transform Methods that are inherited
  *
- * @type {Object}
- * @api public
+ * @type {{callClient: Function}}
  */
-var Transform = {};
+var BaseTransform = {
+  callClient: function callClient(client, method, params) {
+    var event = client + '::' + method;
+    return _EventsJs2['default'].getEvent('client', event)(params);
+  }
+};
 
 /**
  * Registers all events on a transform
@@ -34,11 +38,9 @@ var Transform = {};
  * @param transform
  * @api private
  */
-function registerEvents(events, transform) {
-  if (events) {
-    events.forEach(function (event) {
-      _EventsJs2['default'].add('transform', event, transform);
-    });
+function registerEvents(event, transform) {
+  if (event) {
+    _EventsJs2['default'].addEvent('transform', event, transform);
   }
 }
 
@@ -50,9 +52,9 @@ function registerEvents(events, transform) {
  * @throws {Error}
  * @api public
  */
-Transform.registerTransform = function registerTransform(transform) {
-  if (!transform.events) {
-    throw new Error('No events method not found on transform');
+function registerTransform(transform) {
+  if (!transform.event) {
+    throw new Error('No event method not found on transform');
   }
 
   if (!transform.requestTransform) {
@@ -63,25 +65,12 @@ Transform.registerTransform = function registerTransform(transform) {
     throw new Error('No responseTransform method not found on transform');
   }
 
-  registerEvents(transform.events(), transform);
+  registerEvents(transform.event(), transform);
 
-  transform.callClient = function (event, params) {
-    return _EventsJs2['default'].get('client', event)(params);
-  };
-  _transforms.push(transform);
+  (0, _lodash.extend)(transform, BaseTransform);
 
   return transform;
-};
+}
 
-/**
- * Get transforms Array
- * @todo remove when dispatcher has been refactored
- *
- * @returns {Array}
- */
-Transform.getTransforms = function getTransforms() {
-  return _transforms;
-};
-
-exports['default'] = Transform;
+exports['default'] = { registerTransform: registerTransform };
 module.exports = exports['default'];

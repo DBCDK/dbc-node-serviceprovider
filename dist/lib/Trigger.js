@@ -23,9 +23,8 @@ var _EventsJs2 = _interopRequireDefault(_EventsJs);
  */
 
 function handleTriggerEvents(event, query) {
-  var transform = _EventsJs2['default'].get('transform', event, query);
+  var transform = _EventsJs2['default'].getEvent('transform', event, query);
   var request = transform.requestTransform(event, query);
-
   // make sure requests are an array
   var requestArray = (0, _lodash.isArray)(request) && request || [request];
 
@@ -33,7 +32,7 @@ function handleTriggerEvents(event, query) {
   // When each promise is resolved the transform response method is called.
   var result = requestArray.map(function (promise) {
     return promise.then(function (response) {
-      var responseValue = transform.responseTransform(response, event);
+      var responseValue = transform.responseTransform(response, query);
       return responseValue;
     });
   });
@@ -49,8 +48,8 @@ function handleTriggerEvents(event, query) {
  * @returns {Array}
  */
 
-function trigger(event, params) {
-  return handleTriggerEvents(event, params);
+function trigger(event, params, connection) {
+  return handleTriggerEvents(event, params, connection);
 }
 
 module.exports = exports['default'];

@@ -5,12 +5,12 @@ Object.defineProperty(exports, '__esModule', {
 });
 var OpenSuggestTransform = {
   _query: '',
-  events: function events() {
-    return ['getFilterGuides'];
+  event: function event() {
+    return 'getFilterGuides';
   },
 
   getSuggestions: function getSuggestions(request) {
-    return this.callClient('opensuggest::getSuggestions', {
+    return this.callClient('opensuggest', 'getSuggestions', {
       profile: 'opac',
       agency: '150013',
       index: request.index,

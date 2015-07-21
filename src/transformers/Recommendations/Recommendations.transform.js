@@ -1,12 +1,12 @@
 'use strict';
 
 const RecommendationsTransform = {
-  events() {
-    return ['getRecommendations'];
+  event() {
+    return 'getRecommendations';
   },
 
   requestTransform(event, list) {
-    return this.callClient('recommend::getRecommendations', list);
+    return this.callClient('recommend', 'getRecommendations', list);
   },
 
   responseTransform(data) {

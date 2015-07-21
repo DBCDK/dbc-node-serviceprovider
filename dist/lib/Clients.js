@@ -31,10 +31,41 @@ var _ClientCacheJs2 = _interopRequireDefault(_ClientCacheJs);
 
 function registerMethods(methods, clientName) {
   (0, _lodash.forEach)(methods, function (method, name) {
-    _EventsJs2['default'].add('client', clientName + '::' + name, method);
+    _EventsJs2['default'].addEvent('client', clientName + '::' + name, method);
   });
 
   return methods;
+}
+
+/**
+ * Registers a new client with the given configuration
+ *
+ * @param {Object} client
+ * @param {Object} config
+ * @returns {Object} methods on the service
+ * @api public
+ */
+function registerClient(config, client) {
+  var name = client.name;
+  var init = client.init;
+
+  if (!config.services[name]) {
+    throw new Error('No Config for ' + name + ' client in config.js');
+  }
+
+  if (!init) {
+    throw new Error('No init method not found on client ' + name);
+  }
+
+  var methods = init(config.services[name]);
+  if (typeof methods !== 'object') {
+    throw new Error('No Config for ' + name + ' client in config.js');
+  }
+
+  if (config.cache) {
+    methods = (0, _ClientCacheJs2['default'])(config.cache).wrap(methods);
+  }
+  return registerMethods(methods, name);
 }
 
 /**
@@ -53,28 +84,7 @@ function Clients(config) {
     throw new Error('A config object needs to be provided and it requires a services property');
   }
 
-  this.registerClient = function registerClient(client) {
-    var name = client.name;
-    var init = client.init;
-
-    if (!config.services[name]) {
-      throw new Error('No Config for ' + name + ' client in config.js');
-    }
-
-    if (!init) {
-      throw new Error('No init method not found on client ' + name);
-    }
-
-    var methods = init(config.services[name]);
-    if (typeof methods !== 'object') {
-      throw new Error('No Config for ' + name + ' client in config.js');
-    }
-
-    if (config.cache) {
-      methods = (0, _ClientCacheJs2['default'])(config.cache).wrap(methods);
-    }
-    return registerMethods(methods, name);
-  };
+  this.registerClient = registerClient.bind(this, config);
 }
 
 /**

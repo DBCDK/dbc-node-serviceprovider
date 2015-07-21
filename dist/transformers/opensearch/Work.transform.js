@@ -150,33 +150,6 @@ function getWorkData(work) {
       general.languages = languages;
     })();
   }
-  if (primary.hasOwnProperty('isPartOf')) {
-    (function () {
-      var partOf = [];
-      var issn = [];
-      primary.isPartOf.forEach(function (isPartOf) {
-        if (!isPartOf.hasOwnProperty('attributes')) {
-          partOf.push(isPartOf.$value);
-        }
-        if (isPartOf.hasOwnProperty('attributes')) {
-          if (isPartOf.attributes['xsi:type'] === 'dkdcplus:ISSN') {
-            issn.push(isPartOf.$value);
-          }
-        }
-      });
-      general.partOf = partOf;
-      general.issn = issn;
-    })();
-  }
-  if (primary.hasOwnProperty('extent')) {
-    (function () {
-      var extents = [];
-      primary.extent.forEach(function (extent) {
-        extents.push(extent.$value);
-      });
-      general.extent = extents;
-    })();
-  }
 
   return general;
 }
@@ -216,12 +189,12 @@ function getManifestationData(work) {
 
 var WorkTransform = {
 
-  events: function events() {
-    return ['getOpenSearchWork'];
+  event: function event() {
+    return 'getOpenSearchWork';
   },
 
   getWorkResult: function getWorkResult(request) {
-    return this.callClient('opensearch::getWorkResult', request);
+    return this.callClient('opensearch', 'getWorkResult', request);
   },
 
   requestTransform: function requestTransform(event, request) {

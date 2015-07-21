@@ -13,9 +13,8 @@ import Events from './Events.js';
  */
 
 function handleTriggerEvents(event, query) {
-  const transform = Events.get('transform', event, query);
+  const transform = Events.getEvent('transform', event, query);
   const request = transform.requestTransform(event, query);
-
   // make sure requests are an array
   const requestArray = isArray(request) && request || [request];
 
@@ -23,7 +22,7 @@ function handleTriggerEvents(event, query) {
   // When each promise is resolved the transform response method is called.
   let result = requestArray.map((promise) => {
     return promise.then((response) => {
-      const responseValue = transform.responseTransform(response, event);
+      const responseValue = transform.responseTransform(response, query);
       return responseValue;
     });
   });
@@ -39,6 +38,6 @@ function handleTriggerEvents(event, query) {
  * @param {Object} params
  * @returns {Array}
  */
-export default function trigger(event, params) {
-  return handleTriggerEvents(event, params);
+export default function trigger(event, params, connection) {
+  return handleTriggerEvents(event, params, connection);
 }

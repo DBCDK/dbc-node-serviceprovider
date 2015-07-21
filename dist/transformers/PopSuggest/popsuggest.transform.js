@@ -8,23 +8,23 @@ var _lodash = require('lodash');
 
 var PopSuggestTransform = {
 
-  events: function events() {
-    return ['getPopSuggestions'];
+  event: function event() {
+    return 'getPopSuggestions';
   },
 
   getPopSuggestionsRequest: function getPopSuggestionsRequest(query) {
     var requests = [];
-    requests.push(this.callClient('popsuggest::getSuggestions', {
+    requests.push(this.callClient('popsuggest', 'getSuggestions', {
       index: 'display.title',
       query: query,
       fields: ['fedoraPid', 'display.title']
     }));
-    requests.push(this.callClient('popsuggest::getSuggestions', {
+    requests.push(this.callClient('popsuggest', 'getSuggestions', {
       index: 'display.creator',
       query: query,
       fields: ['display.creator']
     }));
-    requests.push(this.callClient('popsuggest::getSuggestions', {
+    requests.push(this.callClient('popsuggest', 'getSuggestions', {
       index: 'term.subject',
       query: query,
       fields: ['term.subject']

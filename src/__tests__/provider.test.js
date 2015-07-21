@@ -4,6 +4,7 @@
  * @file Testing the Dispatcher class in dispatcher.js
  */
 import Provider from '../Provider.js';
+import Events from '../lib/Events.js';
 import {expect, assert} from 'chai';
 
 describe('Testing methods on the Provider', () => {
@@ -21,17 +22,17 @@ describe('Testing methods on the Provider', () => {
 
   it('Test the registerTransform method', () => {
     let provider = Provider({});
-    let events = function () {
+    let event = function () {
     };
     let test = {
-      events() {
+      event() {
       },
       requestTransform: true,
       responseTransform: true,
       someMethod() {
       }
     };
-    expect(provider.registerTransform(test)).to.have.keys('someMethod', 'events', 'requestTransform', 'responseTransform', 'callClient');
+    expect(provider.registerTransform(test)).to.have.keys('someMethod', 'event', 'requestTransform', 'responseTransform', 'callClient');
 
     test = {services: []};
     expect(() => provider.registerTransform(test)).to.throw(Error);
@@ -39,13 +40,13 @@ describe('Testing methods on the Provider', () => {
     test = {};
     expect(() => provider.registerTransform(test)).to.throw(Error);
 
-    test = {events};
+    test = {event};
     expect(() => provider.registerTransform(test)).to.throw(Error);
 
-    test = {events, requestTransform: true};
+    test = {event, requestTransform: true};
     expect(() => provider.registerTransform(test)).to.throw(Error);
 
-    test = {events, requestTransform: true, responseTransform: true};
+    test = {event, requestTransform: true, responseTransform: true};
     expect(() => provider.registerTransform(test)).to.not.throw(Error);
   });
 
@@ -75,8 +76,8 @@ describe('Testing methods on the Provider', () => {
       let transform = {
         requestTransform: true, responseTransform: true,
         name: 'testTransform',
-        events() {
-          return ['testRegisterEvent'];
+        event() {
+          return 'testRegisterEvent';
         }
       };
 
@@ -93,8 +94,8 @@ describe('Testing methods on the Provider', () => {
     it('Triggers an event', (done) => {
       let provider = Provider({});
       provider.registerTransform({
-        events() {
-          return ['testEvent'];
+        event() {
+          return 'testEvent';
         },
         requestTransform(event, request) {
           return Promise.resolve(request);
@@ -107,6 +108,57 @@ describe('Testing methods on the Provider', () => {
       expect(trigger).to.have.length(1);
       trigger[0].then((result) => {
         expect(result).to.be.equal('testEvent is triggered');
+        done();
+      });
+    });
+  });
+
+  describe('Test callClient method', () => {
+    let assertString = 'Client test method was called';
+    let testMethod = function (params) {
+      return Promise.resolve(params);
+    };
+    var testClient = {
+      name: 'testClient',
+      init() {
+        return {testMethod: testMethod};
+      }
+    };
+    var testTransform = {
+      event() {
+        return 'testCallClientEvent';
+      },
+      requestTransform() {
+        return this.callClient('testClient', 'testMethod', assertString);
+      },
+      responseTransform(response) {
+        return response;
+      }
+    };
+
+    it('should call method on client', () => {
+      const provider = Provider({services: {testClient: {}}});
+      provider.registerClient(testClient);
+      provider.registerTransform(testTransform);
+
+      provider.trigger('testCallClientEvent')[0].then((value)=> {
+        expect(value).to.be.equal(assertString);
+      });
+
+      testMethod = function (params) {
+        return Promise.reject(params);
+      };
+    });
+    it('should catch error', (done) => {
+      Events.resetEvents();
+      testMethod = function (params) {
+        return Promise.reject(params);
+      };
+      const provider = Provider({services: {testClient: {}}});
+      provider.registerClient(testClient);
+      provider.registerTransform(testTransform);
+      provider.trigger('testCallClientEvent')[0].catch((value)=> {
+        expect(value).to.be.equal(assertString);
         done();
       });
     });

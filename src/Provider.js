@@ -9,9 +9,10 @@
 import path from 'path';
 import autoRequire from './lib/AutoRequire.js';
 import Dispatcher from './lib/dispatcher';
-import {getTransforms, registerTransform} from './lib/Transforms.js';
+import {registerTransform} from './lib/Transforms.js';
 import trigger from './lib/Trigger.js';
 import Clients from './lib/Clients.js';
+import {getEventsOfType} from './lib/Events.js';
 
 let Provider = {};
 /**
@@ -24,8 +25,8 @@ let Provider = {};
  */
 function setupSockets(socket) {
   this.bootstrap();
-  const dispatcher = new Dispatcher();
-  dispatcher.init(socket, getTransforms());
+  Dispatcher(socket, Provider);
+  return Provider;
 }
 
 
@@ -36,6 +37,7 @@ function setupSockets(socket) {
 function bootstrap() {
   autoRequire(path.join(__dirname, 'transformers'), 'transform.js').map(Provider.registerTransform);
   autoRequire(path.join(__dirname, 'clients'), 'client.js').map(Provider.registerClient);
+  return Provider;
 }
 
 /**
@@ -58,7 +60,8 @@ export default function ProviderFactory(config) {
     bootstrap,
     registerTransform,
     registerClient,
-    trigger
+    trigger,
+    getEventsOfType
   };
 
   return Provider;

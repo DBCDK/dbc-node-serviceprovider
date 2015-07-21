@@ -4,12 +4,12 @@ import * as prep from './response-preparation.js';
 
 const ResultListTransform = {
 
-  events() {
-    return ['getOpenSearchResultList'];
+  event() {
+    return 'getOpenSearchResultList';
   },
 
   getSearchResultList(request) {
-    return this.callClient('opensearch::getSearchResult', request);
+    return this.callClient('opensearch', 'getSearchResult', request);
   },
 
   /**

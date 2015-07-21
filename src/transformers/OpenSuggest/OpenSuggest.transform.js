@@ -2,12 +2,12 @@
 
 const OpenSuggestTransform = {
   _query: '',
-  events() {
-    return ['getFilterGuides'];
+  event() {
+    return 'getFilterGuides';
   },
 
   getSuggestions(request) {
-    return this.callClient('opensuggest::getSuggestions', {
+    return this.callClient('opensuggest', 'getSuggestions', {
       profile: 'opac',
       agency: '150013',
       index: request.index,

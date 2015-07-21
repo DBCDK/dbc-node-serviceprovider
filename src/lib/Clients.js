@@ -18,10 +18,40 @@ import ClientCache from './ClientCache.js';
 
 function registerMethods(methods, clientName) {
   forEach(methods, (method, name) => {
-    Events.add('client', `${clientName}::${name}`, method);
+    Events.addEvent('client', `${clientName}::${name}`, method);
   });
 
   return methods;
+}
+
+/**
+ * Registers a new client with the given configuration
+ *
+ * @param {Object} client
+ * @param {Object} config
+ * @returns {Object} methods on the service
+ * @api public
+ */
+function registerClient(config, client) {
+  const {name, init} = client;
+
+  if (!config.services[name]) {
+    throw new Error(`No Config for ${name} client in config.js`);
+  }
+
+  if (!init) {
+    throw new Error(`No init method not found on client ${name}`);
+  }
+
+  let methods = init(config.services[name]);
+  if (typeof methods !== 'object') {
+    throw new Error(`No Config for ${name} client in config.js`);
+  }
+
+  if (config.cache) {
+    methods = ClientCache(config.cache).wrap(methods);
+  }
+  return registerMethods(methods, name);
 }
 
 /**
@@ -40,27 +70,7 @@ function Clients (config) {
     throw new Error(`A config object needs to be provided and it requires a services property`);
   }
 
-  this.registerClient = function registerClient(client) {
-    const {name, init} = client;
-
-    if (!config.services[name]) {
-      throw new Error(`No Config for ${name} client in config.js`);
-    }
-
-    if (!init) {
-      throw new Error(`No init method not found on client ${name}`);
-    }
-
-    let methods = init(config.services[name]);
-    if (typeof methods !== 'object') {
-      throw new Error(`No Config for ${name} client in config.js`);
-    }
-
-    if (config.cache) {
-      methods = ClientCache(config.cache).wrap(methods);
-    }
-    return registerMethods(methods, name);
-  };
+  this.registerClient = registerClient.bind(this, config);
 }
 
 /**

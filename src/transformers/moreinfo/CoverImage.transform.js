@@ -18,9 +18,8 @@ function getImagesFromResponse(result) {
 
 const CoverImageTransform = {
 
-  _query: '',
-  events() {
-    return ['getCoverImage'];
+  event() {
+    return 'getCoverImage';
   },
 
   /**
@@ -31,7 +30,7 @@ const CoverImageTransform = {
    */
   requestTransform(request, data) { // eslint-disable-line
     let identifiers = data.map((pid) => pid.split(':').pop());
-    return this.callClient('moreinfo::getMoreInfoResult', {identifiers});
+    return this.callClient('moreinfo', 'getMoreInfoResult', {identifiers});
   },
 
   /**

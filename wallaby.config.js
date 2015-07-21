@@ -7,11 +7,12 @@ module.exports = function() {
       {pattern: 'src/*.js'},
       {pattern: 'src/lib/*.js'},
       {pattern: 'src/transformers/**/*.js'},
-      {pattern: 'src/clients/**/*.js'}
+      {pattern: 'src/clients/**/*.js'},
+      {pattern: 'src/__tests__/**/*.mock.js'}
     ],
 
     tests: [
-      {pattern: 'src/**/*.test.js'}
+      {pattern: 'src/**/*.test.js'},
     ],
 
     preprocessors: {

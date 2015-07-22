@@ -1,17 +1,17 @@
 'use strict';
 
+/**
+ * @file
+ * Basic service provider. Discovers and initializes the transforms and
+ * initializes the dispatcher if sockets are available.
+ */
+
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
 exports['default'] = ProviderFactory;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-/**
- * @file
- * Basic service provider. Discovers and initializes the transforms and
- * initializes the dispatcher if sockets are available.
- */
 
 var _path = require('path');
 

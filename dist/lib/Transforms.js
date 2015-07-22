@@ -1,27 +1,28 @@
 'use strict';
 
+/**
+ * @file
+ * Module for registering all transforms
+ */
+
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-/**
- * @file
- * Module for registering all transforms
- */
-
 var _lodash = require('lodash');
 
 var _EventsJs = require('./Events.js');
-
-var _EventsJs2 = _interopRequireDefault(_EventsJs);
 
 /**
  * Base Transform Methods that are inherited
  *
  * @type {{callClient: Function}}
  */
+
+var _EventsJs2 = _interopRequireDefault(_EventsJs);
+
 var BaseTransform = {
   callClient: function callClient(client, method, params) {
     var event = client + '::' + method;

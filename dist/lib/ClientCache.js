@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * @file
+ * Cache wrapper for Provider Client Methods
+ */
+
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
@@ -7,20 +12,16 @@ exports['default'] = CacheManager;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-/**
- * @file
- * Cache wrapper for Provider Client Methods
- */
-
 var _lodash = require('lodash');
 
 var _cacheManager = require('cache-manager');
 
-var _cacheManager2 = _interopRequireDefault(_cacheManager);
-
 /**
  * Central cache store object
  */
+
+var _cacheManager2 = _interopRequireDefault(_cacheManager);
+
 var store = undefined;
 
 /**

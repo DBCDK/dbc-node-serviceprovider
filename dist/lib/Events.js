@@ -1,14 +1,14 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
 /**
  * @file
  * Handles all provider events
  * @todo look into extending Node::EventEmitter
  */
 
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
 var events = {};
 
 /**

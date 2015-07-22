@@ -1,9 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-exports.checkResponse = checkResponse;
 /**
  * Checks the response from the MoreInfo webservice, to see
  * if any errors are returned from the service.
@@ -12,6 +8,11 @@ exports.checkResponse = checkResponse;
  * @return {Object} either empty if everything was ok, otherwise error
  * code and error messages
  */
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+exports.checkResponse = checkResponse;
 
 function checkResponse(response) {
 

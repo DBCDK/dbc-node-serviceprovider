@@ -1,16 +1,16 @@
 'use strict';
 
+/**
+ * @file
+ * Module for registering Provider clients
+ */
+
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
 exports['default'] = ClientsFactory;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-/**
- * @file
- * Module for registering Provider clients
- */
 
 var _lodash = require('lodash');
 
@@ -20,14 +20,14 @@ var _EventsJs2 = _interopRequireDefault(_EventsJs);
 
 var _ClientCacheJs = require('./ClientCache.js');
 
-var _ClientCacheJs2 = _interopRequireDefault(_ClientCacheJs);
-
 /**
  * Register clients on the provider, providing them with configurations
  *
  * @param client
  * @returns {*}
  */
+
+var _ClientCacheJs2 = _interopRequireDefault(_ClientCacheJs);
 
 function registerMethods(methods, clientName) {
   (0, _lodash.forEach)(methods, function (method, name) {

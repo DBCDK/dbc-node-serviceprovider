@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * @file
+ * Module for requiring all modules in a folder with a specified namespace
+ */
+
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
@@ -7,18 +12,11 @@ exports['default'] = autoRequire;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-/**
- * @file
- * Module for requiring all modules in a folder with a specified namespace
- */
-
 var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
 
 var _walk = require('walk');
-
-var _walk2 = _interopRequireDefault(_walk);
 
 /**
  * Traverses the filetree under ./transformers and looks for files named
@@ -26,6 +24,9 @@ var _walk2 = _interopRequireDefault(_walk);
  * added to the pool of transforms that later will be passed to the
  * disspatchers.
  */
+
+var _walk2 = _interopRequireDefault(_walk);
+
 function discoverFiles(folder, namespace) {
   var files = [];
   var walkOptions = {

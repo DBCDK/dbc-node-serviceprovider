@@ -1,17 +1,17 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-exports.checkRecord = checkRecord;
-exports.checkResponse = checkResponse;
-exports.restructureRecords = restructureRecords;
 /**
  * Checks if the response has a searchResult (1 or more hits)
  *
  * @param {Object} the response from the webservice
  * @return {Boolean}
  */
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+exports.checkRecord = checkRecord;
+exports.checkResponse = checkResponse;
+exports.restructureRecords = restructureRecords;
 function hasSearchResult(response) {
 
   if (typeof response.result !== 'undefined') {

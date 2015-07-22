@@ -1,9 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-exports['default'] = SocketDispatcher;
 /**
  * @file
  * The Dispatcher is a wrapper for socket.io. It will handle all communication
@@ -17,6 +13,10 @@ exports['default'] = SocketDispatcher;
  * @param responsePromise
  * @param event
  */
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+exports['default'] = SocketDispatcher;
 function handleResponse(connection, responsePromise, event) {
   var eventName = event + 'Response';
   responsePromise.then(function (response) {

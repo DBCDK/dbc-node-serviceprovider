@@ -136,6 +136,22 @@ function getWorkData(work) {
     });
     general.languages = languages;
   }
+  if (primary.hasOwnProperty('isPartOf')) {
+    let partOf = [];
+    let issn = [];
+    primary.isPartOf.forEach(function (isPartOf) {
+      if (!isPartOf.hasOwnProperty('attributes')) {
+        partOf.push(isPartOf.$value);
+      }
+      if (isPartOf.hasOwnProperty('attributes')) {
+        if (isPartOf.attributes['xsi:type'] === 'dkdcplus:ISSN') {
+          issn.push(isPartOf.$value);
+        }
+      }
+    });
+    general.partOf = partOf;
+    general.issn = issn;
+  }
 
   return general;
 }
@@ -171,6 +187,74 @@ function getManifestationData(work) {
   });
 
   return specific;
+}
+
+function getPublicationData(work) {
+
+  let editions = [];
+
+  work.collection.object.forEach(function (manifestation) {
+    let pubDetails = {};
+    const record = manifestation.record;
+    pubDetails.identifier = manifestation.identifier;
+    if (record.hasOwnProperty('type')) {
+      let types = [];
+      record.type.forEach(function (type) {
+        types.push(type.$value);
+      });
+      pubDetails.types = types;
+    }
+    if (record.hasOwnProperty('date')) {
+      let dates = [];
+      record.date.forEach(function (date) {
+        dates.push(date.$value);
+      });
+      pubDetails.dates = dates;
+    }
+    if (record.hasOwnProperty('publisher')) {
+      let publishers = [];
+      record.publisher.forEach(function (publisher) {
+        publishers.push(publisher.$value);
+      });
+      pubDetails.publishers = publishers;
+    }
+    if (record.hasOwnProperty('version')) {
+      let edition = [];
+      record.version.forEach(function (version) {
+        edition.push(version.$value);
+      });
+      pubDetails.editions = edition;
+    }
+    if (record.hasOwnProperty('isPartOf')) {
+      let partOf = [];
+      let issn = [];
+      record.isPartOf.forEach(function (isPartOf) {
+        if (!isPartOf.hasOwnProperty('attributes')) {
+          partOf.push(isPartOf.$value);
+        }
+        if (isPartOf.hasOwnProperty('attributes')) {
+          if (isPartOf.attributes['xsi:type'] === 'dkdcplus:ISSN') {
+            issn.push(isPartOf.$value);
+          }
+        }
+      });
+      pubDetails.partOf = partOf;
+      pubDetails.issn = issn;
+    }
+    if (record.hasOwnProperty('extent')) {
+      let ext = [];
+      record.extent.forEach(function (extent) {
+        ext.push(extent.$value);
+      });
+      pubDetails.extents = ext;
+    }
+
+    editions.push(pubDetails);
+
+  });
+
+  return editions;
+
 }
 
 const WorkTransform = {
@@ -226,6 +310,7 @@ const WorkTransform = {
       work = prep.restructureRecords(work);
       newWork.general = getWorkData(work);
       newWork.specific = getManifestationData(work);
+      newWork.publications = getPublicationData(work);
       data.result = newWork;
 
     });

@@ -12,6 +12,7 @@ node_modules
 # ============
 # REPORTS
 # ============
+output/
 test-results.xml
 coverage
 

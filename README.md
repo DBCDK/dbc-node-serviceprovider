@@ -1,5 +1,8 @@
 # dbc-node-serviceprovider
 
+[![David](https://img.shields.io/david/DBCDK/dbc-node-serviceprovider.svg?style=flat-square)](https://david-dm.org/DBCDK/dbc-node-serviceprovider#info=dependencies)
+[![David](https://img.shields.io/david/dev/DBCDK/dbc-node-serviceprovider.svg?style=flat-square)](https://david-dm.org/DBCDK/dbc-node-serviceprovider#info=devDependencies)
+
 Abstraction layer for the dbc-node-services. Handles the communication between 
 the application- and the service layer providing optional transforms for 
 transforming the data received from the services before returning it to the 
@@ -17,16 +20,16 @@ I Client in the service provider
 ### Provider
 The provider needs to be initialized with a config file before usage. 
 
-```
+```javascript
   const Provider = require('dbc-node-serviceprovider');
   const provider = Provider(config);
 ```
 
 ### Provider.registerClient(client):Client
-Method for registering service clients. Clients need a name that refers to a config namespace, and an init()
-that provides the configurations and should return the client methods
+Method for registering serviceclients. Serviceclients need a name that refers to a config namespace, and an init()
+that provides the configurations and should return the client methods.
  
-```
+```javascript
   import Recommendations from 'dbc-node-recommendations';
   
   provider.registerClient({
@@ -39,7 +42,7 @@ that provides the configurations and should return the client methods
 ### Provider#registerTransform(client):Transform
 Method for registering transform classes. Transforms need events, requestTransform, responseTransform
 
-```
+```javascript
   provider.registerTransform({
     event() {
       return 'transformEvent';
@@ -57,7 +60,7 @@ Method for registering transform classes. Transforms need events, requestTransfo
 #### Transform#callClient:Promise
 On a transform it is possible to make calls to registered clients in the following format
 
-```
+```javascript
   const promise = this.callClient('client', 'method', params);
 ```
 callClient returns a promise that should be returned from the requestTransform
@@ -66,9 +69,9 @@ callClient returns a promise that should be returned from the requestTransform
 Triggers an event on the provider. If the event does not exists an error is thrown.  
 A transform with the corresponding event needs to be registered first. 
 
-the trigger method returns a promise-
+the trigger method returns a Promise
 
-```
+```javascript
   const recommendations = Provider.trigger('recommend', {like: ['123123123']});
   
   recommendations
@@ -82,13 +85,13 @@ the trigger method returns a promise-
 
 ### Provider#bootstrap
 activates the bundled transforms and clients
-```
+```javascript
   provider.boostrap();
 ```
 
 ### Provider#setupSockets
 Setup socket api
-```
+```javascript
   const app = express();
   const server = require('http').Server(app);
   const socket = require('socket.io').listen(server);
@@ -101,20 +104,20 @@ The provider inherits the Events API which is used to register events from the r
 
 ### Events#addEvent
 add an event object
-```
+```javascript
   Events.add('type', 'eventName', Function||Object);
 ```
 
 ### Events#getEvent
 Retrieve a single event object
-```
+```javascript
   const event = Events.get('type', 'eventName');
 ```
 
 ### Events#getEventsOfType
 Returns a map of events of a specified type
 
-```
+```javascript
   const map = Events.getEventsOfType('type');
   map.forEach((value, eventName) => console.log.bind(console));
   

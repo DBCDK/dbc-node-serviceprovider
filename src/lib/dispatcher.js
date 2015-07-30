@@ -24,6 +24,7 @@ function handleResponse(connection, responsePromise, event) {
  * Trigger event on provider, when an event is registered on a connection
  *
  * @param connection
+ * @param provider
  * @param event
  */
 function onEventOnConnection(connection, provider, event) {

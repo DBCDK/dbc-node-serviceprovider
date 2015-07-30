@@ -69,7 +69,7 @@ callClient returns a promise that should be returned from the requestTransform
 Triggers an event on the provider. If the event does not exists an error is thrown.  
 A transform with the corresponding event needs to be registered first. 
 
-the trigger method returns a promise-
+the trigger method returns a Promise
 
 ```javascript
   const recommendations = Provider.trigger('recommend', {like: ['123123123']});

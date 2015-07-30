@@ -91,7 +91,7 @@ activates the bundled transforms and clients
 
 ### Provider#setupSockets
 Setup socket api
-```
+```javascript
   const app = express();
   const server = require('http').Server(app);
   const socket = require('socket.io').listen(server);

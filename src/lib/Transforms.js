@@ -25,7 +25,7 @@ const BaseTransform = {
  *
  * if an event already exists. An error is thrown
  *
- * @param events
+ * @param event
  * @param transform
  * @api private
  */

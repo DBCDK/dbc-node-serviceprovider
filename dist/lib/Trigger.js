@@ -32,8 +32,7 @@ function handleTriggerEvents(event, query) {
   // When each promise is resolved the transform response method is called.
   var result = requestArray.map(function (promise) {
     return promise.then(function (response) {
-      var responseValue = transform.responseTransform(response, query);
-      return responseValue;
+      return transform.responseTransform(response, query);
     });
   });
 
@@ -46,6 +45,7 @@ function handleTriggerEvents(event, query) {
  * @param {String} event
  * @param {Object} params
  * @returns {Array}
+ * @param connection
  */
 
 function trigger(event, params, connection) {

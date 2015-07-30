@@ -172,7 +172,8 @@
     ],
     "sort-vars": [
       0,
-      "ignoreCase"
+      {"ignoreCase": false}
+
     ],
     "space-after-keywords": 2,
     "space-before-blocks": 2,

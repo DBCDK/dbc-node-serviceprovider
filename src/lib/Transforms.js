@@ -43,7 +43,7 @@ function registerEvents(event, transform) {
  * @throws {Error}
  * @api public
  */
-export default function registerTransform(transform) {
+function registerTransform(transform) {
   if (!transform.event) {
     throw new Error('No event method not found on transform');
   }
@@ -62,3 +62,6 @@ export default function registerTransform(transform) {
 
   return transform;
 }
+
+
+export default {registerTransform};

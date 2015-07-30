@@ -26,7 +26,7 @@ The provider needs to be initialized with a config file before usage.
 ```
 
 ### Provider.registerClient(client):Client
-Method for registering service clients. Clients need a name that refers to a config namespace, and an init()
+Method for registering serviceclients. Serviceclients need a name that refers to a config namespace, and an init()
 that provides the configurations and should return the client methods.
  
 ```javascript

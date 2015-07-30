@@ -28,13 +28,13 @@ function handleTriggerEvents(event, query) {
   return result;
 }
 
-
 /**
  * Triggers an event with the given parameters. Returns an array of promises that resolves the request
  *
  * @param {String} event
  * @param {Object} params
  * @returns {Array}
+ * @param connection
  */
 export default function trigger(event, params, connection) {
   return handleTriggerEvents(event, params, connection);

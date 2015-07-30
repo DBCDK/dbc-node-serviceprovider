@@ -20,16 +20,16 @@ I Client in the service provider
 ### Provider
 The provider needs to be initialized with a config file before usage. 
 
-```
+```javascript
   const Provider = require('dbc-node-serviceprovider');
   const provider = Provider(config);
 ```
 
 ### Provider.registerClient(client):Client
 Method for registering service clients. Clients need a name that refers to a config namespace, and an init()
-that provides the configurations and should return the client methods
+that provides the configurations and should return the client methods.
  
-```
+```javascript
   import Recommendations from 'dbc-node-recommendations';
   
   provider.registerClient({
@@ -42,7 +42,7 @@ that provides the configurations and should return the client methods
 ### Provider#registerTransform(client):Transform
 Method for registering transform classes. Transforms need events, requestTransform, responseTransform
 
-```
+```javascript
   provider.registerTransform({
     event() {
       return 'transformEvent';
@@ -60,7 +60,7 @@ Method for registering transform classes. Transforms need events, requestTransfo
 #### Transform#callClient:Promise
 On a transform it is possible to make calls to registered clients in the following format
 
-```
+```javascript
   const promise = this.callClient('client', 'method', params);
 ```
 callClient returns a promise that should be returned from the requestTransform
@@ -71,7 +71,7 @@ A transform with the corresponding event needs to be registered first.
 
 the trigger method returns a promise-
 
-```
+```javascript
   const recommendations = Provider.trigger('recommend', {like: ['123123123']});
   
   recommendations
@@ -85,7 +85,7 @@ the trigger method returns a promise-
 
 ### Provider#bootstrap
 activates the bundled transforms and clients
-```
+```javascript
   provider.boostrap();
 ```
 
@@ -104,20 +104,20 @@ The provider inherits the Events API which is used to register events from the r
 
 ### Events#addEvent
 add an event object
-```
+```javascript
   Events.add('type', 'eventName', Function||Object);
 ```
 
 ### Events#getEvent
 Retrieve a single event object
-```
+```javascript
   const event = Events.get('type', 'eventName');
 ```
 
 ### Events#getEventsOfType
 Returns a map of events of a specified type
 
-```
+```javascript
   const map = Events.getEventsOfType('type');
   map.forEach((value, eventName) => console.log.bind(console));
   

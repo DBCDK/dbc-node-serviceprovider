@@ -47,7 +47,6 @@ function bootstrap() {
  *
  * @api public
  */
-
 export default function ProviderFactory(config) {
   if (!config) {
     throw new Error('No configuration was provided');

@@ -30,7 +30,7 @@ const CoverImageTransform = {
    */
   requestTransform(request, data) { // eslint-disable-line
     let identifiers = data.map((pid) => pid.split(':').pop());
-    return this.callClient('moreinfo', 'getMoreInfoResult', {identifiers});
+    return this.callServiceClient('moreinfo', 'getMoreInfoResult', {identifiers});
   },
 
   /**

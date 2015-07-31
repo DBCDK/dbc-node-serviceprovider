@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * @file
+ * Methods for triggering events on the provider
+ */
+
 import {isArray} from 'lodash';
 import Events from './Events.js';
 
@@ -12,7 +17,7 @@ import Events from './Events.js';
  * @param {Object || Array} query The query object/array
  */
 function handleTriggerEvents(event, query) {
-  const transform = Events.getEvent('transform', event, query);
+  const transform = Events.getEvent('transform', event);
   const request = transform.requestTransform(event, query);
   // make sure requests are an array
   const requestArray = isArray(request) && request || [request];

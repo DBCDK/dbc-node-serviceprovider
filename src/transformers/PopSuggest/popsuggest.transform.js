@@ -10,17 +10,17 @@ const PopSuggestTransform = {
 
   getPopSuggestionsRequest(query) {
     let requests = [];
-    requests.push(this.callClient('popsuggest', 'getSuggestions', {
+    requests.push(this.callServiceClient('popsuggest', 'getSuggestions', {
       index: 'display.title',
       query: query,
       fields: ['fedoraPid', 'display.title']
     }));
-    requests.push(this.callClient('popsuggest', 'getSuggestions', {
+    requests.push(this.callServiceClient('popsuggest', 'getSuggestions', {
       index: 'display.creator',
       query: query,
       fields: ['display.creator']
     }));
-    requests.push(this.callClient('popsuggest', 'getSuggestions', {
+    requests.push(this.callServiceClient('popsuggest', 'getSuggestions', {
       index: 'term.subject',
       query: query,
       fields: ['term.subject']

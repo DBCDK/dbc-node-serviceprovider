@@ -264,7 +264,7 @@ const WorkTransform = {
   },
 
   getWorkResult(request) {
-    return this.callClient('opensearch', 'getWorkResult', request);
+    return this.callServiceClient('opensearch', 'getWorkResult', request);
   },
 
   requestTransform(event, request) {

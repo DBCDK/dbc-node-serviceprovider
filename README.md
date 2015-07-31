@@ -3,7 +3,7 @@
 [![David](https://img.shields.io/david/DBCDK/dbc-node-serviceprovider.svg?style=flat-square)](https://david-dm.org/DBCDK/dbc-node-serviceprovider#info=dependencies)
 [![David](https://img.shields.io/david/dev/DBCDK/dbc-node-serviceprovider.svg?style=flat-square)](https://david-dm.org/DBCDK/dbc-node-serviceprovider#info=devDependencies)
 
-Abstraction layer for the dbc-node-services. Handles the communication between 
+Abstraction layer for the DBC webservices. Handles the communication between 
 the application- and the service layer providing optional transforms for 
 transforming the data received from the services before returning it to the 
 client.
@@ -13,8 +13,8 @@ A transform is a form of event that takes a request and calls one or more servic
 When service calls are resolved the Transform transforms the response into the desired format. 
 A transform is created with [`provider.registerTransform`](Provider#registerTransform(client):Transform)  
 
-## Clients
-I Client in the service provider 
+## ServiceClients
+A ServiceClient is an implementation of a client that handles communication with a service
 
 ## API
 ### Provider
@@ -25,14 +25,14 @@ The provider needs to be initialized with a config file before usage.
   const provider = Provider(config);
 ```
 
-### Provider.registerClient(client):Client
+### Provider.registerServiceClient(client):ServiceClient
 Method for registering serviceclients. Serviceclients need a name that refers to a config namespace, and an init()
 that provides the configurations and should return the client methods.
  
 ```javascript
   import Recommendations from 'dbc-node-recommendations';
   
-  provider.registerClient({
+  provider.registerServiceClient({
     name: 'recommend',
     init(config) {
       return Recommendations(config.endpoint);
@@ -48,8 +48,8 @@ Method for registering transform classes. Transforms need events, requestTransfo
       return 'transformEvent';
     }
     requestTranform(request) {
-      // make a call to one or more services, using the callClient method
-      return this.callClient('moreinfo::method', request);
+      // make a call to one or more services, using the callServiceClient method
+      return this.callServiceClient('moreinfo::method', request);
     }
     requestResponse(response) {
       // do something with the reponse
@@ -57,13 +57,13 @@ Method for registering transform classes. Transforms need events, requestTransfo
     }
   });
 ```
-#### Transform#callClient:Promise
+#### Transform#callServiceClient:Promise
 On a transform it is possible to make calls to registered clients in the following format
 
 ```javascript
-  const promise = this.callClient('client', 'method', params);
+  const promise = this.callServiceClient('client', 'method', params);
 ```
-callClient returns a promise that should be returned from the requestTransform
+callServiceClient returns a promise that should be returned from the requestTransform
 
 ### Provider#trigger(event, params):Promise
 Triggers an event on the provider. If the event does not exists an error is thrown.  
@@ -135,5 +135,5 @@ Returns a map of events of a specified type
 * ResultList.transform.js
 * Work.transform.js
 * OpenSuggest.transform.js
-* popsuggest.transform.js
+* PopSuggest.transform.js
 * Recommendations.transform.js

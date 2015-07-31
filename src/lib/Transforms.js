@@ -14,7 +14,7 @@ import Events from './Events.js';
  * @type {{callClient: Function}}
  */
 const BaseTransform = {
-  callClient(client, method, params) {
+  callServiceClient(client, method, params) {
     const event = `${client}::${method}`;
     return Events.getEvent('client', event)(params);
   }

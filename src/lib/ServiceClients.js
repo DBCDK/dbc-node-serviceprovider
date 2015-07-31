@@ -32,7 +32,7 @@ function registerMethods(methods, clientName) {
  * @returns {Object} methods on the service
  * @api public
  */
-function registerClient(config, client) {
+function registerServiceClient(config, client) {
   const {name, init} = client;
 
   if (!config.services[name]) {
@@ -70,7 +70,7 @@ function Clients (config) {
     throw new Error(`A config object needs to be provided and it requires a services property`);
   }
 
-  this.registerClient = registerClient.bind(this, config);
+  this.registerServiceClient = registerServiceClient.bind(this, config);
 }
 
 /**
@@ -80,7 +80,7 @@ function Clients (config) {
  * @returns {Clients}
  * @constructor
  */
-export default function ClientsFactory (config) {
+export default function ClientsFactory(config) {
 
   return new Clients(config);
 }

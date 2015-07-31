@@ -24,7 +24,7 @@ var _EventsJs = require('./Events.js');
 var _EventsJs2 = _interopRequireDefault(_EventsJs);
 
 var BaseTransform = {
-  callClient: function callClient(client, method, params) {
+  callServiceClient: function callServiceClient(client, method, params) {
     var event = client + '::' + method;
     return _EventsJs2['default'].getEvent('client', event)(params);
   }

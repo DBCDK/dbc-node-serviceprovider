@@ -31,9 +31,9 @@ var _libTriggerJs = require('./lib/Trigger.js');
 
 var _libTriggerJs2 = _interopRequireDefault(_libTriggerJs);
 
-var _libClientsJs = require('./lib/Clients.js');
+var _libServiceClientsJs = require('./lib/ServiceClients.js');
 
-var _libClientsJs2 = _interopRequireDefault(_libClientsJs);
+var _libServiceClientsJs2 = _interopRequireDefault(_libServiceClientsJs);
 
 var _libEventsJs = require('./lib/Events.js');
 
@@ -58,7 +58,7 @@ function setupSockets(socket) {
  */
 function bootstrap() {
   (0, _libAutoRequireJs2['default'])(_path2['default'].join(__dirname, 'transformers'), 'transform.js').map(Provider.registerTransform);
-  (0, _libAutoRequireJs2['default'])(_path2['default'].join(__dirname, 'clients'), 'client.js').map(Provider.registerClient);
+  (0, _libAutoRequireJs2['default'])(_path2['default'].join(__dirname, 'clients'), 'client.js').map(Provider.registerServiceClient);
   return Provider;
 }
 
@@ -75,13 +75,13 @@ function ProviderFactory(config) {
     throw new Error('No configuration was provided');
   }
 
-  var registerClient = (0, _libClientsJs2['default'])(config).registerClient;
+  var registerServiceClient = (0, _libServiceClientsJs2['default'])(config).registerServiceClient;
 
   Provider = {
     setupSockets: setupSockets,
     bootstrap: bootstrap,
     registerTransform: _libTransformsJs.registerTransform,
-    registerClient: registerClient,
+    registerServiceClient: registerServiceClient,
     trigger: _libTriggerJs2['default'],
     getEventsOfType: _libEventsJs.getEventsOfType
   };

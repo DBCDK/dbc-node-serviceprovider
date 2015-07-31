@@ -32,7 +32,7 @@ describe('Testing methods on the Provider', () => {
       someMethod() {
       }
     };
-    expect(provider.registerTransform(test)).to.have.keys('someMethod', 'event', 'requestTransform', 'responseTransform', 'callClient');
+    expect(provider.registerTransform(test)).to.have.keys('someMethod', 'event', 'requestTransform', 'responseTransform', 'callServiceClient');
 
     test = {services: []};
     expect(() => provider.registerTransform(test)).to.throw(Error);
@@ -51,23 +51,23 @@ describe('Testing methods on the Provider', () => {
   });
 
 
-  it('Test the registerClient method', () => {
+  it('Test the registerServiceClient method', () => {
     let client = {};
     let config = {};
-    expect(() => Provider(config).registerClient(client)).to.throw(Error);
+    expect(() => Provider(config).registerServiceClient(client)).to.throw(Error);
     config.services = {};
-    expect(() => Provider(config).registerClient(client)).to.throw(Error);
+    expect(() => Provider(config).registerServiceClient(client)).to.throw(Error);
     client.name = 'test';
     config.services.test = {};
-    expect(() => Provider(config).registerClient(client)).to.throw(Error);
+    expect(() => Provider(config).registerServiceClient(client)).to.throw(Error);
     client.init = () => {
     };
-    expect(() => Provider(config).registerClient(client)).to.throw(Error);
+    expect(() => Provider(config).registerServiceClient(client)).to.throw(Error);
     client.init = () => {
       return {};
     };
-    expect(() => Provider(config).registerClient(client)).to.not.throw(Error);
-    let methods = Provider(config).registerClient(client);
+    expect(() => Provider(config).registerServiceClient(client)).to.not.throw(Error);
+    let methods = Provider(config).registerServiceClient(client);
     expect(methods).to.be.object; // eslint-disable-line no-unused-expressions
   });
 
@@ -113,7 +113,7 @@ describe('Testing methods on the Provider', () => {
     });
   });
 
-  describe('Test callClient method', () => {
+  describe('Test callServiceClient method', () => {
     let assertString = 'Client test method was called';
     let testMethod = function (params) {
       return Promise.resolve(params);
@@ -129,7 +129,7 @@ describe('Testing methods on the Provider', () => {
         return 'testCallClientEvent';
       },
       requestTransform() {
-        return this.callClient('testClient', 'testMethod', assertString);
+        return this.callServiceClient('testClient', 'testMethod', assertString);
       },
       responseTransform(response) {
         return response;
@@ -138,7 +138,7 @@ describe('Testing methods on the Provider', () => {
 
     it('should call method on client', () => {
       const provider = Provider({services: {testClient: {}}});
-      provider.registerClient(testClient);
+      provider.registerServiceClient(testClient);
       provider.registerTransform(testTransform);
 
       provider.trigger('testCallClientEvent')[0].then((value)=> {
@@ -155,7 +155,7 @@ describe('Testing methods on the Provider', () => {
         return Promise.reject(params);
       };
       const provider = Provider({services: {testClient: {}}});
-      provider.registerClient(testClient);
+      provider.registerServiceClient(testClient);
       provider.registerTransform(testTransform);
       provider.trigger('testCallClientEvent')[0].catch((value)=> {
         expect(value).to.be.equal(assertString);

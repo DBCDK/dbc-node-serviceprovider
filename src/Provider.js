@@ -11,7 +11,7 @@ import autoRequire from './lib/AutoRequire.js';
 import Dispatcher from './lib/dispatcher';
 import {registerTransform} from './lib/Transforms.js';
 import trigger from './lib/Trigger.js';
-import Clients from './lib/Clients.js';
+import ServiceClients from './lib/ServiceClients.js';
 import {getEventsOfType} from './lib/Events.js';
 
 let Provider = {};
@@ -36,7 +36,7 @@ function setupSockets(socket) {
  */
 function bootstrap() {
   autoRequire(path.join(__dirname, 'transformers'), 'transform.js').map(Provider.registerTransform);
-  autoRequire(path.join(__dirname, 'clients'), 'client.js').map(Provider.registerClient);
+  autoRequire(path.join(__dirname, 'clients'), 'client.js').map(Provider.registerServiceClient);
   return Provider;
 }
 
@@ -52,13 +52,13 @@ export default function ProviderFactory(config) {
     throw new Error('No configuration was provided');
   }
 
-  let registerClient = Clients(config).registerClient;
+  let registerServiceClient = ServiceClients(config).registerServiceClient;
 
   Provider = {
     setupSockets,
     bootstrap,
     registerTransform,
-    registerClient,
+    registerServiceClient,
     trigger,
     getEventsOfType
   };

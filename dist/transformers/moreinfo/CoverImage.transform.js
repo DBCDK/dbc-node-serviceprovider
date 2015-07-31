@@ -45,7 +45,7 @@ var CoverImageTransform = {
     var identifiers = data.map(function (pid) {
       return pid.split(':').pop();
     });
-    return this.callClient('moreinfo', 'getMoreInfoResult', { identifiers: identifiers });
+    return this.callServiceClient('moreinfo', 'getMoreInfoResult', { identifiers: identifiers });
   },
 
   /**

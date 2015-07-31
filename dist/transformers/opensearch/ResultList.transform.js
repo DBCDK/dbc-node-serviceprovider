@@ -17,7 +17,7 @@ var ResultListTransform = {
   },
 
   getSearchResultList: function getSearchResultList(request) {
-    return this.callClient('opensearch', 'getSearchResult', request);
+    return this.callServiceClient('opensearch', 'getSearchResult', request);
   },
 
   /**

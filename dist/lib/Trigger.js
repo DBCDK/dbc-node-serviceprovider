@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * @file
+ * Methods for triggering events on the provider
+ */
+
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
@@ -23,7 +28,7 @@ var _EventsJs = require('./Events.js');
 var _EventsJs2 = _interopRequireDefault(_EventsJs);
 
 function handleTriggerEvents(event, query) {
-  var transform = _EventsJs2['default'].getEvent('transform', event, query);
+  var transform = _EventsJs2['default'].getEvent('transform', event);
   var request = transform.requestTransform(event, query);
   // make sure requests are an array
   var requestArray = (0, _lodash.isArray)(request) && request || [request];

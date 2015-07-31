@@ -10,7 +10,7 @@ var OpenSuggestTransform = {
   },
 
   getSuggestions: function getSuggestions(request) {
-    return this.callClient('opensuggest', 'getSuggestions', {
+    return this.callServiceClient('opensuggest', 'getSuggestions', {
       profile: 'opac',
       agency: '150013',
       index: request.index,

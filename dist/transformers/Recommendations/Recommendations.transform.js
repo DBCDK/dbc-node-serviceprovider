@@ -9,7 +9,7 @@ var RecommendationsTransform = {
   },
 
   requestTransform: function requestTransform(event, list) {
-    return this.callClient('recommend', 'getRecommendations', list);
+    return this.callServiceClient('recommend', 'getRecommendations', list);
   },
 
   responseTransform: function responseTransform(data) {

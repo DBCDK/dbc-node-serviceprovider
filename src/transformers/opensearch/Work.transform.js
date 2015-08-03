@@ -196,6 +196,28 @@ function getSubjects(general, primary) {
 }
 
 /**
+ * Extracts dk5 data about the work
+ *
+ * @param {Object} general the general information of the work
+ * @param {Object} primary the primary data from the work being transform
+ * @return Null
+ */
+
+function getDk5(general, primary) {
+
+  let dk5s = [];
+
+  let dk5 = getRecordData(primary, 'subject', 'xsi:type', 'dkdcplus:DK5');
+  let dk5text = getRecordData(primary, 'subject', 'xsi:type', 'dkdcplus:DK5-Text');
+  if (dk5.length > 0) {
+    let link = dk5[0].replace(/ .*/, '');
+    dk5s.push({value: dk5, search_link: '/search?dkcclterm.dk=' + encodeURIComponent(link), text: dk5text});
+    general.dk5s = dk5s;
+  }
+
+}
+
+/**
  * Extracts track data about the work
  *
  * @param {Object} general the general information of the work
@@ -280,6 +302,7 @@ function getWorkData(work) {
   getCreators(general, primary);
   getDescription(general, primary);
   getSubjects(general, primary);
+  getDk5(general, primary);
   getTracks(general, primary);
   getLanguages(general, primary);
   getPartOf(general, primary);

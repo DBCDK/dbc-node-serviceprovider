@@ -1,6 +1,21 @@
 'use strict';
+/**
+ * @file
+ * Transformation of request to and response from the Opensearch webservice,
+ * for presentation of work data.
+ */
 
 import * as prep from './response-preparation.js';
+
+/**
+ * Extracts data from elements (with attributes) in a record
+ *
+ * @param {Object} record the record being transformed
+ * @param {String} element the name of the element being processed
+ * @param {String} attribute the name of the attribute
+ * @param {String} attValue the wanted value of the attribute
+ * @return {Array}
+ */
 
 function getRecordData(record, element, attribute, attValue) {
   let dataElement = [];
@@ -18,6 +33,14 @@ function getRecordData(record, element, attribute, attValue) {
   return dataElement;
 }
 
+/**
+ * Extracts data from elements (without attributes) in a record
+ *
+ * @param {Object} record the record being transformed
+ * @param {String} element the name of the element being processed
+ * @return {Array}
+ */
+
 function getRecordDataNoAttribute(record, element) {
   let dataElement = [];
   if (record.hasOwnProperty(element)) {
@@ -29,33 +52,83 @@ function getRecordDataNoAttribute(record, element) {
   return dataElement;
 }
 
-function getWorkData(work) {
-  let general = {};
-  let primary = work.collection.object[0].record;
+/**
+ * Extracts series data about the work
+ *
+ * @param {Object} general the general information of the work
+ * @param {Object} primary the primary data from the work being transform
+ * @return Null
+ */
 
-  general.title = getRecordData(primary, 'title', 'xsi:type', 'dkdcplus:full')[0];
-
+function getSeries(general, primary) {
   let series = getRecordData(primary, 'title', 'xsi:type', 'dkdcplus:series');
+  let link = '';
   if (series.length > 0) {
-    general.series = series;
+    link = series[0].replace(/ ; .*/, '');
+    link = link.replace(/Samhørende: /, '');
+    link = link.replace(/.* del af: /, '');
+    general.series = {value: series, search_link: '/search?phrase.titleSeries=' + encodeURIComponent(link)};
   } else {
     series = getRecordData(primary, 'description', 'xsi:type', 'dkdcplus:series');
     if (series.length > 0) {
-      general.series = series;
+      link = series[0].replace(/ ; .*/, '');
+      link = link.replace(/Samhørende: /, '');
+      link = link.replace(/.* del af: /, '');
+      general.series = {value: series, search_link: '/search?phrase.titleSeries=' + encodeURIComponent(link)};
     }
   }
+}
+
+/**
+ * Extracts creator data about the work
+ *
+ * @param {Object} general the general information of the work
+ * @param {Object} primary the primary data from the work being transform
+ * @return Null
+ */
+
+function getCreators(general, primary) {
 
   if (primary.hasOwnProperty('creator')) {
     let creators = [];
     primary.creator.forEach(function (creator) {
       if (!creator.hasOwnProperty('attributes')) {
-        creators.push(creator.$value);
+        creators.push({value: creator.$value, search_link: '/search?phrase.creator=' + encodeURIComponent(creator.$value)});
       } else if (creator.attributes['xsi:type'] !== 'oss:sort') {
-        creators.push(creator.$value);
+        creators.push({value: creator.$value, search_link: '/search?phrase.creator=' + encodeURIComponent(creator.$value)});
       }
     });
     general.creators = creators;
   }
+
+  if (primary.hasOwnProperty('contributor')) {
+    let actors = [];
+    primary.contributor.forEach(function (contributor) {
+      if (contributor.hasOwnProperty('attributes')) {
+        if (contributor.attributes['xsi:type'] === 'dkdcplus:act') {
+          actors.push({value: contributor.$value, search_link: '/search?phrase.creator=' + encodeURIComponent(contributor.$value)});
+        }
+        if (contributor.attributes['xsi:type'] === 'dkdcplus:prf') {
+          actors.push({value: contributor.$value, search_link: '/search?phrase.creator=' + encodeURIComponent(contributor.$value)});
+        }
+      }
+    });
+    if (actors.length > 0) {
+      general.actors = actors;
+    }
+  }
+
+}
+
+/**
+ * Extracts description data about the work
+ *
+ * @param {Object} general the general information of the work
+ * @param {Object} primary the primary data from the work being transform
+ * @return Null
+ */
+
+function getDescription(general, primary) {
 
   let description = getRecordDataNoAttribute(primary, 'abstract');
   if (description.length > 0) {
@@ -67,21 +140,33 @@ function getWorkData(work) {
     }
   }
 
+}
+
+/**
+ * Extracts subject data about the work
+ *
+ * @param {Object} general the general information of the work
+ * @param {Object} primary the primary data from the work being transform
+ * @return Null
+ */
+
+function getSubjects(general, primary) {
+
   let subjects = [];
   if (primary.hasOwnProperty('subject')) {
     primary.subject.forEach(function (subject) {
       if (subject.hasOwnProperty('attributes')) {
         if (subject.attributes['xsi:type'] === 'dkdcplus:DBCS') {
-          subjects.push(subject.$value);
+          subjects.push({value: subject.$value, search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)});
         }
         if (subject.attributes['xsi:type'] === 'dkdcplus:DBCF') {
-          subjects.push(subject.$value);
+          subjects.push({value: subject.$value, search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)});
         }
         if (subject.attributes['xsi:type'] === 'dkdcplus:DBCM') {
-          subjects.push(subject.$value);
+          subjects.push({value: subject.$value, search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)});
         }
         if (subject.attributes['xsi:type'] === 'dkdcplus:DBCO') {
-          subjects.push(subject.$value);
+          subjects.push({value: subject.$value, search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)});
         }
       }
     });
@@ -92,7 +177,7 @@ function getWorkData(work) {
       primary.spatial = [spatial];
     }
     primary.spatial.forEach(function (subject) {
-      subjects.push(subject.$value);
+      subjects.push({value: subject.$value, search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)});
     });
   }
   if (primary.hasOwnProperty('temporal')) {
@@ -101,32 +186,42 @@ function getWorkData(work) {
       primary.temporal = [temporal];
     }
     primary.temporal.forEach(function (subject) {
-      subjects.push(subject.$value);
+      subjects.push({value: subject.$value, search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)});
     });
   }
   if (subjects.length > 0) {
     general.subjects = subjects;
   }
+
+}
+
+/**
+ * Extracts track data about the work
+ *
+ * @param {Object} general the general information of the work
+ * @param {Object} primary the primary data from the work being transform
+ * @return Null
+ */
+
+function getTracks(general, primary) {
+
   let tracks = getRecordData(primary, 'hasPart', 'xsi:type', 'dkdcplus:track');
   if (tracks.length > 0) {
     general.tracks = tracks;
   }
-  if (primary.hasOwnProperty('contributor')) {
-    let actors = [];
-    primary.contributor.forEach(function (contributor) {
-      if (contributor.hasOwnProperty('attributes')) {
-        if (contributor.attributes['xsi:type'] === 'dkdcplus:act') {
-          actors.push(contributor.$value);
-        }
-        if (contributor.attributes['xsi:type'] === 'dkdcplus:prf') {
-          actors.push(contributor.$value);
-        }
-      }
-    });
-    if (actors.length > 0) {
-      general.actors = actors;
-    }
-  }
+
+}
+
+/**
+ * Extracts language data about the work
+ *
+ * @param {Object} general the general information of the work
+ * @param {Object} primary the primary data from the work being transform
+ * @return Null
+ */
+
+function getLanguages(general, primary) {
+
   if (primary.hasOwnProperty('language')) {
     let languages = [];
     primary.language.forEach(function (language) {
@@ -136,6 +231,19 @@ function getWorkData(work) {
     });
     general.languages = languages;
   }
+
+}
+
+/**
+ * Extracts part-of data about the work
+ *
+ * @param {Object} general the general information of the work
+ * @param {Object} primary the primary data from the work being transform
+ * @return Null
+ */
+
+function getPartOf(general, primary) {
+
   if (primary.hasOwnProperty('isPartOf')) {
     let partOf = [];
     let issn = [];
@@ -153,8 +261,38 @@ function getWorkData(work) {
     general.issn = issn;
   }
 
+}
+
+/**
+ * Extracts data about the work
+ *
+ * @param {Object} work the work being transformed.
+ * @return {Object}
+ */
+
+function getWorkData(work) {
+  let general = {};
+  let primary = work.collection.object[0].record;
+
+  general.title = getRecordData(primary, 'title', 'xsi:type', 'dkdcplus:full')[0];
+
+  getSeries(general, primary);
+  getCreators(general, primary);
+  getDescription(general, primary);
+  getSubjects(general, primary);
+  getTracks(general, primary);
+  getLanguages(general, primary);
+  getPartOf(general, primary);
+
   return general;
 }
+
+/**
+ * Extracts data about each material type in a work
+ *
+ * @param {Object} work the work being transformed.
+ * @return {Object}
+ */
 
 function getManifestationData(work) {
   let specific = [];
@@ -189,6 +327,129 @@ function getManifestationData(work) {
   return specific;
 }
 
+/**
+ * Extracts type data about a manifestation
+ *
+ * @param {Object} pubDetails the specific publication data about the manifestation
+ * @param {Object} record the record data
+ * @return Null
+ */
+
+function getTypes(pubDetails, record) {
+
+  if (record.hasOwnProperty('type')) {
+    let types = [];
+    record.type.forEach(function (type) {
+      types.push(type.$value);
+    });
+    pubDetails.types = types;
+  }
+
+}
+
+/**
+ * Extracts date data about a manifestation
+ *
+ * @param {Object} pubDetails the specific publication data about the manifestation
+ * @param {Object} record the record data
+ * @return Null
+ */
+
+function getDates(pubDetails, record) {
+
+  if (record.hasOwnProperty('date')) {
+    let dates = [];
+    record.date.forEach(function (date) {
+      dates.push(date.$value);
+    });
+    pubDetails.dates = dates;
+  }
+
+}
+
+/**
+ * Extracts publisher data about a manifestation
+ *
+ * @param {Object} pubDetails the specific publication data about the manifestation
+ * @param {Object} record the record data
+ * @return Null
+ */
+
+function getPublishers(pubDetails, record) {
+
+  if (record.hasOwnProperty('publisher')) {
+    let publishers = [];
+    record.publisher.forEach(function (publisher) {
+      publishers.push(publisher.$value);
+    });
+    pubDetails.publishers = publishers;
+  }
+
+}
+
+/**
+ * Extracts edition data about a manifestation
+ *
+ * @param {Object} pubDetails the specific publication data about the manifestation
+ * @param {Object} record the record data
+ * @return Null
+ */
+
+function getEditions(pubDetails, record) {
+
+  if (record.hasOwnProperty('version')) {
+    let edition = [];
+    record.version.forEach(function (version) {
+      edition.push(version.$value);
+    });
+    pubDetails.editions = edition;
+  }
+
+}
+
+/**
+ * Extracts part-of data about a manifestation
+ *
+ * @param {Object} pubDetails the specific publication data about the manifestation
+ * @param {Object} record the record data
+ * @return Null
+ */
+
+function getPartOfData(pubDetails, record) {
+
+  if (record.hasOwnProperty('isPartOf')) {
+    let partOf = [];
+    let issn = [];
+    record.isPartOf.forEach(function (isPartOf) {
+      if (!isPartOf.hasOwnProperty('attributes')) {
+        partOf.push(isPartOf.$value);
+      }
+      if (isPartOf.hasOwnProperty('attributes')) {
+        if (isPartOf.attributes['xsi:type'] === 'dkdcplus:ISSN') {
+          issn.push(isPartOf.$value);
+        }
+      }
+    });
+    pubDetails.partOf = partOf;
+    pubDetails.issn = issn;
+  }
+  if (record.hasOwnProperty('extent')) {
+    let ext = [];
+    record.extent.forEach(function (extent) {
+      ext.push(extent.$value);
+    });
+    pubDetails.extents = ext;
+  }
+
+}
+
+/**
+ * Extracts data about the specific publications in a work
+ *
+ * @param {Object} work the work being transformed.
+ * @return {Array}
+ */
+
 function getPublicationData(work) {
 
   let editions = [];
@@ -196,58 +457,13 @@ function getPublicationData(work) {
   work.collection.object.forEach(function (manifestation) {
     let pubDetails = {};
     const record = manifestation.record;
+
     pubDetails.identifier = manifestation.identifier;
-    if (record.hasOwnProperty('type')) {
-      let types = [];
-      record.type.forEach(function (type) {
-        types.push(type.$value);
-      });
-      pubDetails.types = types;
-    }
-    if (record.hasOwnProperty('date')) {
-      let dates = [];
-      record.date.forEach(function (date) {
-        dates.push(date.$value);
-      });
-      pubDetails.dates = dates;
-    }
-    if (record.hasOwnProperty('publisher')) {
-      let publishers = [];
-      record.publisher.forEach(function (publisher) {
-        publishers.push(publisher.$value);
-      });
-      pubDetails.publishers = publishers;
-    }
-    if (record.hasOwnProperty('version')) {
-      let edition = [];
-      record.version.forEach(function (version) {
-        edition.push(version.$value);
-      });
-      pubDetails.editions = edition;
-    }
-    if (record.hasOwnProperty('isPartOf')) {
-      let partOf = [];
-      let issn = [];
-      record.isPartOf.forEach(function (isPartOf) {
-        if (!isPartOf.hasOwnProperty('attributes')) {
-          partOf.push(isPartOf.$value);
-        }
-        if (isPartOf.hasOwnProperty('attributes')) {
-          if (isPartOf.attributes['xsi:type'] === 'dkdcplus:ISSN') {
-            issn.push(isPartOf.$value);
-          }
-        }
-      });
-      pubDetails.partOf = partOf;
-      pubDetails.issn = issn;
-    }
-    if (record.hasOwnProperty('extent')) {
-      let ext = [];
-      record.extent.forEach(function (extent) {
-        ext.push(extent.$value);
-      });
-      pubDetails.extents = ext;
-    }
+    getTypes(pubDetails, record);
+    getDates(pubDetails, record);
+    getPublishers(pubDetails, record);
+    getEditions(pubDetails, record);
+    getPartOfData(pubDetails, record);
 
     editions.push(pubDetails);
 
@@ -256,6 +472,12 @@ function getPublicationData(work) {
   return editions;
 
 }
+
+/**
+ * Transforms a work request data and the resulting work object from Open Search
+ *
+ * @return {Object}
+ */
 
 const WorkTransform = {
 

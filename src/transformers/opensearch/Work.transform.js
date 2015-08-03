@@ -210,7 +210,8 @@ function getDk5(general, primary) {
   let dk5 = getRecordData(primary, 'subject', 'xsi:type', 'dkdcplus:DK5');
   let dk5text = getRecordData(primary, 'subject', 'xsi:type', 'dkdcplus:DK5-Text');
   if (dk5.length > 0) {
-    dk5s.push({value: dk5, search_link: '/search?dkcclterm.dk=' + encodeURIComponent(dk5), text: dk5text});
+    let link = dk5[0].replace(/ .*/, '');
+    dk5s.push({value: dk5, search_link: '/search?dkcclterm.dk=' + encodeURIComponent(link), text: dk5text});
     general.dk5s = dk5s;
   }
 

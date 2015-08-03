@@ -461,6 +461,36 @@ function getPartOfData(pubDetails, record) {
 }
 
 /**
+ * Extracts identfier data about a manifestation
+ *
+ * @param {Object} pubDetails the specific publication data about the manifestation
+ * @param {Object} record the record data
+ * @return Null
+ */
+
+function getIdentifiers(pubDetails, record) {
+
+  if (record.hasOwnProperty('identifier')) {
+    (function () {
+      var isbn = [];
+      var uri = [];
+      record.identifier.forEach(function (identifier) {
+        if (identifier.hasOwnProperty('attributes')) {
+          if (identifier.attributes['xsi:type'] === 'dkdcplus:ISBN') {
+            isbn.push(identifier.$value);
+          }
+          if (identifier.attributes['xsi:type'] === 'dcterms:URI') {
+            uri.push(identifier.$value);
+          }
+        }
+      });
+      pubDetails.isbns = isbn;
+      pubDetails.links = uri;
+    })();
+  }
+}
+
+/**
  * Extracts data about the specific publications in a work
  *
  * @param {Object} work the work being transformed.
@@ -481,6 +511,7 @@ function getPublicationData(work) {
     getPublishers(pubDetails, record);
     getEditions(pubDetails, record);
     getPartOfData(pubDetails, record);
+    getIdentifiers(pubDetails, record);
 
     editions.push(pubDetails);
   });

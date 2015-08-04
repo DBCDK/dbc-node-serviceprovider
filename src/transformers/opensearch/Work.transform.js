@@ -324,11 +324,13 @@ function getManifestationData(work) {
   work.collection.object.forEach(function (manifestation) {
     const accessType = work.formattedCollection.briefDisplay.manifestation[i].accessType;
     const type = manifestation.record.type[0].$value;
+    const title = manifestation.record.title[0].$value;
     if (types.indexOf(type) === -1) {
       let minorwork = {};
       types.push(type);
       minorwork.type = type;
       minorwork.accessType = accessType;
+      minorwork.title = title;
       let identifiers = [];
       identifiers.push(manifestation.identifier);
       minorwork.identifiers = identifiers;
@@ -345,6 +347,13 @@ function getManifestationData(work) {
       });
     }
     i++;
+  });
+
+  specific.forEach(function (s) {
+    if (s.accessType === 'physical') {
+      let order_link = '/order?ids=' + s.identifiers + '&title=' + encodeURIComponent(s.title) + '&type=' + encodeURIComponent(s.type);
+      s.order = order_link;
+    }
   });
 
   return specific;

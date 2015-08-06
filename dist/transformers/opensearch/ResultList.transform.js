@@ -52,7 +52,6 @@ var ResultListTransform = {
    * @param {Object} the response from the webservice
    * @return {Object} the transformed result
    */
-
   responseTransform: function responseTransform(response) {
 
     var data = {};

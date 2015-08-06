@@ -37,7 +37,8 @@ var CoverImageTransform = {
   /**
    * Transforms the request from the app to MoreInfo request parameters
    *
-   * @param {Array} the pid from Open Search
+   * @param {string} request
+   * @param {Array} data The pid from Open Search
    * @return {Array} request parameters using More Info terminology
    */
   requestTransform: function requestTransform(request, data) {

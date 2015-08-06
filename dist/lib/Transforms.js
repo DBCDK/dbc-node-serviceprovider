@@ -15,14 +15,13 @@ var _lodash = require('lodash');
 
 var _EventsJs = require('./Events.js');
 
+var _EventsJs2 = _interopRequireDefault(_EventsJs);
+
 /**
  * Base Transform Methods that are inherited
  *
  * @type {{callClient: Function}}
  */
-
-var _EventsJs2 = _interopRequireDefault(_EventsJs);
-
 var BaseTransform = {
   callServiceClient: function callServiceClient(client, method, params) {
     var event = client + '::' + method;

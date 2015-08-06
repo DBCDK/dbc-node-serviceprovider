@@ -18,15 +18,14 @@ var _path2 = _interopRequireDefault(_path);
 
 var _walk = require('walk');
 
+var _walk2 = _interopRequireDefault(_walk);
+
 /**
  * Traverses the filetree under ./transformers and looks for files named
  * transform.js. All files found with that name are considered a transform and
  * added to the pool of transforms that later will be passed to the
  * disspatchers.
  */
-
-var _walk2 = _interopRequireDefault(_walk);
-
 function discoverFiles(folder, namespace) {
   var files = [];
   var walkOptions = {

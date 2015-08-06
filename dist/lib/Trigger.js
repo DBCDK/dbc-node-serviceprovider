@@ -16,6 +16,8 @@ var _lodash = require('lodash');
 
 var _EventsJs = require('./Events.js');
 
+var _EventsJs2 = _interopRequireDefault(_EventsJs);
+
 /**
  * Handles the request and response transform callback and returns a promise, which resolves to the final
  * response.
@@ -24,9 +26,6 @@ var _EventsJs = require('./Events.js');
  * @param {String} event
  * @param {Object || Array} query The query object/array
  */
-
-var _EventsJs2 = _interopRequireDefault(_EventsJs);
-
 function handleTriggerEvents(event, query) {
   var transform = _EventsJs2['default'].getEvent('transform', event);
   var request = transform.requestTransform(event, query);

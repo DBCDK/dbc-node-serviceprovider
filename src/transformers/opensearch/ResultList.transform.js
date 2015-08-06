@@ -45,7 +45,6 @@ const ResultListTransform = {
    * @param {Object} the response from the webservice
    * @return {Object} the transformed result
    */
-
   responseTransform(response) {
 
     let data = {};
@@ -58,7 +57,8 @@ const ResultListTransform = {
     if (result.hasOwnProperty('errorcode')) {
       data.error.push(result);
       return data;
-    } else if (result.collections === '0') {
+    }
+    else if (result.collections === '0') {
       data.info.hits = result.hits;
       data.info.collections = result.collections;
       data.info.more = result.more;
@@ -78,15 +78,14 @@ const ResultListTransform = {
       let newWork = {};
       let no = work.collection.numberOfObjects;
       let identifiers = [];
-      let title,
-        creator,
-        workType;
+      let title, creator, workType;
       if (no === '1') {
         identifiers.push(work.collection.object.identifier);
         title = work.formattedCollection.briefDisplay.manifestation.titleFull;
         creator = work.formattedCollection.briefDisplay.manifestation.creator;
         workType = work.formattedCollection.briefDisplay.manifestation.workType;
-      } else {
+      }
+      else {
         work.collection.object.forEach((identifier) => {
           identifiers.push(identifier.identifier);
           title = work.formattedCollection.briefDisplay.manifestation[0].titleFull;
@@ -99,7 +98,6 @@ const ResultListTransform = {
       newWork.creator = creator;
       newWork.workType = workType;
       data.result.push(newWork);
-
     });
 
     return data;

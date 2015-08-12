@@ -93,17 +93,18 @@ var PopSuggestTransform = {
     docs.forEach(function (value) {
       var shouldStopFilter = false;
       if (value[index] && counter < 5) {
+        var text = value[index].filter(function (string) {
+          if (!_this.shouldFilter(index)) {
+            return true;
+          }
+          if (!shouldStopFilter && string.toLowerCase().startsWith(query.toLowerCase(), 0)) {
+            shouldStopFilter = true;
+            return true;
+          }
+          return false;
+        });
         parsedDocs.push({
-          text: value[index].filter(function (string) {
-            if (!_this.shouldFilter(index)) {
-              return true;
-            }
-            if (!shouldStopFilter && string.toLowerCase().startsWith(query.toLowerCase(), 0)) {
-              shouldStopFilter = true;
-              return true;
-            }
-            return false;
-          }),
+          text: (0, _lodash.isArray)(text) ? text.pop() : text,
           pid: value.fedoraPid || null
         });
         counter++;

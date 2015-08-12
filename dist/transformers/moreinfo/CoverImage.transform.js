@@ -42,9 +42,14 @@ var CoverImageTransform = {
    * @return {Array} request parameters using More Info terminology
    */
   requestTransform: function requestTransform(request, data) {
-    // eslint-disable-line
-    var identifiers = data.map(function (pid) {
-      return pid.split(':').pop();
+    // eslint-disable-line no-unused-vars
+    var identifiers = [];
+    data.forEach(function (pid) {
+      try {
+        var faust = pid.split(':').pop();
+        identifiers.push(faust);
+      } catch (e) {// eslint-disable-line
+      }
     });
     return this.callServiceClient('moreinfo', 'getMoreInfoResult', { identifiers: identifiers });
   },

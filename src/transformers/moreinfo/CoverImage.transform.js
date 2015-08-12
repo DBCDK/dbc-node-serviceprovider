@@ -29,8 +29,16 @@ const CoverImageTransform = {
    * @param {Array} data The pid from Open Search
    * @return {Array} request parameters using More Info terminology
    */
-  requestTransform(request, data) { // eslint-disable-line
-    let identifiers = data.map((pid) => pid.split(':').pop());
+  requestTransform(request, data) { // eslint-disable-line no-unused-vars
+    let identifiers = [];
+    data.forEach((pid) => {
+      try {
+        const faust = pid.split(':').pop();
+        identifiers.push(faust);
+      }
+      catch(e) { // eslint-disable-line
+      }
+    });
     return this.callServiceClient('moreinfo', 'getMoreInfoResult', {identifiers});
   },
 

@@ -44,10 +44,12 @@ const PopSuggestTransform = {
         statusCode: response.error.statusCode,
         statusMessage: response.error.statusMessage
       };
-    } else if (isEmpty(response.response.docs)) {
+    }
+    else if (isEmpty(response.response.docs)) {
       data.isEmpty = true;
       data.index = this._getIndex(response);
-    } else {
+    }
+    else {
       data = this._parseData(response, query);
       data.query = query;
     }
@@ -59,7 +61,8 @@ const PopSuggestTransform = {
     let index = '';
     if (isArray(response.responseHeader.qf)) {
       index = response.responseHeader.qf.join();
-    } else {
+    }
+    else {
       index = response.responseHeader.qf.join();
     }
 
@@ -87,17 +90,18 @@ const PopSuggestTransform = {
     docs.forEach((value) => {
       let shouldStopFilter = false;
       if (value[index] && counter < 5) {
+        const text = value[index].filter((string) => {
+          if (!this.shouldFilter(index)) {
+            return true;
+          }
+          if (!shouldStopFilter && string.toLowerCase().startsWith(query.toLowerCase(), 0)) {
+            shouldStopFilter = true;
+            return true;
+          }
+          return false;
+        });
         parsedDocs.push({
-          text: value[index].filter((string) => {
-            if (!this.shouldFilter(index)) {
-              return true;
-            }
-            if (!shouldStopFilter && string.toLowerCase().startsWith(query.toLowerCase(), 0)) {
-              shouldStopFilter = true;
-              return true;
-            }
-            return false;
-          }),
+          text: isArray(text) ? text.pop() : text,
           pid: value.fedoraPid || null
         });
         counter++;

@@ -36,7 +36,7 @@ const CoverImageTransform = {
         const faust = pid.split(':').pop();
         identifiers.push(faust);
       }
-      catch(e) { // eslint-disable-line no-empty
+      catch(e) { // eslint-disable-line
       }
     });
     return this.callServiceClient('moreinfo', 'getMoreInfoResult', {identifiers});

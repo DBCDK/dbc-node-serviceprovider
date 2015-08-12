@@ -224,10 +224,23 @@ function getAudience(general, primary) {
   audience.age = age;
   if (age.length === 0) {
     let ages = getRecordData(primary, 'subject', 'xsi:type', 'dkdcplus:DBCN');
+    for (let i = ages.length - 1; i >= 0; i--) {
+      if (!ages[i].match(/for \d* år/)) {
+        ages.splice(i, 1);
+      }
+    }
+    let no_ages = [];
+    for (let i = ages.length - 1; i >= 0; i--) {
+      let a = ages[i].replace(/for (\d*) år/, '$1');
+      no_ages.push(parseInt(a, 0));
+    }
+    no_ages.sort(function(a, b) {
+      return a - b;
+    });
     if (ages.length === 1) {
       audience.age = ages[0];
     } else if (ages.length > 1) {
-      audience.age = ages[0].replace(/ år/, '-') + ages[ages.length - 1].replace(/for /, '');
+      audience.age = 'for ' + no_ages[0] + '-' + no_ages[no_ages.length - 1] + ' år';
     }
   }
 

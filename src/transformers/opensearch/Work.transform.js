@@ -93,9 +93,15 @@ function getCreators(general, primary) {
     let creators = [];
     primary.creator.forEach(function (creator) {
       if (!creator.hasOwnProperty('attributes')) {
-        creators.push({value: creator.$value, search_link: '/search?phrase.creator=' + encodeURIComponent(creator.$value)});
+        creators.push({
+          value: creator.$value,
+          search_link: '/search?phrase.creator=' + encodeURIComponent(creator.$value)
+        });
       } else if (creator.attributes['xsi:type'] !== 'oss:sort') {
-        creators.push({value: creator.$value, search_link: '/search?phrase.creator=' + encodeURIComponent(creator.$value)});
+        creators.push({
+          value: creator.$value,
+          search_link: '/search?phrase.creator=' + encodeURIComponent(creator.$value)
+        });
       }
     });
     general.creators = creators;
@@ -106,10 +112,16 @@ function getCreators(general, primary) {
     primary.contributor.forEach(function (contributor) {
       if (contributor.hasOwnProperty('attributes')) {
         if (contributor.attributes['xsi:type'] === 'dkdcplus:act') {
-          actors.push({value: contributor.$value, search_link: '/search?phrase.creator=' + encodeURIComponent(contributor.$value)});
+          actors.push({
+            value: contributor.$value,
+            search_link: '/search?phrase.creator=' + encodeURIComponent(contributor.$value)
+          });
         }
         if (contributor.attributes['xsi:type'] === 'dkdcplus:prf') {
-          actors.push({value: contributor.$value, search_link: '/search?phrase.creator=' + encodeURIComponent(contributor.$value)});
+          actors.push({
+            value: contributor.$value,
+            search_link: '/search?phrase.creator=' + encodeURIComponent(contributor.$value)
+          });
         }
       }
     });
@@ -157,16 +169,28 @@ function getSubjects(general, primary) {
     primary.subject.forEach(function (subject) {
       if (subject.hasOwnProperty('attributes')) {
         if (subject.attributes['xsi:type'] === 'dkdcplus:DBCS') {
-          subjects.push({value: subject.$value, search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)});
+          subjects.push({
+            value: subject.$value,
+            search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)
+          });
         }
         if (subject.attributes['xsi:type'] === 'dkdcplus:DBCF') {
-          subjects.push({value: subject.$value, search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)});
+          subjects.push({
+            value: subject.$value,
+            search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)
+          });
         }
         if (subject.attributes['xsi:type'] === 'dkdcplus:DBCM') {
-          subjects.push({value: subject.$value, search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)});
+          subjects.push({
+            value: subject.$value,
+            search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)
+          });
         }
         if (subject.attributes['xsi:type'] === 'dkdcplus:DBCO') {
-          subjects.push({value: subject.$value, search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)});
+          subjects.push({
+            value: subject.$value,
+            search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)
+          });
         }
       }
     });
@@ -177,7 +201,10 @@ function getSubjects(general, primary) {
       primary.spatial = [spatial];
     }
     primary.spatial.forEach(function (subject) {
-      subjects.push({value: subject.$value, search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)});
+      subjects.push({
+        value: subject.$value,
+        search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)
+      });
     });
   }
   if (primary.hasOwnProperty('temporal')) {
@@ -186,7 +213,10 @@ function getSubjects(general, primary) {
       primary.temporal = [temporal];
     }
     primary.temporal.forEach(function (subject) {
-      subjects.push({value: subject.$value, search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)});
+      subjects.push({
+        value: subject.$value,
+        search_link: '/search?phrase.subject=' + encodeURIComponent(subject.$value)
+      });
     });
   }
   if (subjects.length > 0) {

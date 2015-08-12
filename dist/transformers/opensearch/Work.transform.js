@@ -24,7 +24,6 @@ var prep = _interopRequireWildcard(_responsePreparationJs);
  * @param {String} attValue the wanted value of the attribute
  * @return {Array}
  */
-
 function getRecordData(record, element, attribute, attValue) {
   var dataElement = [];
 
@@ -48,7 +47,6 @@ function getRecordData(record, element, attribute, attValue) {
  * @param {String} element the name of the element being processed
  * @return {Array}
  */
-
 function getRecordDataNoAttribute(record, element) {
   var dataElement = [];
   if (record.hasOwnProperty(element)) {
@@ -67,7 +65,6 @@ function getRecordDataNoAttribute(record, element) {
  * @param {Object} primary the primary data from the work being transform
  * @return Null
  */
-
 function getSeries(general, primary) {
   var series = getRecordData(primary, 'title', 'xsi:type', 'dkdcplus:series');
   var link = '';
@@ -94,7 +91,6 @@ function getSeries(general, primary) {
  * @param {Object} primary the primary data from the work being transform
  * @return Null
  */
-
 function getCreators(general, primary) {
 
   if (primary.hasOwnProperty('creator')) {
@@ -138,7 +134,6 @@ function getCreators(general, primary) {
  * @param {Object} primary the primary data from the work being transform
  * @return Null
  */
-
 function getDescription(general, primary) {
 
   var description = getRecordDataNoAttribute(primary, 'abstract');
@@ -159,7 +154,6 @@ function getDescription(general, primary) {
  * @param {Object} primary the primary data from the work being transform
  * @return Null
  */
-
 function getSubjects(general, primary) {
 
   var subjects = [];
@@ -211,7 +205,6 @@ function getSubjects(general, primary) {
  * @param {Object} primary the primary data from the work being transform
  * @return Null
  */
-
 function getDk5(general, primary) {
 
   var dk5s = [];
@@ -225,13 +218,42 @@ function getDk5(general, primary) {
 }
 
 /**
+ * Extracts audience data about the work
+ *
+ * @param {Object} general the general information of the work
+ * @param {Object} primary the primary data from the work being transform
+ * @return Null
+ */
+function getAudience(general, primary) {
+
+  var audience = {};
+
+  var age = getRecordData(primary, 'audience', 'xsi:type', 'dkdcplus:age');
+  audience.age = age;
+  if (age.length === 0) {
+    var ages = getRecordData(primary, 'subject', 'xsi:type', 'dkdcplus:DBCN');
+    if (ages.length === 1) {
+      audience.age = ages[0];
+    } else if (ages.length > 1) {
+      audience.age = ages[0].replace(/ år/, '-') + ages[ages.length - 1].replace(/for /, '');
+    }
+  }
+
+  var pegi = getRecordData(primary, 'audience', 'xsi:type', 'dkdcplus:pegi');
+  audience.pegi = pegi;
+  var medieraad = getRecordData(primary, 'audience', 'xsi:type', 'dkdcplus:medieraad');
+  audience.medieraad = medieraad;
+
+  general.audience = audience;
+}
+
+/**
  * Extracts track data about the work
  *
  * @param {Object} general the general information of the work
  * @param {Object} primary the primary data from the work being transform
  * @return Null
  */
-
 function getTracks(general, primary) {
 
   var tracks = getRecordData(primary, 'hasPart', 'xsi:type', 'dkdcplus:track');
@@ -247,7 +269,6 @@ function getTracks(general, primary) {
  * @param {Object} primary the primary data from the work being transform
  * @return Null
  */
-
 function getLanguages(general, primary) {
 
   if (primary.hasOwnProperty('language')) {
@@ -270,7 +291,6 @@ function getLanguages(general, primary) {
  * @param {Object} primary the primary data from the work being transform
  * @return Null
  */
-
 function getPartOf(general, primary) {
 
   if (primary.hasOwnProperty('isPartOf')) {
@@ -299,7 +319,6 @@ function getPartOf(general, primary) {
  * @param {Object} work the work being transformed.
  * @return {Object}
  */
-
 function getWorkData(work) {
   var general = {};
   var primary = work.collection.object[0].record;
@@ -311,6 +330,7 @@ function getWorkData(work) {
   getDescription(general, primary);
   getSubjects(general, primary);
   getDk5(general, primary);
+  getAudience(general, primary);
   getTracks(general, primary);
   getLanguages(general, primary);
   getPartOf(general, primary);
@@ -324,7 +344,6 @@ function getWorkData(work) {
  * @param {Object} work the work being transformed.
  * @return {Object}
  */
-
 function getManifestationData(work) {
   var specific = [];
   var types = [];
@@ -365,7 +384,6 @@ function getManifestationData(work) {
  * @param {Object} record the record data
  * @return Null
  */
-
 function getTypes(pubDetails, record) {
 
   if (record.hasOwnProperty('type')) {
@@ -386,7 +404,6 @@ function getTypes(pubDetails, record) {
  * @param {Object} record the record data
  * @return Null
  */
-
 function getDates(pubDetails, record) {
 
   if (record.hasOwnProperty('date')) {
@@ -407,7 +424,6 @@ function getDates(pubDetails, record) {
  * @param {Object} record the record data
  * @return Null
  */
-
 function getPublishers(pubDetails, record) {
 
   if (record.hasOwnProperty('publisher')) {
@@ -428,7 +444,6 @@ function getPublishers(pubDetails, record) {
  * @param {Object} record the record data
  * @return Null
  */
-
 function getEditions(pubDetails, record) {
 
   if (record.hasOwnProperty('version')) {
@@ -449,7 +464,6 @@ function getEditions(pubDetails, record) {
  * @param {Object} record the record data
  * @return Null
  */
-
 function getPartOfData(pubDetails, record) {
 
   if (record.hasOwnProperty('isPartOf')) {
@@ -488,7 +502,6 @@ function getPartOfData(pubDetails, record) {
  * @param {Object} record the record data
  * @return Null
  */
-
 function getIdentifiers(pubDetails, record) {
 
   if (record.hasOwnProperty('identifier')) {
@@ -517,7 +530,6 @@ function getIdentifiers(pubDetails, record) {
  * @param {Object} work the work being transformed.
  * @return {Array}
  */
-
 function getPublicationData(work) {
 
   var editions = [];
@@ -545,7 +557,6 @@ function getPublicationData(work) {
  *
  * @return {Object}
  */
-
 var WorkTransform = {
 
   event: function event() {

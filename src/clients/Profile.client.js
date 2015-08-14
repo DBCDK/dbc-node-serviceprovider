@@ -5,7 +5,8 @@ import * as Profile from 'dbc-node-profile-client';
 const ProfileClient = {
   name: 'profile',
   init(config) {
-    return Profile.init(config);
+    Profile.init(config);
+    return Profile.METHODS;
   }
 };
 

@@ -13,7 +13,8 @@ var Profile = _interopRequireWildcard(_dbcNodeProfileClient);
 var ProfileClient = {
   name: 'profile',
   init: function init(config) {
-    return Profile.init(config);
+    Profile.init(config);
+    return Profile.METHODS;
   }
 };
 

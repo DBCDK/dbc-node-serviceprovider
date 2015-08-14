@@ -1,13 +1,13 @@
 'use strict';
 
-const CreateUserTransform = {
+const VerifyEmailTransform = {
 
   event() {
-    return 'createUser';
+    return 'verifyEmail';
   },
 
   requestTransform(event, query) { // eslint-disable-line no-unused-vars
-    let promise = this.callServiceClient('profile', 'createUser', query);
+    let promise = this.callServiceClient('profile', 'verifyEmail', query);
     return promise;
   },
 
@@ -16,5 +16,4 @@ const CreateUserTransform = {
   }
 };
 
-
-export default CreateUserTransform;
+export default VerifyEmailTransform;

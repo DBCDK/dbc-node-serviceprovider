@@ -26,7 +26,7 @@ const ResultListTransform = {
     let sort = request.sort;
 
     if (request.sort === 'default') {
-      sort = 'popularity_descending';
+      sort = 'rank_frequency';
     }
 
     return this.getSearchResultList({

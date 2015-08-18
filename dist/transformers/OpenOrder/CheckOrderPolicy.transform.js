@@ -28,10 +28,9 @@ var CheckOrderPolicyTransform = {
   },
 
   responseTransform: function responseTransform(response) {
-
     var data = {};
     data.result = [];
-    data.info = {};
+    data.info = { pids: response.pids };
     data.error = [];
 
     var result = prep.checkResponse(response);

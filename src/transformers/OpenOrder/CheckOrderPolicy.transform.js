@@ -20,10 +20,9 @@ const CheckOrderPolicyTransform = {
   },
 
   responseTransform(response) {
-
     let data = {};
     data.result = [];
-    data.info = {};
+    data.info = {pids: response.pids};
     data.error = [];
 
     let result = prep.checkResponse(response);

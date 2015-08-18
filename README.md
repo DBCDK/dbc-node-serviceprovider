@@ -46,11 +46,11 @@ Method for registering transform classes. Transforms need events, requestTransfo
   provider.registerTransform({
     event() {
       return 'transformEvent';
-    }
+    },
     requestTranform(request) {
       // make a call to one or more services, using the callServiceClient method
       return this.callServiceClient('moreinfo::method', request);
-    }
+    },
     requestResponse(response) {
       // do something with the reponse
       return response;

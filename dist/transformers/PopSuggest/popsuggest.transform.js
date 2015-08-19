@@ -14,20 +14,21 @@ var PopSuggestTransform = {
 
   getPopSuggestionsRequest: function getPopSuggestionsRequest(query) {
     var requests = [];
-    requests.push(this.callServiceClient('popsuggest', 'getSuggestions', {
+
+    requests.push(this.callServiceClient('popsuggest', 'getPopSuggestions', {
       index: 'display.title',
       query: query,
       fields: ['fedoraPid', 'display.title']
     }));
-    requests.push(this.callServiceClient('popsuggest', 'getSuggestions', {
-      index: 'display.creator',
-      query: query,
-      fields: ['display.creator']
+
+    requests.push(this.callServiceClient('popsuggest', 'getEntitySuggestions', {
+      index: 'creator',
+      query: query
     }));
-    requests.push(this.callServiceClient('popsuggest', 'getSuggestions', {
-      index: 'term.subject',
-      query: query,
-      fields: ['term.subject']
+
+    requests.push(this.callServiceClient('popsuggest', 'getEntitySuggestions', {
+      index: 'subject',
+      query: query
     }));
 
     return requests;
@@ -48,18 +49,25 @@ var PopSuggestTransform = {
         statusCode: response.error.statusCode,
         statusMessage: response.error.statusMessage
       };
+    } else if (!(0, _lodash.isEmpty)(response.params.path.method) && response.params.path.method === 'entity-suggest') {
+      if ((0, _lodash.isEmpty)(response.response.suggestions)) {
+        data.isEmpty = true;
+        data.index = this.getEntitySuggestIndex(response.params.path.index);
+      } else {
+        data = this.parseEntitySuggestData(response);
+      }
     } else if ((0, _lodash.isEmpty)(response.response.docs)) {
       data.isEmpty = true;
-      data.index = this._getIndex(response);
+      data.index = this.getIndex(response);
     } else {
-      data = this._parseData(response, query);
+      data = this.parseData(response, query);
       data.query = query;
     }
 
     return data;
   },
 
-  _getIndex: function _getIndex(response) {
+  getIndex: function getIndex(response) {
     var index = '';
     if ((0, _lodash.isArray)(response.responseHeader.qf)) {
       index = response.responseHeader.qf.join();
@@ -70,8 +78,40 @@ var PopSuggestTransform = {
     return index.replace(',rec.collectionIdentifier', '');
   },
 
-  _parseData: function _parseData(response, query) {
-    var index = this._getIndex(response);
+  /**
+   * Parse data coming from the entity-suggest service
+   */
+  parseEntitySuggestData: function parseEntitySuggestData(response) {
+    var query = response.params.path.query;
+    var index = this.getEntitySuggestIndex(response.params.path.index);
+    var docs = [];
+
+    var numItems = response.response.suggestions.length <= 5 ? response.response.suggestions.length : 5;
+
+    for (var i = 0; i < numItems; i++) {
+      if (response.response.suggestions[i]) {
+        docs.push({ text: response.response.suggestions[i].suggestion });
+      }
+    }
+
+    return { index: index, docs: docs, query: query };
+  },
+
+  getEntitySuggestIndex: function getEntitySuggestIndex(indx) {
+    var index = '';
+    if (indx === 'creator') {
+      index = 'display.creator';
+    } else if (indx === 'subject') {
+      index = 'term.subject';
+    }
+    return index;
+  },
+
+  /**
+   * Parse data coming from the suggest service
+   */
+  parseData: function parseData(response, query) {
+    var index = this.getIndex(response);
     var data = {
       index: index,
       docs: []
@@ -86,17 +126,13 @@ var PopSuggestTransform = {
   },
 
   parseDocs: function parseDocs(docs, index, query) {
-    var _this = this;
-
     var parsedDocs = [];
     var counter = 0;
+
     docs.forEach(function (value) {
       var shouldStopFilter = false;
       if (value[index] && counter < 5) {
         var text = value[index].filter(function (string) {
-          if (!_this.shouldFilter(index)) {
-            return true;
-          }
           if (!shouldStopFilter && string.toLowerCase().startsWith(query.toLowerCase(), 0)) {
             shouldStopFilter = true;
             return true;
@@ -112,10 +148,6 @@ var PopSuggestTransform = {
     });
 
     return parsedDocs;
-  },
-
-  shouldFilter: function shouldFilter(index) {
-    return index === 'display.creator' || index === 'term.subject';
   }
 };
 

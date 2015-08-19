@@ -5,14 +5,14 @@
   "main": "index.js",
   "homepage": "https://github.com/DBCDK/dbc-node-serviceprovider/tree/master#readme",
   "scripts": {
-    "test:watch": "mocha --compilers js:babel/register src/__tests__ -w",
-    "test": "mocha --compilers js:babel/register src/__tests__ -R mocha-jenkins-reporter",
     "build": "npm run cleardest && babel ./src -d dist --ignore __tests__",
     "cleardest": "rm -rf ./dist",
     "lint": "eslint ./src",
     "lint:checkstyle": "eslint ./src  -o report.xml -f checkstyle",
-    "watch": "npm run cleardest && babel ./src --watch -d dist --ignore __tests__",
-    "reinstall": "rm -r node_modules && npm install"
+    "reinstall": "rm -r node_modules && npm install",
+    "test:watch": "mocha --compilers js:babel/register src/**/__tests__/*.test.js -w",
+    "test": "mocha --compilers js:babel/register src/**/__tests__/*.test.js -R mocha-jenkins-reporter",
+    "watch": "npm run cleardest && babel ./src --watch -d dist --ignore __tests__"
   },
   "repository": {
     "type": "git",

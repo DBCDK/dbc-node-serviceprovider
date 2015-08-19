@@ -12,7 +12,7 @@ const CreateUserTransform = {
   },
 
   responseTransform(response, query) { // eslint-disable-line no-unused-vars
-    return response;
+    return JSON.parse(response.body);
   }
 };
 

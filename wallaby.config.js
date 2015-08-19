@@ -4,20 +4,19 @@ let babel = require('babel');
 module.exports = function() {
   return {
     files: [
-      {pattern: 'src/*.js'},
-      {pattern: 'src/lib/*.js'},
-      {pattern: 'src/transformers/**/*.js'},
-      {pattern: 'src/clients/**/*.js'},
-      {pattern: 'src/__tests__/**/*.mock.js'}
+      'src/**/*.js',
+      '!src/**/__tests__/*.test.js'
     ],
 
     tests: [
-      {pattern: 'src/**/*.test.js'},
+      'src/**/__tests__/*.test.js'
     ],
+
+    debug: true,
 
     preprocessors: {
       '**/*.js': [
-          file => babel.transform(file.content, {sourceMaps: true})
+        file => babel.transform(file.content, {sourceMaps: true})
       ]
     },
 

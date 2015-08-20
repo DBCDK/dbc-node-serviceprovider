@@ -7,8 +7,8 @@ import PopSuggestTransform from '../popsuggest.transform.js';
 describe('Test PopSuggest transform', () => {
 
   it('respond correctly on errors', () => {
-    const obj = {error: {statusCode: '200', statusMessage: 'statusMessage'}};
-    const expected = '{"error":true,"statusCode":"200","statusMessage":"statusMessage"}';
+    const obj = {error: {statusCode: '500', statusMessage: 'statusMessage'}};
+    const expected = '{"error":true,"statusCode":"500","statusMessage":"statusMessage"}';
 
     const response = JSON.stringify(PopSuggestTransform.responseTransform(obj, 'query'));
     assert.equal(response, expected, 'got object as expected');

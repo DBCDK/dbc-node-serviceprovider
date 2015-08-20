@@ -22,14 +22,14 @@ var CheckOrderPolicyTransform = {
 
   requestTransform: function requestTransform(event, request) {
     return this.checkOrderPolicy({
-      pickupAgencyId: request.pickupAgencyId,
-      pid: request.pid
+      agencyId: request.agencyId,
+      pids: request.pids
     });
   },
 
   responseTransform: function responseTransform(response) {
     var data = {};
-    data.result = [];
+    data.result = {};
     data.info = { pids: response.pids };
     data.error = [];
 

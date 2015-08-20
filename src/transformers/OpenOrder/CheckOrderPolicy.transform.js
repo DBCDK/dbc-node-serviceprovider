@@ -14,14 +14,14 @@ const CheckOrderPolicyTransform = {
 
   requestTransform(event, request) {
     return this.checkOrderPolicy({
-      pickupAgencyId: request.pickupAgencyId,
-      pid: request.pid
+      agencyId: request.agencyId,
+      pids: request.pids
     });
   },
 
   responseTransform(response) {
     let data = {};
-    data.result = [];
+    data.result = {};
     data.info = {pids: response.pids};
     data.error = [];
 

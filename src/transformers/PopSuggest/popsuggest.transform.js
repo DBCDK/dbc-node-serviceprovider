@@ -129,11 +129,10 @@ const PopSuggestTransform = {
 
   parseDocs(docs, index, query) {
     let parsedDocs = [];
-    let counter = 0;
 
-    docs.forEach((value) => {
+    docs.forEach((value, key) => {
       let shouldStopFilter = false;
-      if (value[index] && counter < 5) {
+      if (value[index] && key < 5) {
         const text = value[index].filter((string) => {
           if (!shouldStopFilter && string.toLowerCase().startsWith(query.toLowerCase(), 0)) {
             shouldStopFilter = true;
@@ -145,7 +144,6 @@ const PopSuggestTransform = {
           text: isArray(text) ? text.pop() : text,
           pid: value.fedoraPid || null
         });
-        counter++;
       }
     });
 

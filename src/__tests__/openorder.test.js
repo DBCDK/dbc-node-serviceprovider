@@ -26,7 +26,7 @@ describe('Test transform of OpenOrder response', () => {
 
 		let response = {"checkOrderPolicyResponse":{"$":{"xmlns":"http://oss.dbc.dk/ns/openorder"},"checkOrderPolicyError":["service_unavailable"]}, pids: [ '870970-basis:28183488' ]};
 
-		assert.equal(JSON.stringify(transform.responseTransform(response)), JSON.stringify({"result":[],"info":{"pids":["870970-basis:28183488"]},"error":[["service_unavailable"]]}), 'Error');
+		assert.equal(JSON.stringify(transform.responseTransform(response)), JSON.stringify({"result":{},"info":{"pids":["870970-basis:28183488"]},"error":[["service_unavailable"]]}), 'Error');
 
 	});
 

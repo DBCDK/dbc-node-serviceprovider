@@ -2,6 +2,13 @@
 
 import * as prep from './response-preparation.js';
 
+const translations = {
+  music: 'Musik',
+  movie: 'Film',
+  literature: 'Bog',
+  game: 'Spil'
+};
+
 const ResultListTransform = {
 
   event() {
@@ -33,7 +40,11 @@ const ResultListTransform = {
       query: request.query,
       start: request.offset,
       stepValue: request.worksPerPage,
-      sort: sort
+      sort: sort,
+      facets: {
+        facetName: 'term.workType',
+        numberOfTerms: 15
+      }
     });
 
   },
@@ -68,6 +79,22 @@ const ResultListTransform = {
     data.info.hits = result.hits;
     data.info.collections = result.collections;
     data.info.more = result.more;
+
+
+    let facet = response.result.facetResult.facet || {};
+    if (facet.hasOwnProperty('facetTerm')) {
+      data.info.facets = [];
+      facet.facetTerm.forEach((value) => {
+        if (translations[value.term]) {
+          data.info.facets.push({
+            type: facet.facetName,
+            value: value.term,
+            displayValue: translations[value.term],
+            cssClass: 'worktype'
+          });
+        }
+      });
+    }
 
     if (result.collections === '1') {
       let searchResult = response.result.searchResult;

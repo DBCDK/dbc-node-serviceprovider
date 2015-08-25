@@ -10,6 +10,13 @@ var _responsePreparationJs = require('./response-preparation.js');
 
 var prep = _interopRequireWildcard(_responsePreparationJs);
 
+var translations = {
+  music: 'Musik',
+  movie: 'Film',
+  literature: 'Bog',
+  game: 'Spil'
+};
+
 var ResultListTransform = {
 
   event: function event() {
@@ -41,7 +48,11 @@ var ResultListTransform = {
       query: request.query,
       start: request.offset,
       stepValue: request.worksPerPage,
-      sort: sort
+      sort: sort,
+      facets: {
+        facetName: 'term.workType',
+        numberOfTerms: 15
+      }
     });
   },
 
@@ -74,6 +85,21 @@ var ResultListTransform = {
     data.info.hits = result.hits;
     data.info.collections = result.collections;
     data.info.more = result.more;
+
+    var facet = response.result.facetResult.facet || {};
+    if (facet.hasOwnProperty('facetTerm')) {
+      data.info.facets = [];
+      facet.facetTerm.forEach(function (value) {
+        if (translations[value.term]) {
+          data.info.facets.push({
+            type: facet.facetName,
+            value: value.term,
+            displayValue: translations[value.term],
+            cssClass: 'worktype'
+          });
+        }
+      });
+    }
 
     if (result.collections === '1') {
       var searchResult = response.result.searchResult;

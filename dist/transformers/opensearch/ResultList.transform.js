@@ -14,7 +14,14 @@ var translations = {
   music: 'Musik',
   movie: 'Film',
   literature: 'Bog',
-  game: 'Spil'
+  game: 'Spil',
+  periodica: 'Tidsskrift',
+  track: 'Spor',
+  article: 'Artikel',
+  sheetmusic: 'Noder',
+  map: 'Kort',
+  review: 'Anmeldelse',
+  bookdescription: 'Bog Beskrivelse'
 };
 
 var ResultListTransform = {

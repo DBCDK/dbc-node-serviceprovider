@@ -2,20 +2,6 @@
 
 import * as prep from './response-preparation.js';
 
-const translations = {
-  music: 'Musik',
-  movie: 'Film',
-  literature: 'Bog',
-  game: 'Spil',
-  periodica: 'Tidsskrift',
-  track: 'Spor',
-  article: 'Artikel',
-  sheetmusic: 'Noder',
-  map: 'Kort',
-  review: 'Anmeldelse',
-  bookdescription: 'Bog Beskrivelse'
-};
-
 const ResultListTransform = {
 
   event() {
@@ -92,14 +78,12 @@ const ResultListTransform = {
     if (facet.hasOwnProperty('facetTerm')) {
       data.info.facets = [];
       facet.facetTerm.forEach((value) => {
-        if (translations[value.term]) {
-          data.info.facets.push({
-            type: facet.facetName,
-            value: value.term,
-            displayValue: translations[value.term],
-            cssClass: 'worktype'
-          });
-        }
+        data.info.facets.push({
+          type: facet.facetName,
+          value: value.term,
+          displayValue: value.term,
+          cssClass: 'worktype'
+        });
       });
     }
 

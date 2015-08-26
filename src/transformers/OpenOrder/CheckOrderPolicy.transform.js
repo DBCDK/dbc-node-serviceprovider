@@ -25,7 +25,7 @@ const CheckOrderPolicyTransform = {
     data.info = {pids: response.pids};
     data.error = [];
 
-    let result = prep.checkResponse(response);
+    let result = prep.checkPolicyResponse(response);
 
     if (result.hasOwnProperty('error')) {
       data.error.push(result.error);

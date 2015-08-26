@@ -3,17 +3,32 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
-exports.checkResponse = checkResponse;
-function hasValidResponse(response) {
+exports.checkPolicyResponse = checkPolicyResponse;
+exports.checkOrderResponse = checkOrderResponse;
+function hasValidPolicyResponse(response) {
   return response.checkOrderPolicyResponse.hasOwnProperty('orderPossible');
 }
 
-function checkResponse(response) {
+function checkPolicyResponse(response) {
 
-  if (hasValidResponse(response) === true) {
+  if (hasValidPolicyResponse(response) === true) {
     return response;
   }
 
   response.error = response.checkOrderPolicyResponse.checkOrderPolicyError;
+  return response;
+}
+
+function hasValidOrderResponse(response) {
+  return response.hasOwnProperty('placeOrderResponse');
+}
+
+function checkOrderResponse(response) {
+
+  if (hasValidOrderResponse(response) === true) {
+    return response;
+  }
+
+  response.error = 'Fejl ved bestilling';
   return response;
 }

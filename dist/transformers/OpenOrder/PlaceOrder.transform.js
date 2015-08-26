@@ -10,20 +10,27 @@ var _responsePreparationJs = require('./response-preparation.js');
 
 var prep = _interopRequireWildcard(_responsePreparationJs);
 
-var CheckOrderPolicyTransform = {
+var PlaceOrderTransform = {
 
   event: function event() {
-    return 'getOrderPolicy';
+    return 'getPlaceOrder';
   },
 
-  checkOrderPolicy: function checkOrderPolicy(request) {
-    return this.callServiceClient('openorder', 'checkOrderPolicy', request);
+  getNeedBeforeDate: function getNeedBeforeDate(days) {
+    var future = new Date();
+    return future.setDate(future.getDate() + days).toISOString();
+  },
+
+  placeOrder: function placeOrder(request) {
+    return this.callServiceClient('openorder', 'placeOrder', request);
   },
 
   requestTransform: function requestTransform(event, request) {
-    return this.checkOrderPolicy({
+    return this.placeOrder({
       agencyId: request.agencyId,
-      pids: request.pids
+      pids: request.pids,
+      userId: request.userId,
+      needBeforeDate: this.getNeedBeforeDate(90)
     });
   },
 
@@ -33,15 +40,21 @@ var CheckOrderPolicyTransform = {
     data.info = { pids: response.pids };
     data.error = [];
 
-    var result = prep.checkPolicyResponse(response);
+    var result = prep.checkOrderResponse(response);
 
     if (result.hasOwnProperty('error')) {
       data.error.push(result.error);
       return data;
     }
 
+    var orderPlaced = false;
+
+    if (result.placeOrderResponse.hasOwnProperty('orderPlaced')) {
+      orderPlaced = true;
+    }
+
     data.result = {
-      canOrder: result.checkOrderPolicyResponse.orderPossible[0]
+      orderPlaced: orderPlaced
     };
 
     return data;
@@ -49,5 +62,5 @@ var CheckOrderPolicyTransform = {
 
 };
 
-exports['default'] = CheckOrderPolicyTransform;
+exports['default'] = PlaceOrderTransform;
 module.exports = exports['default'];

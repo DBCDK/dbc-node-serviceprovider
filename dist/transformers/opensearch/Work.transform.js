@@ -365,12 +365,23 @@ function getManifestationData(work) {
     var accessType = work.formattedCollection.briefDisplay.manifestation[i].accessType;
     var type = manifestation.record.type[0].$value;
     var title = manifestation.record.title[0].$value;
+    var creator = '';
+    if (manifestation.record.hasOwnProperty('creator')) {
+      manifestation.record.creator.forEach(function (cre) {
+        if (!cre.hasOwnProperty('attributes')) {
+          creator = cre.$value;
+        } else if (cre.attributes['xsi:type'] !== 'oss:sort') {
+          creator = cre.$value;
+        }
+      });
+    }
     if (types.indexOf(type) === -1) {
       var minorwork = {};
       types.push(type);
       minorwork.type = type;
       minorwork.accessType = accessType;
       minorwork.title = title;
+      minorwork.creator = creator;
       var identifiers = [];
       identifiers.push(manifestation.identifier);
       minorwork.identifiers = identifiers;
@@ -391,7 +402,7 @@ function getManifestationData(work) {
 
   specific.forEach(function (s) {
     if (s.accessType === 'physical') {
-      var order_link = '/order?ids=' + s.identifiers + '&title=' + encodeURIComponent(s.title) + '&type=' + encodeURIComponent(s.type);
+      var order_link = '/order?ids=' + s.identifiers + '&creator=' + encodeURIComponent(s.creator) + '&title=' + encodeURIComponent(s.title) + '&type=' + encodeURIComponent(s.type);
       s.order = order_link;
     }
   });

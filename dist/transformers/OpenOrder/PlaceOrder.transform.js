@@ -13,12 +13,12 @@ var prep = _interopRequireWildcard(_responsePreparationJs);
 var PlaceOrderTransform = {
 
   event: function event() {
-    return 'getPlaceOrder';
+    return 'placeOrder';
   },
 
   getNeedBeforeDate: function getNeedBeforeDate(days) {
     var future = new Date();
-    return future.setDate(future.getDate() + days).toISOString();
+    return new Date(future.setDate(future.getDate() + days)).toISOString();
   },
 
   placeOrder: function placeOrder(request) {
@@ -28,7 +28,7 @@ var PlaceOrderTransform = {
   requestTransform: function requestTransform(event, request) {
     return this.placeOrder({
       agencyId: request.agencyId,
-      pids: request.pids,
+      pids: request.pids.split(','),
       userId: request.userId,
       needBeforeDate: this.getNeedBeforeDate(90)
     });

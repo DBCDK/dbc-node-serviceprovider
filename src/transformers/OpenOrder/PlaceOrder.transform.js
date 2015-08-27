@@ -5,12 +5,12 @@ import * as prep from './response-preparation.js';
 const PlaceOrderTransform = {
 
   event() {
-    return 'getPlaceOrder';
+    return 'placeOrder';
   },
 
   getNeedBeforeDate(days) {
     let future = new Date();
-    return future.setDate(future.getDate() + days).toISOString();
+    return new Date(future.setDate(future.getDate() + days)).toISOString();
   },
 
   placeOrder(request) {
@@ -20,7 +20,7 @@ const PlaceOrderTransform = {
   requestTransform(event, request) {
     return this.placeOrder({
       agencyId: request.agencyId,
-      pids: request.pids,
+      pids: request.pids.split(','),
       userId: request.userId,
       needBeforeDate: this.getNeedBeforeDate(90)
     });

@@ -22,13 +22,13 @@ var _EventsJs2 = _interopRequireDefault(_EventsJs);
  * Handles the request and response transform callback and returns a promise, which resolves to the final
  * response.
  *
- * @param {Object} transform The transform object
  * @param {String} event
  * @param {Object || Array} query The query object/array
+ * @param {Object} connection
  */
-function handleTriggerEvents(event, query) {
+function handleTriggerEvents(event, query, connection) {
   var transform = _EventsJs2['default'].getEvent('transform', event);
-  var request = transform.requestTransform(event, query);
+  var request = transform.requestTransform(event, query, connection);
   // make sure requests are an array
   var requestArray = (0, _lodash.isArray)(request) && request || [request];
 
@@ -36,7 +36,7 @@ function handleTriggerEvents(event, query) {
   // When each promise is resolved the transform response method is called.
   var result = requestArray.map(function (promise) {
     return promise.then(function (response) {
-      return transform.responseTransform(response, query);
+      return transform.responseTransform(response, query, connection);
     });
   });
 

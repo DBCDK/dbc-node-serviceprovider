@@ -3,15 +3,15 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
-var LogoutUserTransform = {
+var LogoutProfileTransform = {
 
   event: function event() {
-    return 'logoutUser';
+    return 'logoutProfile';
   },
 
   requestTransform: function requestTransform(event, query) {
     // eslint-disable-line no-unused-vars
-    var promise = this.callServiceClient('profile', 'logoutUser', query);
+    var promise = this.callServiceClient('profile', 'logoutProfile', query);
     return promise;
   },
 
@@ -21,5 +21,5 @@ var LogoutUserTransform = {
   }
 };
 
-exports['default'] = LogoutUserTransform;
+exports['default'] = LogoutProfileTransform;
 module.exports = exports['default'];

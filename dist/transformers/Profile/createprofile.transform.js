@@ -3,15 +3,15 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
-var CreateUserTransform = {
+var CreateProfileTransform = {
 
   event: function event() {
-    return 'createUser';
+    return 'createProfile';
   },
 
   requestTransform: function requestTransform(event, query) {
     // eslint-disable-line no-unused-vars
-    var promise = this.callServiceClient('profile', 'createUser', query);
+    var promise = this.callServiceClient('profile', 'createProfile', query);
     return promise;
   },
 
@@ -21,5 +21,5 @@ var CreateUserTransform = {
   }
 };
 
-exports['default'] = CreateUserTransform;
+exports['default'] = CreateProfileTransform;
 module.exports = exports['default'];

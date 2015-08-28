@@ -12,13 +12,13 @@ import Events from './Events.js';
  * Handles the request and response transform callback and returns a promise, which resolves to the final
  * response.
  *
- * @param {Object} transform The transform object
  * @param {String} event
  * @param {Object || Array} query The query object/array
+ * @param {Object} connection
  */
-function handleTriggerEvents(event, query) {
+function handleTriggerEvents(event, query, connection) {
   const transform = Events.getEvent('transform', event);
-  const request = transform.requestTransform(event, query);
+  const request = transform.requestTransform(event, query, connection);
   // make sure requests are an array
   const requestArray = isArray(request) && request || [request];
 
@@ -26,7 +26,7 @@ function handleTriggerEvents(event, query) {
   // When each promise is resolved the transform response method is called.
   let result = requestArray.map((promise) => {
     return promise.then((response) => {
-      return transform.responseTransform(response, query);
+      return transform.responseTransform(response, query, connection);
     });
   });
 

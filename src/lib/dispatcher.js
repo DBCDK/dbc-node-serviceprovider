@@ -30,7 +30,7 @@ function handleResponse(connection, responsePromise, event) {
 function onEventOnConnection(connection, provider, event) {
   connection.on(`${event}Request`, (request) => {
     provider
-      .trigger(event, request)
+      .trigger(event, request, connection)
       .forEach(responsePromise => handleResponse(connection, responsePromise, event));
   });
 }

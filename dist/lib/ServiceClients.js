@@ -62,8 +62,8 @@ function registerServiceClient(config, client) {
     throw new Error('No Config for ' + name + ' client in config.js');
   }
 
-  if (config.cache) {
-    methods = (0, _ClientCacheJs2['default'])(config.cache).wrap(methods);
+  if (config.services[name].cache) {
+    methods = (0, _ClientCacheJs2['default'])(config.services[name].cache).wrap(methods);
   }
   return registerMethods(methods, name);
 }

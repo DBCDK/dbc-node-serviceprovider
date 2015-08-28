@@ -24,10 +24,12 @@ function cachePromiseCallback(params) {
 
   if (err) {
     reject(err);
-  } else if (result) {
+  }
+  else if (result) {
     // Cached version exists
     resolve(JSON.parse(result));
-  } else {
+  }
+  else {
     // No cache exists
     resolve(cb().then((value) => {
       store.set(key, JSON.stringify(value), ttl && {ttl});
@@ -85,7 +87,6 @@ function wrap(methods, ttl) {
   });
   return methods;
 }
-
 
 /**
  * Constructor for a CacheManager.

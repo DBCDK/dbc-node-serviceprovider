@@ -40,19 +40,38 @@ var OpenAgencyTransform = {
       data = {
         agencyName: response.pickupAgency.agencyName,
         branchId: response.pickupAgency.branchId,
-        branchNameDan: (0, _lodash.isArray)(response.pickupAgency.branchName) ? response.pickupAgency.branchName[0].$value : response.pickupAgency.branchName.$value,
+        branchNameDan: this.determineBranchName(response.pickupAgency.branchName),
         branchPhone: response.pickupAgency.branchPhone,
         branchEmail: response.pickupAgency.branchEmail,
         postalAddress: response.pickupAgency.postalAddress,
         postalCode: response.pickupAgency.postalCode,
         city: response.pickupAgency.city,
-        openingHoursDan: (0, _lodash.isArray)(response.pickupAgency.openingHours) ? response.pickupAgency.openingHours[0].$value : response.pickupAgency.openingHours.$value,
+        openingHoursDan: this.determineOpeningHours(response.pickupAgency.openingHours),
         branchWebsiteUrl: response.pickupAgency.branchWebsiteUrl
       };
     }
     data.query = query;
 
     return data;
+  },
+
+  determineOpeningHours: function determineOpeningHours(openingHours) {
+    var hours = '';
+    if ((0, _lodash.isArray)(openingHours)) {
+      hours = openingHours[0].$value;
+    } else if (openingHours) {
+      hours = openingHours.$value;
+    }
+
+    return hours;
+  },
+
+  determineBranchName: function determineBranchName(branchName) {
+    if ((0, _lodash.isArray)(branchName)) {
+      return branchName[0].$value;
+    }
+
+    return branchName.$value;
   }
 };
 

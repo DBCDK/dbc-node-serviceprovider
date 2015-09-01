@@ -173,3 +173,55 @@ export const ballerupAgency = {
     stateAndUniversityLibraryCopyService: '1'
   }
 };
+
+export const hjoerringAgency = {
+  pickupAgency: {
+    agencyName: 'Hjørring Bibliotekerne',
+    agencyId: '786000',
+    agencyType: 'Folkebibliotek',
+    agencyEmail: 'bibliotekerne@hjoerring.dk',
+    agencyPhone: '72 33 48 00',
+    agencyCvrNumber: '29189382',
+    agencyPNumber: '1003379475',
+    agencyEanNumber: '5798003593654',
+    branchId: '786008',
+    branchType: 's',
+    branchName: {
+      attributes: {
+        'oa:language': 'dan'
+      },
+      '$value': 'Bjergby'
+    },
+    branchShortName: {
+      attributes: {
+        'oa:language': 'dan'
+      },
+      '$value': 'Bjergby - Skole'
+    },
+    branchPhone: {},
+    branchEmail: {},
+    branchIsAgency: '0',
+      postalAddress: 'Bjergby-Mygdal Skole Asdalvej 14 Bjergby',
+    postalCode: '9800',
+    city: 'Hjørring',
+    isil: 'DK-786008',
+    branchCatalogueUrl: 'https://hjoweb.axielldrift.dk/sites/XHJBIB/',
+    lookupUrl: 'https://hjoweb.axielldrift.dk/sites/XHJBIB/pub/search.html?doaction=showfull&data=format%3dfull%20keyno_list%3d',
+    branchWebsiteUrl: 'http://www.hjbib.dk',
+    paymentUrl: 'https://hjoweb.axielldrift.dk/sites/XHJBIB/pub/patronstatus.html',
+    userStatusUrl: 'https://hjoweb.axielldrift.dk/sites/XHJBIB/pub/patronstatus.html',
+    librarydkSupportEmail: 'bibfje@hjoerring.dk',
+    temporarilyClosed: '0',
+    pickupAllowed: '1',
+    ncipLookupUser: '1',
+    ncipRenewOrder: '1',
+    ncipCancelOrder: '1',
+    ncipUpdateOrder: '1',
+    ncipServerAddress: 'https://hjobib.axielldrift.dk:4001/',
+    dropOffBranch: '786000',
+    dropOffName: 'Hjørring Bibliotek',
+    lastUpdated: '2015-02-12',
+    isOclcRsLibrary: '0',
+    stateAndUniversityLibraryCopyService: '1'
+  }
+};

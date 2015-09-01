@@ -21,7 +21,12 @@ var GetProfileTransform = {
 
   responseTransform: function responseTransform(response, query, connection) {
     // eslint-disable-line no-unused-vars
-    return JSON.parse(response.body);
+    var loopbackProfile = JSON.parse(response.body);
+    var profile = {
+      name: loopbackProfile.email,
+      imageUrl: loopbackProfile.imageUrl
+    };
+    return profile;
   }
 };
 

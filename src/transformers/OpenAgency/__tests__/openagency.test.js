@@ -29,4 +29,12 @@ describe('Test OpenAgency transform', () => {
     const response = JSON.stringify(OpenAgencyTransform.responseTransform(obj));
     assert.equal(response, expected, 'got object as expected');
   });
+
+  it('should respond correctly on results from open-agency service without openingHours in response', () => {
+    const obj = mocks.hjoerringAgency;
+    const expected = '{"agencyName":"Hjørring Bibliotekerne","branchId":"786008","branchNameDan":"Bjergby","branchPhone":{},"branchEmail":{},"postalAddress":"Bjergby-Mygdal Skole Asdalvej 14 Bjergby","postalCode":"9800","city":"Hjørring","openingHoursDan":"","branchWebsiteUrl":"http://www.hjbib.dk"}'; // eslint-disable-line max-len
+
+    const response = JSON.stringify(OpenAgencyTransform.responseTransform(obj));
+    assert.equal(response, expected, 'got object as expected');
+  });
 });

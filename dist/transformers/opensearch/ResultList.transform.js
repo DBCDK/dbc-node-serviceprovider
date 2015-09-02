@@ -79,7 +79,21 @@ var ResultListTransform = {
     data.info.collections = result.collections;
     data.info.more = result.more;
 
-    var facet = response.result.facetResult.facet || {};
+    if (result.collections === '1') {
+      var searchResult = response.result.searchResult;
+      response.result.searchResult = [searchResult];
+    }
+
+    var facet = {};
+
+    var facets = response.result.facetResult.facet || {};
+
+    if (facets instanceof Array) {
+      facet = facets;
+    } else {
+      facet = [facets];
+    }
+
     if (facet.hasOwnProperty('facetTerm')) {
       data.info.facets = [];
       facet.facetTerm.forEach(function (value) {
@@ -90,11 +104,6 @@ var ResultListTransform = {
           cssClass: 'worktype'
         });
       });
-    }
-
-    if (result.collections === '1') {
-      var searchResult = response.result.searchResult;
-      response.result.searchResult = [searchResult];
     }
 
     response.result.searchResult.forEach(function (work) {

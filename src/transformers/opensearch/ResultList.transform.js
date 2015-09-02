@@ -73,8 +73,21 @@ const ResultListTransform = {
     data.info.collections = result.collections;
     data.info.more = result.more;
 
+    if (result.collections === '1') {
+      let searchResult = response.result.searchResult;
+      response.result.searchResult = [searchResult];
+    }
 
-    let facet = response.result.facetResult.facet || {};
+    let facet = {};
+
+    const facets = response.result.facetResult.facet || {};
+
+    if (facets instanceof Array) {
+      facet = facets;
+    } else {
+      facet = [facets];
+    }
+
     if (facet.hasOwnProperty('facetTerm')) {
       data.info.facets = [];
       facet.facetTerm.forEach((value) => {
@@ -85,11 +98,6 @@ const ResultListTransform = {
           cssClass: 'worktype'
         });
       });
-    }
-
-    if (result.collections === '1') {
-      let searchResult = response.result.searchResult;
-      response.result.searchResult = [searchResult];
     }
 
     response.result.searchResult.forEach((work) => {

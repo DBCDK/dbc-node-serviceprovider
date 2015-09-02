@@ -12,10 +12,15 @@ const CheckOrderPolicyTransform = {
     return this.callServiceClient('openorder', 'checkOrderPolicy', request);
   },
 
-  requestTransform(event, request) {
+  requestTransform(event, request, connection) {
+    let loggedIn = false;
+    if (connection.request.session.hasOwnProperty('passport')) {
+      loggedIn = true;
+    }
     return this.checkOrderPolicy({
       agencyId: request.agencyId,
-      pids: request.pids
+      pids: request.pids,
+      loggedIn: loggedIn
     });
   },
 

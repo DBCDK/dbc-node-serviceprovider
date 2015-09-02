@@ -2,7 +2,7 @@
 
 import {assert} from 'chai';
 import * as mocks from './searchopenagency.mock.js';
-import SearchOpenAgencyTransform from '../searchopenagency.transform.js';
+import SearchOpenAgencyTransform from '../searchOpenAgency.transform.js';
 
 describe('Test SearchOpenAgency transform', () => {
   it('respond correctly on errors', () => {

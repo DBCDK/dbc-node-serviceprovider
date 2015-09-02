@@ -4,7 +4,7 @@
  * @file
  * Mock object to be used within the openagency.test.js
  * The objects are stringified response parameter in the responseTransform
- * method in the openagency.transform.js
+ * method in the getopenagency.transform.js
  */
 
 /* eslint-disable */

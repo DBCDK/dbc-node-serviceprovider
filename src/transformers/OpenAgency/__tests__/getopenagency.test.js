@@ -1,11 +1,10 @@
 'use strict';
 
 import {assert} from 'chai';
-import * as mocks from './openagency.mock.js';
-import OpenAgencyTransform from '../openagency.transform.js';
+import * as mocks from './getopenagency.mock.js';
+import OpenAgencyTransform from '../getopenagency.transform.js';
 
 describe('Test OpenAgency transform', () => {
-
   it('respond correctly on errors', () => {
     const obj = {error: {statusCode: '500', statusMessage: 'statusMessage'}};
     const expected = '{"error":true,"statusCode":"500","statusMessage":"statusMessage","query":"query"}';

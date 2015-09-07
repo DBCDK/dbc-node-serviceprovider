@@ -17,9 +17,11 @@ const GetProfileTransform = {
 
   responseTransform(response, query, connection) { // eslint-disable-line no-unused-vars
     const loopbackProfile = JSON.parse(response.body);
+
     const profile = {
       name: loopbackProfile.email,
-      imageUrl: loopbackProfile.imageUrl
+      imageUrl: loopbackProfile.imageUrl,
+      favoriteLibraries: loopbackProfile.favoriteLibraries
     };
     return profile;
   }

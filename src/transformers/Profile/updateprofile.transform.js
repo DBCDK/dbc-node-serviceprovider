@@ -7,14 +7,21 @@ const UpdateProfileTransform = {
   },
 
   requestTransform(event, query, connection) { // eslint-disable-line no-unused-vars
-    const loopbackProfile = {
-      email: query.name,
-      imageUrl: query.imageUrl,
+    query.email = query.name;
+    delete query.name;
+
+    let loopbackProfile = {
       id: connection.request.session.passport.user.uid,
       accessToken: connection.request.session.passport.user.id
     };
-    let promise = this.callServiceClient('profile', 'updateProfile', loopbackProfile);
-    return promise;
+
+    for (var i in query) {
+      if (query.hasOwnProperty(i)) {
+        loopbackProfile[i] = query[i];
+      }
+    }
+
+    return this.callServiceClient('profile', 'updateProfile', loopbackProfile);
   },
 
   responseTransform(response, query) { // eslint-disable-line no-unused-vars

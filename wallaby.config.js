@@ -4,6 +4,7 @@ let babel = require('babel');
 module.exports = function() {
   return {
     files: [
+      {pattern: 'node_modules/sinon/pkg/sinon.js', instrument: false},
       'src/**/*.js',
       '!src/**/__tests__/*.test.js'
     ],

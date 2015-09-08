@@ -7,23 +7,30 @@ const UpdateProfileTransform = {
   },
 
   requestTransform(event, query, connection) { // eslint-disable-line no-unused-vars
-    // console.log(query);
+    const passport = connection.request.session.passport || {user: {id: '', uid: ''}};
+
     const params = {
-      accessToken: connection.request.session.passport.user.id,
-      uid: connection.request.session.passport.user.uid,
+      accessToken: passport.user.id,
+      uid: passport.user.uid,
       item_id: query.item_id,
       value: null
     };
+
+    const id = query.id || null;
 
     let request = null;
     switch (query.action) {
       case 'like':
         params.value = 1;
-        request = this.callServiceClient('profile', 'saveLike', params);
+        request = this.saveLike(params, id);
+        break;
+      case 'dislike':
+        params.value = -1;
+        request = this.saveLike(params, id);
         break;
       case 'remove':
-        params.id = query.id;
-        request = this.callServiceClient('profile', 'removeLike', params);
+        params.id = id;
+        request = this.makeCallToServiceClient('removeLike', params);
         break;
       default:
         break;
@@ -32,9 +39,25 @@ const UpdateProfileTransform = {
     return request;
   },
 
-  responseTransform(response, query) { // eslint-disable-line no-unused-vars
-    // console.log(response);
-    const isSuccesful = response.statusCode === 200;
+  saveLike(params, id) {
+    let request = null;
+    if (id) {
+      params.id = id;
+      request = this.makeCallToServiceClient('updateLike', params);
+    }
+    else {
+      request = this.makeCallToServiceClient('saveLike', params);
+    }
+
+    return request;
+  },
+
+  makeCallToServiceClient(method, params) {
+    return this.callServiceClient('profile', method, params);
+  },
+
+  responseTransform(response) {
+    const isSuccesful = response.statusCode === 204 || response.statusCode === 200;
     return JSON.parse(isSuccesful);
   }
 };

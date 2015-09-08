@@ -14,9 +14,10 @@ var UpdateProfileTransform = {
     query.email = query.name;
     delete query.name;
 
+    var passport = connection.request.session.passport || { user: { id: '', uid: '' } };
     var loopbackProfile = {
-      id: connection.request.session.passport.user.uid,
-      accessToken: connection.request.session.passport.user.id
+      accessToken: passport.user.id,
+      id: passport.user.uid
     };
 
     for (var i in query) {

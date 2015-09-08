@@ -10,9 +10,10 @@ const UpdateProfileTransform = {
     query.email = query.name;
     delete query.name;
 
+    const passport = connection.request.session.passport || {user: {id: '', uid: ''}};
     let loopbackProfile = {
-      id: connection.request.session.passport.user.uid,
-      accessToken: connection.request.session.passport.user.id
+      accessToken: passport.user.id,
+      id: passport.user.uid
     };
 
     for (var i in query) {

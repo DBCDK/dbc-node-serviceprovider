@@ -31,5 +31,4 @@ const GetProfileTransform = {
   }
 };
 
-
 export default GetProfileTransform;

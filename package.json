@@ -40,7 +40,7 @@
     "dbc-node-popsuggest": "git+https://github.com/DBCDK/dbc-node-popsuggest#stable_dist",
     "dbc-node-openagency-client": "git+https://github.com/DBCDK/dbc-node-openagency-client#stable_dist",
     "jsonpath-object-transform": "https://github.com/vibjerg/jsonpath-object-transform/archive/1.0.5.tar.gz",
-    "lodash": "^3.9.3",
+    "lodash": "^3.10.1",
     "walk": "^2.3.9"
   },
   "devDependencies": {
@@ -55,4 +55,4 @@
     "webpack": "^1.9.10"
   }
 }
-  
+

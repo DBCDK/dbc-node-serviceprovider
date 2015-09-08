@@ -1,22 +1,24 @@
 'use strict';
 
-import {isEmpty} from 'lodash';
+import {isEmpty, isArray} from 'lodash';
 import getDataFromPickupAgency from './openagency.js';
 
 const OpenAgencyTransform = {
 
   event() {
-    return 'getOpenAgency';
+    return 'getMultiOpenAgency';
   },
 
   getOpenAgencyRequest(id) {
+    let ids = isArray(id) ? id : [id];
+
     return this.callServiceClient('openagency', 'getOpenAgency', {
-      id: [id]
+      id: ids
     });
   },
 
   requestTransform(event, query) {
-    if (event === 'getOpenAgency') {
+    if (event === 'getMultiOpenAgency') {
       return this.getOpenAgencyRequest(query);
     }
   },

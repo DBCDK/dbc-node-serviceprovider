@@ -7,12 +7,13 @@ const GetProfileTransform = {
   },
 
   requestTransform(event, query, connection) { // eslint-disable-line no-unused-vars
+    const passport = connection.request.session.passport || {user: {id: '', uid: ''}};
     const params = {
-      accessToken: connection.request.session.passport.user.id,
-      id: connection.request.session.passport.user.uid
+      accessToken: passport.user.id,
+      id: passport.user.uid
     };
-    let promise = this.callServiceClient('profile', 'getProfile', params);
-    return promise;
+
+    return this.callServiceClient('profile', 'getProfile', params);
   },
 
   responseTransform(response, query, connection) { // eslint-disable-line no-unused-vars
@@ -21,8 +22,11 @@ const GetProfileTransform = {
     const profile = {
       name: loopbackProfile.email,
       imageUrl: loopbackProfile.imageUrl,
-      favoriteLibraries: loopbackProfile.favoriteLibraries
+      favoriteLibraries: loopbackProfile.favoriteLibraries,
+      likes: loopbackProfile.likes,
+      userIsLoggedIn: (!loopbackProfile.error)
     };
+
     return profile;
   }
 };

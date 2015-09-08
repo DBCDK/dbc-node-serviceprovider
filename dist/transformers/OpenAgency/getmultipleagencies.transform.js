@@ -15,17 +15,19 @@ var _openagencyJs2 = _interopRequireDefault(_openagencyJs);
 var OpenAgencyTransform = {
 
   event: function event() {
-    return 'getOpenAgency';
+    return 'getMultiOpenAgency';
   },
 
   getOpenAgencyRequest: function getOpenAgencyRequest(id) {
+    var ids = (0, _lodash.isArray)(id) ? id : [id];
+
     return this.callServiceClient('openagency', 'getOpenAgency', {
-      id: [id]
+      id: ids
     });
   },
 
   requestTransform: function requestTransform(event, query) {
-    if (event === 'getOpenAgency') {
+    if (event === 'getMultiOpenAgency') {
       return this.getOpenAgencyRequest(query);
     }
   },

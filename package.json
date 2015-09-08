@@ -32,15 +32,16 @@
   "dependencies": {
     "cache-manager": "^1.0.0",
     "dbc-node-moreinfo-client": "git+https://github.com/DBCDK/dbc-node-moreinfo-client#stable_dist",
+    "dbc-node-openagency-client": "git+https://github.com/DBCDK/dbc-node-openagency-client#stable_dist",
     "dbc-node-openorder-client": "git+https://github.com/DBCDK/dbc-node-openorder-client#stable_dist",
     "dbc-node-opensearch-client": "git+https://github.com/DBCDK/dbc-node-opensearch-client#stable_dist",
     "dbc-node-opensuggest": "git+https://github.com/DBCDK/dbc-node-opensuggest#stable_dist",
+    "dbc-node-popsuggest": "git+https://github.com/DBCDK/dbc-node-popsuggest#stable_dist",
     "dbc-node-profile-client": "git+https://github.com/DBCDK/dbc-node-profile-client#stable_dist",
     "dbc-node-recommendations": "git+https://github.com/DBCDK/dbc-node-recommendations#stable_dist",
-    "dbc-node-popsuggest": "git+https://github.com/DBCDK/dbc-node-popsuggest#stable_dist",
-    "dbc-node-openagency-client": "git+https://github.com/DBCDK/dbc-node-openagency-client#stable_dist",
     "jsonpath-object-transform": "https://github.com/vibjerg/jsonpath-object-transform/archive/1.0.5.tar.gz",
     "lodash": "^3.10.1",
+    "sinon": "^1.16.1",
     "walk": "^2.3.9"
   },
   "devDependencies": {
@@ -55,4 +56,3 @@
     "webpack": "^1.9.10"
   }
 }
-

@@ -17,7 +17,7 @@ var EntitySuggestTransform = {
 
     requests.push(this.callServiceClient('popsuggest', 'getEntitySuggestions', {
       index: 'library',
-      query: query + '<=folkebibliotek'
+      query: query + '&lt=folkebibliotek'
     }));
 
     return requests;

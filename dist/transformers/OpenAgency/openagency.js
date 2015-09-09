@@ -34,6 +34,7 @@ function determineBranchName(branchName) {
 function getDataFromPickupAgency(pickupAgency) {
   return {
     agencyName: pickupAgency.agencyName,
+    agencyId: pickupAgency.agencyId,
     branchId: pickupAgency.branchId,
     branchNameDan: determineBranchName(pickupAgency.branchName),
     branchPhone: pickupAgency.branchPhone,

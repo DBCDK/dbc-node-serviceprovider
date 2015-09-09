@@ -12,7 +12,6 @@ var UpdateProfileTransform = {
   requestTransform: function requestTransform(event, query, connection) {
     // eslint-disable-line no-unused-vars
     query.email = query.name;
-    delete query.name;
 
     var passport = connection.request.session.passport || { user: { id: '', uid: '' } };
     var loopbackProfile = {

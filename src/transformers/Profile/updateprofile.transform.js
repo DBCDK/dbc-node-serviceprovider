@@ -8,7 +8,6 @@ const UpdateProfileTransform = {
 
   requestTransform(event, query, connection) { // eslint-disable-line no-unused-vars
     query.email = query.name;
-    delete query.name;
 
     const passport = connection.request.session.passport || {user: {id: '', uid: ''}};
     let loopbackProfile = {

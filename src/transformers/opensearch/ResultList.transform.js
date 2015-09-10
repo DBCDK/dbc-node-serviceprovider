@@ -78,15 +78,7 @@ const ResultListTransform = {
       response.result.searchResult = [searchResult];
     }
 
-    let facet = {};
-
     const facets = response.result.facetResult.facet || {};
-
-    if (facets instanceof Array) {
-      facet = facets;
-    } else {
-      facet = [facets];
-    }
 
     if (facets.hasOwnProperty('facetTerm')) {
       data.info.facets = [];

@@ -88,11 +88,11 @@ const ResultListTransform = {
       facet = [facets];
     }
 
-    if (facet.hasOwnProperty('facetTerm')) {
+    if (facets.hasOwnProperty('facetTerm')) {
       data.info.facets = [];
-      facet.facetTerm.forEach((value) => {
+      facets.facetTerm.forEach((value) => {
         data.info.facets.push({
-          type: facet.facetName,
+          type: facets.facetName,
           value: value.term,
           displayValue: value.term,
           cssClass: 'worktype'

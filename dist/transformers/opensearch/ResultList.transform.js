@@ -84,21 +84,13 @@ var ResultListTransform = {
       response.result.searchResult = [searchResult];
     }
 
-    var facet = {};
-
     var facets = response.result.facetResult.facet || {};
 
-    if (facets instanceof Array) {
-      facet = facets;
-    } else {
-      facet = [facets];
-    }
-
-    if (facet.hasOwnProperty('facetTerm')) {
+    if (facets.hasOwnProperty('facetTerm')) {
       data.info.facets = [];
-      facet.facetTerm.forEach(function (value) {
+      facets.facetTerm.forEach(function (value) {
         data.info.facets.push({
-          type: facet.facetName,
+          type: facets.facetName,
           value: value.term,
           displayValue: value.term,
           cssClass: 'worktype'

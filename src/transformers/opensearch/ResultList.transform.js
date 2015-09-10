@@ -78,21 +78,13 @@ const ResultListTransform = {
       response.result.searchResult = [searchResult];
     }
 
-    let facet = {};
-
     const facets = response.result.facetResult.facet || {};
 
-    if (facets instanceof Array) {
-      facet = facets;
-    } else {
-      facet = [facets];
-    }
-
-    if (facet.hasOwnProperty('facetTerm')) {
+    if (facets.hasOwnProperty('facetTerm')) {
       data.info.facets = [];
-      facet.facetTerm.forEach((value) => {
+      facets.facetTerm.forEach((value) => {
         data.info.facets.push({
-          type: facet.facetName,
+          type: facets.facetName,
           value: value.term,
           displayValue: value.term,
           cssClass: 'worktype'

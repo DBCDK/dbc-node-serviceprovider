@@ -1,6 +1,7 @@
 'use strict';
 
 import * as prep from './response-preparation.js';
+import {isArray} from 'lodash';
 
 const ResultListTransform = {
 
@@ -50,7 +51,6 @@ const ResultListTransform = {
    * @return {Object} the transformed result
    */
   responseTransform(response) {
-
     let data = {};
     data.result = [];
     data.info = {};
@@ -69,6 +69,7 @@ const ResultListTransform = {
       return data;
     }
 
+
     data.info.hits = result.hits;
     data.info.collections = result.collections;
     data.info.more = result.more;
@@ -82,7 +83,8 @@ const ResultListTransform = {
 
     if (facets.hasOwnProperty('facetTerm')) {
       data.info.facets = [];
-      facets.facetTerm.forEach((value) => {
+      const facetTerms = isArray(facets.facetTerm) ? facets.facetTerm : [facets.facetTerm];
+      facetTerms.forEach((value) => {
         data.info.facets.push({
           type: facets.facetName,
           value: value.term,
@@ -93,6 +95,7 @@ const ResultListTransform = {
     }
 
     response.result.searchResult.forEach((work) => {
+      console.log(work);
       let newWork = {};
       let no = work.collection.numberOfObjects;
       let identifiers = [];
@@ -119,7 +122,6 @@ const ResultListTransform = {
     });
 
     return data;
-
   }
 };
 

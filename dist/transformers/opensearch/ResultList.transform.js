@@ -10,6 +10,8 @@ var _responsePreparationJs = require('./response-preparation.js');
 
 var prep = _interopRequireWildcard(_responsePreparationJs);
 
+var _lodash = require('lodash');
+
 var ResultListTransform = {
 
   event: function event() {
@@ -23,10 +25,8 @@ var ResultListTransform = {
   /**
    * Transforms the request from the application to Open Search request parameters
    *
-   * @param {String} the query from the user
-   * @param {String} the number of the first collection wanted in the search result
-   * @param {String} the number of works to retrieve
-   * @param {String} which sort to use
+   * @param {string} event
+   * @param {Object} request
    * @return {Object} request parameters using Open Search terminology
    */
 
@@ -53,11 +53,10 @@ var ResultListTransform = {
    * Transforms the response from Open Search webservice to a representation
    * that can be used by the application
    *
-   * @param {Object} the response from the webservice
+   * @param {Object} response the response from the webservice
    * @return {Object} the transformed result
    */
   responseTransform: function responseTransform(response) {
-
     var data = {};
     data.result = [];
     data.info = {};
@@ -88,7 +87,8 @@ var ResultListTransform = {
 
     if (facets.hasOwnProperty('facetTerm')) {
       data.info.facets = [];
-      facets.facetTerm.forEach(function (value) {
+      var facetTerms = (0, _lodash.isArray)(facets.facetTerm) ? facets.facetTerm : [facets.facetTerm];
+      facetTerms.forEach(function (value) {
         data.info.facets.push({
           type: facets.facetName,
           value: value.term,

@@ -10,7 +10,6 @@ var GetProfileTransform = {
   },
 
   requestTransform: function requestTransform(event, query, connection) {
-    // eslint-disable-line no-unused-vars
     var passport = connection.request.session.passport || { user: { id: '', uid: '' } };
     var params = {
       accessToken: passport.user.id,

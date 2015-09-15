@@ -6,7 +6,7 @@ const GetProfileTransform = {
     return 'getProfile';
   },
 
-  requestTransform(event, query, connection) { // eslint-disable-line no-unused-vars
+  requestTransform(event, query, connection) {
     const passport = connection.request.session.passport || {user: {id: '', uid: ''}};
     const params = {
       accessToken: passport.user.id,

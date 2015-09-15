@@ -38,7 +38,30 @@ const ResultListTransform = {
         numberOfTerms: 15
       }
     });
+  },
 
+  /**
+   * Extract facets from the response.
+   *
+   * @param {Object} response The response from which the facets should be extracted.
+   * @return {Array} result Array of facets. Empty array if none is found.
+   */
+  getFacets(response) {
+    const facets = response.result.facetResult.facet || {};
+    let result = [];
+
+    if (facets.hasOwnProperty('facetTerm')) {
+      const facetTerms = isArray(facets.facetTerm) ? facets.facetTerm : [facets.facetTerm];
+      facetTerms.forEach((value) => {
+        result.push({
+          type: facets.facetName,
+          value: value.term,
+          displayValue: value.term,
+          cssClass: 'worktype'
+        });
+      });
+    }
+    return result;
   },
 
   /**
@@ -49,10 +72,13 @@ const ResultListTransform = {
    * @return {Object} the transformed result
    */
   responseTransform(response) {
-    let data = {};
-    data.result = [];
-    data.info = {};
-    data.error = [];
+    let data = {
+      result: [],
+      info: {
+        facets: []
+      },
+      error: []
+    };
 
     let result = prep.checkResponse(response);
 
@@ -77,20 +103,7 @@ const ResultListTransform = {
       response.result.searchResult = [searchResult];
     }
 
-    const facets = response.result.facetResult.facet || {};
-
-    if (facets.hasOwnProperty('facetTerm')) {
-      data.info.facets = [];
-      const facetTerms = isArray(facets.facetTerm) ? facets.facetTerm : [facets.facetTerm];
-      facetTerms.forEach((value) => {
-        data.info.facets.push({
-          type: facets.facetName,
-          value: value.term,
-          displayValue: value.term,
-          cssClass: 'worktype'
-        });
-      });
-    }
+    data.info.facets = this.getFacets(response);
 
     response.result.searchResult.forEach((work) => {
       let newWork = {};

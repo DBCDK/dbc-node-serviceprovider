@@ -13,7 +13,7 @@ module.exports = function() {
       'src/**/__tests__/*.test.js'
     ],
 
-    debug: true,
+    debug: false,
 
     preprocessors: {
       '**/*.js': [

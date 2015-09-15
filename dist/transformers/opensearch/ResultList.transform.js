@@ -50,6 +50,30 @@ var ResultListTransform = {
   },
 
   /**
+   * Extract facets from the response.
+   *
+   * @param {Object} response The response from which the facets should be extracted.
+   * @return {Array} result Array of facets. Empty array if none is found.
+   */
+  getFacets: function getFacets(response) {
+    var facets = response.result.facetResult.facet || {};
+    var result = [];
+
+    if (facets.hasOwnProperty('facetTerm')) {
+      var facetTerms = (0, _lodash.isArray)(facets.facetTerm) ? facets.facetTerm : [facets.facetTerm];
+      facetTerms.forEach(function (value) {
+        result.push({
+          type: facets.facetName,
+          value: value.term,
+          displayValue: value.term,
+          cssClass: 'worktype'
+        });
+      });
+    }
+    return result;
+  },
+
+  /**
    * Transforms the response from Open Search webservice to a representation
    * that can be used by the application
    *
@@ -57,10 +81,13 @@ var ResultListTransform = {
    * @return {Object} the transformed result
    */
   responseTransform: function responseTransform(response) {
-    var data = {};
-    data.result = [];
-    data.info = {};
-    data.error = [];
+    var data = {
+      result: [],
+      info: {
+        facets: []
+      },
+      error: []
+    };
 
     var result = prep.checkResponse(response);
 
@@ -83,20 +110,7 @@ var ResultListTransform = {
       response.result.searchResult = [searchResult];
     }
 
-    var facets = response.result.facetResult.facet || {};
-
-    if (facets.hasOwnProperty('facetTerm')) {
-      data.info.facets = [];
-      var facetTerms = (0, _lodash.isArray)(facets.facetTerm) ? facets.facetTerm : [facets.facetTerm];
-      facetTerms.forEach(function (value) {
-        data.info.facets.push({
-          type: facets.facetName,
-          value: value.term,
-          displayValue: value.term,
-          cssClass: 'worktype'
-        });
-      });
-    }
+    data.info.facets = this.getFacets(response);
 
     response.result.searchResult.forEach(function (work) {
       var newWork = {};

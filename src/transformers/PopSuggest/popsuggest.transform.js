@@ -13,7 +13,7 @@ const PopSuggestTransform = {
 
     requests.push(this.callServiceClient('popsuggest', 'getPopSuggestions', {
       index: 'display.title',
-      query: query,
+      query: query.replace(' ', '%5C%20'), // prepending a \ to whitespace in query string
       fields: ['fedoraPid', 'display.title']
     }));
 

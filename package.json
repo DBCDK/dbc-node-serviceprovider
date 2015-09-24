@@ -28,8 +28,8 @@
     "provider",
     "ws"
   ],
-  "author": "DBC A/S",
-  "license": "ISC",
+  "author": "dbcdk",
+  "license": "GPL-3.0",
   "dependencies": {
     "cache-manager": "^1.0.0",
     "dbc-node-moreinfo-client": "git+https://github.com/DBCDK/dbc-node-moreinfo-client#stable_dist",

@@ -30,6 +30,10 @@ describe('Testing the methods in the Dispatcher object', () => {
     }
   };
 
+  const loggerMock = {
+    log: () => {}
+  };
+
   /**
    * Provider Mock
    * @type {{}}
@@ -39,7 +43,7 @@ describe('Testing the methods in the Dispatcher object', () => {
   providerMock.getEventsOfType = sinon.stub().returns(new Map([['testEvent', {}]]));
 
   it('tests something', (done) => {
-    Dispatcher(socketMock, providerMock);
+    Dispatcher(socketMock, providerMock, loggerMock);
     expect(providerMock.trigger.calledWith('testEvent')).to.be.equal(true);
     expect(providerMock.getEventsOfType.calledWith('transform')).to.be.equal(true);
     expect(connectionMock.emit.called).to.be.equal(false);

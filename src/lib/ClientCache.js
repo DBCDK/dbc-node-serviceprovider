@@ -12,6 +12,7 @@ import cacheManager from 'cache-manager';
  * Central cache store object
  */
 let store;
+let Logger = console;
 
 /**
  * Handles the callback from cachePromiseWrapper
@@ -27,7 +28,9 @@ function cachePromiseCallback(params) {
   }
   else if (result) {
     // Cached version exists
-    resolve(JSON.parse(result));
+    const res = JSON.parse(result);
+    resolve(res);
+    Logger.info('Delivering cached result', {res: res, params: params});
   }
   else {
     // No cache exists
@@ -35,6 +38,7 @@ function cachePromiseCallback(params) {
       store.set(key, JSON.stringify(value), ttl && {ttl});
       return value;
     }));
+    Logger.info('No cahced data was found, retreiving from client with params: ', params);
   }
 }
 
@@ -107,7 +111,11 @@ function wrap(methods, ttl) {
  * @returns {{wrap: wrap, store: *}}
  * @constructor
  */
-export default function CacheManager(config) {
+export function CacheManager(config) {
   store = cacheManager.caching(config);
   return {wrap};
+}
+
+export function setLogger(logger) {
+  Logger = logger;
 }

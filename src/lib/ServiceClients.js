@@ -7,7 +7,10 @@
 
 import {forEach} from 'lodash';
 import Events from './Events.js';
-import ClientCache from './ClientCache.js';
+import * as ClientCache from './ClientCache.js';
+
+// Creates a fallback logger object
+let Logger = console;
 
 /**
  * Register clients on the provider, providing them with configurations
@@ -15,7 +18,6 @@ import ClientCache from './ClientCache.js';
  * @param client
  * @returns {*}
  */
-
 function registerMethods(methods, clientName) {
   forEach(methods, (method, name) => {
     Events.addEvent('client', `${clientName}::${name}`, method);
@@ -35,21 +37,23 @@ function registerMethods(methods, clientName) {
 function registerServiceClient(config, client) {
   const {name, init} = client;
 
-  if (!config.services[name]) {
-    throw new Error(`No Config for ${name} client in config.js`);
+  if (!config.services || !config.services[name]) {
+    Logger.warning(`No Config for ${name} client found in config.js`);
+    return {};
   }
 
   if (!init) {
     throw new Error(`No init method not found on client ${name}`);
   }
 
-  let methods = init(config.services[name]);
+  const conf = config.services[name];
+  let methods = init(conf);
   if (typeof methods !== 'object') {
-    throw new Error(`No Config for ${name} client in config.js`);
+    throw new Error(`Expected type Object to be returned from ${name} client. Got ${typeof methods}`);
   }
 
   if (config.services[name].cache) {
-    methods = ClientCache(config.services[name].cache).wrap(methods);
+    methods = ClientCache.CacheManager(config.services[name].cache).wrap(methods);
   }
   return registerMethods(methods, name);
 }
@@ -61,13 +65,13 @@ function registerServiceClient(config, client) {
  * with configurations
  *
  * @param config
+ * @param logger
  * @constructor
  */
+function Clients(config) {
 
-function Clients (config) {
-
-  if (!config && !config.services) {
-    throw new Error(`A config object needs to be provided and it requires a services property`);
+  if (!config || !config.services) {
+    Logger.error('A config object needs to be provided and it requires a services property');
   }
 
   this.registerServiceClient = registerServiceClient.bind(this, config);
@@ -77,10 +81,12 @@ function Clients (config) {
  * Factory for creating Client instances
  *
  * @param config
+ * @param {Object} logger
  * @returns {Clients}
  * @constructor
  */
-export default function ClientsFactory(config) {
-
+export default function ClientsFactory(config, logger) {
+  Logger = logger;
+  ClientCache.setLogger(Logger);
   return new Clients(config);
 }

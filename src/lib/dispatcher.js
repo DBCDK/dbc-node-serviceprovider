@@ -6,6 +6,8 @@
  * between server and client
  */
 
+let Logger = null;
+
 /**
  * Handle promises being resolved or rejected
  *
@@ -16,8 +18,22 @@
 function handleResponse(connection, responsePromise, event) {
   const eventName = `${event}Response`;
   responsePromise
-    .then(response => connection.emit(eventName, response))
-    .catch(error => connection.emit(eventName, {error}));
+    .then(response => {
+      connection.emit(eventName, response);
+      Logger.log('info', 'Got a response to deliver by sockets', {
+        event: event,
+        response: response,
+        conection: (connection && connection.request && connection.request.session) ? connection.request.session : {}
+      });
+    })
+    .catch(error => {
+      connection.emit(eventName, {error});
+      Logger.log('info', 'An error occured in a response from a service', {
+        event: event,
+        error: error,
+        conection: (connection && connection.request && connection.request.session) ? connection.request.session : {}
+      });
+    });
 }
 
 /**
@@ -32,6 +48,12 @@ function onEventOnConnection(connection, provider, event) {
     provider
       .trigger(event, request, connection)
       .forEach(responsePromise => handleResponse(connection, responsePromise, event));
+
+    Logger.log('info', 'Got a request by sockets', {
+      event: event,
+      request: request,
+      conection: (connection && connection.request && connection.request.session) ? connection.request.session : {}
+    });
   });
 }
 
@@ -52,8 +74,10 @@ function registerEventsOnConnection(connection, provider) {
  *
  * @param socket
  * @param provider
+ * @param logger
  * @constructor
  */
-export default function SocketDispatcher(socket, provider) {
+export default function SocketDispatcher(socket, provider, logger) {
+  Logger = logger;
   socket.on('connection', (connection) => registerEventsOnConnection(connection, provider));
 }

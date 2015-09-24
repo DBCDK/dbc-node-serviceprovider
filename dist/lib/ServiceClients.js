@@ -10,6 +10,8 @@ Object.defineProperty(exports, '__esModule', {
 });
 exports['default'] = ClientsFactory;
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var _lodash = require('lodash');
@@ -20,7 +22,10 @@ var _EventsJs2 = _interopRequireDefault(_EventsJs);
 
 var _ClientCacheJs = require('./ClientCache.js');
 
-var _ClientCacheJs2 = _interopRequireDefault(_ClientCacheJs);
+var ClientCache = _interopRequireWildcard(_ClientCacheJs);
+
+// Creates a fallback logger object
+var Logger = console;
 
 /**
  * Register clients on the provider, providing them with configurations
@@ -28,7 +33,6 @@ var _ClientCacheJs2 = _interopRequireDefault(_ClientCacheJs);
  * @param client
  * @returns {*}
  */
-
 function registerMethods(methods, clientName) {
   (0, _lodash.forEach)(methods, function (method, name) {
     _EventsJs2['default'].addEvent('client', clientName + '::' + name, method);
@@ -49,21 +53,23 @@ function registerServiceClient(config, client) {
   var name = client.name;
   var init = client.init;
 
-  if (!config.services[name]) {
-    throw new Error('No Config for ' + name + ' client in config.js');
+  if (!config.services || !config.services[name]) {
+    Logger.warning('No Config for ' + name + ' client found in config.js');
+    return {};
   }
 
   if (!init) {
     throw new Error('No init method not found on client ' + name);
   }
 
-  var methods = init(config.services[name]);
+  var conf = config.services[name];
+  var methods = init(conf);
   if (typeof methods !== 'object') {
-    throw new Error('No Config for ' + name + ' client in config.js');
+    throw new Error('Expected type Object to be returned from ' + name + ' client. Got ' + typeof methods);
   }
 
   if (config.services[name].cache) {
-    methods = (0, _ClientCacheJs2['default'])(config.services[name].cache).wrap(methods);
+    methods = ClientCache.CacheManager(config.services[name].cache).wrap(methods);
   }
   return registerMethods(methods, name);
 }
@@ -75,13 +81,13 @@ function registerServiceClient(config, client) {
  * with configurations
  *
  * @param config
+ * @param logger
  * @constructor
  */
-
 function Clients(config) {
 
-  if (!config && !config.services) {
-    throw new Error('A config object needs to be provided and it requires a services property');
+  if (!config || !config.services) {
+    Logger.error('A config object needs to be provided and it requires a services property');
   }
 
   this.registerServiceClient = registerServiceClient.bind(this, config);
@@ -91,12 +97,14 @@ function Clients(config) {
  * Factory for creating Client instances
  *
  * @param config
+ * @param {Object} logger
  * @returns {Clients}
  * @constructor
  */
 
-function ClientsFactory(config) {
-
+function ClientsFactory(config, logger) {
+  Logger = logger;
+  ClientCache.setLogger(Logger);
   return new Clients(config);
 }
 

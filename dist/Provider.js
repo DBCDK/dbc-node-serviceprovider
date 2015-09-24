@@ -38,6 +38,10 @@ var _libServiceClientsJs2 = _interopRequireDefault(_libServiceClientsJs);
 var _libEventsJs = require('./lib/Events.js');
 
 var Provider = {};
+var Logger = console;
+Logger.warning = Logger.error;
+Logger.notice = Logger.log;
+
 /**
  * Initializes the use of sockets
  *
@@ -48,7 +52,7 @@ var Provider = {};
  */
 function setupSockets(socket) {
   this.bootstrap();
-  (0, _libDispatcher2['default'])(socket, Provider);
+  (0, _libDispatcher2['default'])(socket, Provider, Logger);
   return Provider;
 }
 
@@ -66,16 +70,22 @@ function bootstrap() {
  * Initialization of the provider and the underlying services.
  *
  * @param {Object} config Object containing the necessary parameters.
+ * @param {Object} logger logger object with methods for logging.
  *
  * @api public
  */
 
-function ProviderFactory(config) {
-  if (!config) {
-    throw new Error('No configuration was provided');
+function ProviderFactory(config, logger) {
+
+  if (logger) {
+    Logger = logger;
   }
 
-  var registerServiceClient = (0, _libServiceClientsJs2['default'])(config).registerServiceClient;
+  if (!config) {
+    Logger.error('No configuration was provided');
+  }
+
+  var registerServiceClient = (0, _libServiceClientsJs2['default'])(config, Logger).registerServiceClient;
 
   Provider = {
     setupSockets: setupSockets,
@@ -85,6 +95,8 @@ function ProviderFactory(config) {
     trigger: _libTriggerJs2['default'],
     getEventsOfType: _libEventsJs.getEventsOfType
   };
+
+  Logger.log('debug', 'The ServiceProvider was initialized with the following config: ', config);
 
   return Provider;
 }

@@ -7,22 +7,27 @@ import Provider from '../Provider.js';
 import Events from '../lib/Events.js';
 import {expect, assert} from 'chai';
 
+const loggerMock = {
+  log: () => {},
+  error: () => {}
+};
+
 describe('Testing methods on the Provider', () => {
+
   it('assert methods are accessible', () => {
     assert.isNotNull(Provider);
     assert.isFunction(Provider);
-    assert.isNotNull(Provider({}).registerTransform);
-    assert.isFunction(Provider({}).registerTransform);
+    assert.isNotNull(Provider({}, loggerMock).registerTransform);
+    assert.isFunction(Provider({}, loggerMock).registerTransform);
   });
 
   it('Test the constructor method', () => {
-    expect(() => Provider()).to.throw('No configuration was provided');
-    expect(() => Provider({})).to.not.throw(Error);
+    expect(() => Provider({}, loggerMock)).to.not.throw(Error);
   });
 
   it('Test the registerTransform method', () => {
-    let provider = Provider({});
-    let event = function () {
+    let provider = Provider({}, loggerMock);
+    let event = function() {
     };
     let test = {
       event() {
@@ -50,24 +55,23 @@ describe('Testing methods on the Provider', () => {
     expect(() => provider.registerTransform(test)).to.not.throw(Error);
   });
 
-
   it('Test the registerServiceClient method', () => {
     let client = {};
     let config = {};
-    expect(() => Provider(config).registerServiceClient(client)).to.throw(Error);
+    expect(() => Provider(config, loggerMock).registerServiceClient(client)).to.throw(Error);
     config.services = {};
-    expect(() => Provider(config).registerServiceClient(client)).to.throw(Error);
+    expect(() => Provider(config, loggerMock).registerServiceClient(client)).to.throw(Error);
     client.name = 'test';
     config.services.test = {};
-    expect(() => Provider(config).registerServiceClient(client)).to.throw(Error);
+    expect(() => Provider(config, loggerMock).registerServiceClient(client)).to.throw(Error);
     client.init = () => {
     };
-    expect(() => Provider(config).registerServiceClient(client)).to.throw(Error);
+    expect(() => Provider(config, loggerMock).registerServiceClient(client)).to.throw(Error);
     client.init = () => {
       return {};
     };
-    expect(() => Provider(config).registerServiceClient(client)).to.not.throw(Error);
-    let methods = Provider(config).registerServiceClient(client);
+    expect(() => Provider(config, loggerMock).registerServiceClient(client)).to.not.throw(Error);
+    let methods = Provider(config, loggerMock).registerServiceClient(client);
     expect(methods).to.be.object; // eslint-disable-line no-unused-expressions
   });
 
@@ -89,10 +93,11 @@ describe('Testing methods on the Provider', () => {
   describe('Test the trigger function', () => {
     // No event has been reqistered
     it('Throws an error on unsupported events', () => {
-      expect(() => Provider({}).trigger('testEvent', {test: 'testEvent is triggered'})).to.throw(Error);
+      expect(() => Provider({}, loggerMock).trigger('testEvent', {test: 'testEvent is triggered'})).to.throw(Error);
     });
+
     it('Triggers an event', (done) => {
-      let provider = Provider({});
+      let provider = Provider({}, loggerMock);
       provider.registerTransform({
         event() {
           return 'testEvent';
@@ -115,7 +120,7 @@ describe('Testing methods on the Provider', () => {
 
   describe('Test callServiceClient method', () => {
     let assertString = 'Client test method was called';
-    let testMethod = function (params) {
+    let testMethod = function(params) {
       return Promise.resolve(params);
     };
     var testClient = {
@@ -137,7 +142,7 @@ describe('Testing methods on the Provider', () => {
     };
 
     it('should call method on client', () => {
-      const provider = Provider({services: {testClient: {}}});
+      const provider = Provider({services: {testClient: {}}}, loggerMock);
       provider.registerServiceClient(testClient);
       provider.registerTransform(testTransform);
 
@@ -145,16 +150,17 @@ describe('Testing methods on the Provider', () => {
         expect(value).to.be.equal(assertString);
       });
 
-      testMethod = function (params) {
+      testMethod = function(params) {
         return Promise.reject(params);
       };
     });
+
     it('should catch error', (done) => {
       Events.resetEvents();
-      testMethod = function (params) {
+      testMethod = function(params) {
         return Promise.reject(params);
       };
-      const provider = Provider({services: {testClient: {}}});
+      const provider = Provider({services: {testClient: {}}}, loggerMock);
       provider.registerServiceClient(testClient);
       provider.registerTransform(testTransform);
       provider.trigger('testCallClientEvent')[0].catch((value)=> {

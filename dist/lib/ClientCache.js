@@ -8,7 +8,8 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
-exports['default'] = CacheManager;
+exports.CacheManager = CacheManager;
+exports.setLogger = setLogger;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -22,6 +23,7 @@ var _cacheManager2 = _interopRequireDefault(_cacheManager);
  * Central cache store object
  */
 var store = undefined;
+var Logger = console;
 
 /**
  * Handles the callback from cachePromiseWrapper
@@ -42,13 +44,16 @@ function cachePromiseCallback(params) {
     reject(err);
   } else if (result) {
     // Cached version exists
-    resolve(JSON.parse(result));
+    var res = JSON.parse(result);
+    resolve(res);
+    Logger.info('Delivering cached result', { res: res, params: params });
   } else {
     // No cache exists
     resolve(cb().then(function (value) {
       store.set(key, JSON.stringify(value), ttl && { ttl: ttl });
       return value;
     }));
+    Logger.info('No cahced data was found, retreiving from client with params: ', params);
   }
 }
 
@@ -129,4 +134,6 @@ function CacheManager(config) {
   return { wrap: wrap };
 }
 
-module.exports = exports['default'];
+function setLogger(logger) {
+  Logger = logger;
+}

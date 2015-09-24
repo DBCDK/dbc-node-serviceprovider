@@ -6,6 +6,12 @@
  * between server and client
  */
 
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+exports['default'] = SocketDispatcher;
+var Logger = null;
+
 /**
  * Handle promises being resolved or rejected
  *
@@ -13,16 +19,22 @@
  * @param responsePromise
  * @param event
  */
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-exports['default'] = SocketDispatcher;
 function handleResponse(connection, responsePromise, event) {
   var eventName = event + 'Response';
   responsePromise.then(function (response) {
-    return connection.emit(eventName, response);
+    connection.emit(eventName, response);
+    Logger.log('info', 'Got a response to deliver by sockets', {
+      event: event,
+      response: response,
+      conection: connection && connection.request && connection.request.session ? connection.request.session : {}
+    });
   })['catch'](function (error) {
-    return connection.emit(eventName, { error: error });
+    connection.emit(eventName, { error: error });
+    Logger.log('info', 'An error occured in a response from a service', {
+      event: event,
+      error: error,
+      conection: connection && connection.request && connection.request.session ? connection.request.session : {}
+    });
   });
 }
 
@@ -37,6 +49,12 @@ function onEventOnConnection(connection, provider, event) {
   connection.on(event + 'Request', function (request) {
     provider.trigger(event, request, connection).forEach(function (responsePromise) {
       return handleResponse(connection, responsePromise, event);
+    });
+
+    Logger.log('info', 'Got a request by sockets', {
+      event: event,
+      request: request,
+      conection: connection && connection.request && connection.request.session ? connection.request.session : {}
     });
   });
 }
@@ -58,10 +76,12 @@ function registerEventsOnConnection(connection, provider) {
  *
  * @param socket
  * @param provider
+ * @param logger
  * @constructor
  */
 
-function SocketDispatcher(socket, provider) {
+function SocketDispatcher(socket, provider, logger) {
+  Logger = logger;
   socket.on('connection', function (connection) {
     return registerEventsOnConnection(connection, provider);
   });

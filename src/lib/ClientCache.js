@@ -5,7 +5,7 @@
  * Cache wrapper for Provider Client Methods
  */
 
-import {forEach} from 'lodash';
+import {forEach, isArray} from 'lodash';
 import cacheManager from 'cache-manager';
 
 /**
@@ -34,10 +34,16 @@ function cachePromiseCallback(params) {
   }
   else {
     // No cache exists
-    resolve(cb().then((value) => {
-      store.set(key, JSON.stringify(value), ttl && {ttl});
-      return value;
-    }));
+    const callbacks = cb();
+    const callbacksArray = isArray(callbacks) ? callbacks : [callbacks];
+
+    forEach(callbacksArray, (callback) => {
+      resolve(callback.then((value) => {
+        store.set(key, JSON.stringify(value), ttl && {ttl});
+        return value;
+      }));
+    });
+
     Logger.info('No cahced data was found, retreiving from client with params: ', params);
   }
 }

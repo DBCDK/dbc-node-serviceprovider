@@ -32,7 +32,7 @@ function cachePromiseCallback(params) {
   else {
     // No cache exists
     resolve(cb().then((value) => {
-      store.set(key, JSON.stringify(value), ttl && {ttl});
+      store.set(key, JSON.stringify(value), ttl && {ttl}, () => {});
       return value;
     }));
   }

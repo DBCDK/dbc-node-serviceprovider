@@ -1,6 +1,7 @@
 'use strict';
 
 import * as prep from './response-preparation.js';
+import {isArray} from 'lodash';
 
 const ResultListTransform = {
 
@@ -15,10 +16,8 @@ const ResultListTransform = {
   /**
    * Transforms the request from the application to Open Search request parameters
    *
-   * @param {String} the query from the user
-   * @param {String} the number of the first collection wanted in the search result
-   * @param {String} the number of works to retrieve
-   * @param {String} which sort to use
+   * @param {string} event
+   * @param {Object} request
    * @return {Object} request parameters using Open Search terminology
    */
 
@@ -39,22 +38,47 @@ const ResultListTransform = {
         numberOfTerms: 15
       }
     });
+  },
 
+  /**
+   * Extract facets from the response.
+   *
+   * @param {Object} response The response from which the facets should be extracted.
+   * @return {Array} result Array of facets. Empty array if none is found.
+   */
+  getFacets(response) {
+    const facets = response.result.facetResult.facet || {};
+    let result = [];
+
+    if (facets.hasOwnProperty('facetTerm')) {
+      const facetTerms = isArray(facets.facetTerm) ? facets.facetTerm : [facets.facetTerm];
+      facetTerms.forEach((value) => {
+        result.push({
+          type: facets.facetName,
+          value: value.term,
+          displayValue: value.term,
+          cssClass: 'worktype'
+        });
+      });
+    }
+    return result;
   },
 
   /**
    * Transforms the response from Open Search webservice to a representation
    * that can be used by the application
    *
-   * @param {Object} the response from the webservice
+   * @param {Object} response the response from the webservice
    * @return {Object} the transformed result
    */
   responseTransform(response) {
-
-    let data = {};
-    data.result = [];
-    data.info = {};
-    data.error = [];
+    let data = {
+      result: [],
+      info: {
+        facets: []
+      },
+      error: []
+    };
 
     let result = prep.checkResponse(response);
 
@@ -69,6 +93,7 @@ const ResultListTransform = {
       return data;
     }
 
+
     data.info.hits = result.hits;
     data.info.collections = result.collections;
     data.info.more = result.more;
@@ -78,27 +103,7 @@ const ResultListTransform = {
       response.result.searchResult = [searchResult];
     }
 
-    let facet = {};
-
-    const facets = response.result.facetResult.facet || {};
-
-    if (facets instanceof Array) {
-      facet = facets;
-    } else {
-      facet = [facets];
-    }
-
-    if (facet.hasOwnProperty('facetTerm')) {
-      data.info.facets = [];
-      facet.facetTerm.forEach((value) => {
-        data.info.facets.push({
-          type: facet.facetName,
-          value: value.term,
-          displayValue: value.term,
-          cssClass: 'worktype'
-        });
-      });
-    }
+    data.info.facets = this.getFacets(response);
 
     response.result.searchResult.forEach((work) => {
       let newWork = {};
@@ -127,7 +132,6 @@ const ResultListTransform = {
     });
 
     return data;
-
   }
 };
 

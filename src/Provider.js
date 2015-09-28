@@ -15,6 +15,10 @@ import ServiceClients from './lib/ServiceClients.js';
 import {getEventsOfType} from './lib/Events.js';
 
 let Provider = {};
+let Logger = console;
+Logger.warning = Logger.error;
+Logger.notice = Logger.log;
+
 /**
  * Initializes the use of sockets
  *
@@ -25,10 +29,9 @@ let Provider = {};
  */
 function setupSockets(socket) {
   this.bootstrap();
-  Dispatcher(socket, Provider);
+  Dispatcher(socket, Provider, Logger);
   return Provider;
 }
-
 
 /**
  * Loads the bundles transforms and clients
@@ -44,15 +47,21 @@ function bootstrap() {
  * Initialization of the provider and the underlying services.
  *
  * @param {Object} config Object containing the necessary parameters.
+ * @param {Object} logger logger object with methods for logging.
  *
  * @api public
  */
-export default function ProviderFactory(config) {
-  if (!config) {
-    throw new Error('No configuration was provided');
+export default function ProviderFactory(config, logger) {
+
+  if (logger) {
+    Logger = logger;
   }
 
-  let registerServiceClient = ServiceClients(config).registerServiceClient;
+  if (!config) {
+    Logger.error('No configuration was provided');
+  }
+
+  let registerServiceClient = ServiceClients(config, Logger).registerServiceClient;
 
   Provider = {
     setupSockets,
@@ -62,6 +71,8 @@ export default function ProviderFactory(config) {
     trigger,
     getEventsOfType
   };
+
+  Logger.log('debug', 'The ServiceProvider was initialized with the following config: ', config);
 
   return Provider;
 }

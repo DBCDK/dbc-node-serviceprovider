@@ -1,6 +1,6 @@
 {
   "name": "dbc-node-serviceprovider",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Provider for the Node modules that accesesthe DBC webservices",
   "main": "index.js",
   "homepage": "https://github.com/DBCDK/dbc-node-serviceprovider/tree/master#readme",
@@ -10,8 +10,9 @@
     "lint": "eslint ./src",
     "lint:checkstyle": "eslint ./src  -o report.xml -f checkstyle",
     "reinstall": "rm -r node_modules && npm install",
+    "test": "mocha --compilers js:babel/register src/**/__tests__/*.test.js  -R mocha-jenkins-reporter",
+    "test:junit": "npm run test",
     "test:watch": "mocha --compilers js:babel/register src/**/__tests__/*.test.js -w",
-    "test": "mocha --compilers js:babel/register src/**/__tests__/*.test.js -R mocha-jenkins-reporter",
     "watch": "npm run cleardest && babel ./src --watch -d dist --ignore __tests__ --retain-lines"
   },
   "repository": {
@@ -27,8 +28,8 @@
     "provider",
     "ws"
   ],
-  "author": "DBC A/S",
-  "license": "ISC",
+  "author": "dbcdk",
+  "license": "GPL-3.0",
   "dependencies": {
     "cache-manager": "^1.0.0",
     "dbc-node-moreinfo-client": "git+https://github.com/DBCDK/dbc-node-moreinfo-client#stable_dist",

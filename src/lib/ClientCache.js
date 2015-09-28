@@ -34,12 +34,13 @@ function cachePromiseCallback(params) {
   }
   else {
     // No cache exists
+
     const callbacks = cb();
     const callbacksArray = isArray(callbacks) ? callbacks : [callbacks];
 
     forEach(callbacksArray, (callback) => {
       resolve(callback.then((value) => {
-        store.set(key, JSON.stringify(value), ttl && {ttl});
+        store.set(key, JSON.stringify(value), ttl && {ttl}, () => {});
         return value;
       }));
     });

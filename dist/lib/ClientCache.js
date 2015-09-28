@@ -49,12 +49,13 @@ function cachePromiseCallback(params) {
     Logger.info('Delivering cached result', { res: res, params: params });
   } else {
     // No cache exists
+
     var callbacks = cb();
     var callbacksArray = (0, _lodash.isArray)(callbacks) ? callbacks : [callbacks];
 
     (0, _lodash.forEach)(callbacksArray, function (callback) {
       resolve(callback.then(function (value) {
-        store.set(key, JSON.stringify(value), ttl && { ttl: ttl });
+        store.set(key, JSON.stringify(value), ttl && { ttl: ttl }, function () {});
         return value;
       }));
     });

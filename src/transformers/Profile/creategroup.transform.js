@@ -21,7 +21,7 @@ const CreateGroupTransform = {
       }
     }
 
-    return this.callServiceClient('profile', 'createGroup', loopbackProfile);
+    return this.callServiceClient('profile', 'createGroup', loopbackGroup);
   },
 
   responseTransform(response, query) { // eslint-disable-line no-unused-vars

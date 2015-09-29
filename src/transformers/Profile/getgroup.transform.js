@@ -6,7 +6,7 @@ const GetGroupTransform = {
     return 'getGroup';
   },
 
-  requestTransform(event, query, connection) {
+  requestTransform(event, query, connection) { // eslint-disable-line no-unused-vars
     return this.callServiceClient('profile', 'getGroup', query);
   },
 

@@ -15,7 +15,8 @@ const QueryGroupsTransform = {
   },
 
   responseTransform(response, query, connection) { // eslint-disable-line no-unused-vars
-    return {groups: JSON.parse(response.body)};
+    let groups = JSON.parse(response.body);
+    return {groups: groups};
   }
 };
 

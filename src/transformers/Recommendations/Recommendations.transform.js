@@ -5,8 +5,8 @@ const RecommendationsTransform = {
     return 'getRecommendations';
   },
 
-  requestTransform(event, list) {
-    return this.callServiceClient('recommend', 'getRecommendations', list);
+  requestTransform(event, params) {
+    return this.callServiceClient('recommend', 'getRecommendations', params);
   },
 
   responseTransform(data) {

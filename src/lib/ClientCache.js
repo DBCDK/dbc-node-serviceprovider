@@ -34,7 +34,6 @@ function cachePromiseCallback(params) {
   }
   else {
     // No cache exists
-
     const callbacks = cb();
     const callbacksArray = isArray(callbacks) ? callbacks : [callbacks];
 

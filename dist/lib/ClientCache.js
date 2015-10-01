@@ -49,7 +49,6 @@ function cachePromiseCallback(params) {
     Logger.info('Delivering cached result', { res: res, params: params });
   } else {
     // No cache exists
-
     var callbacks = cb();
     var callbacksArray = (0, _lodash.isArray)(callbacks) ? callbacks : [callbacks];
 

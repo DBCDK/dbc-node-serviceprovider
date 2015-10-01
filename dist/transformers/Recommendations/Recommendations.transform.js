@@ -8,8 +8,8 @@ var RecommendationsTransform = {
     return 'getRecommendations';
   },
 
-  requestTransform: function requestTransform(event, list) {
-    return this.callServiceClient('recommend', 'getRecommendations', list);
+  requestTransform: function requestTransform(event, params) {
+    return this.callServiceClient('recommend', 'getRecommendations', params);
   },
 
   responseTransform: function responseTransform(data) {

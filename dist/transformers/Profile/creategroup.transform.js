@@ -11,12 +11,15 @@ var CreateGroupTransform = {
 
   requestTransform: function requestTransform(event, query, connection) {
     // eslint-disable-line no-unused-vars
-    query.email = query.name;
 
     var passport = connection.request.session.passport || { user: { id: '', uid: '' } };
+
+    var today = new Date();
+
     var loopbackGroup = {
       accessToken: passport.user.id,
-      id: passport.user.uid
+      groupownerid: passport.user.uid,
+      timeCreated: today.toISOString()
     };
 
     for (var i in query) {

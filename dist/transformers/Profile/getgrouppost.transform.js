@@ -19,7 +19,7 @@ var QueryGroupsTransform = {
 
   responseTransform: function responseTransform(response, query, connection) {
     // eslint-disable-line no-unused-vars
-    return {};
+    return JSON.parse(response.body);
   }
 };
 

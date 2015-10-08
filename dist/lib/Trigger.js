@@ -19,15 +19,39 @@ var _EventsJs = require('./Events.js');
 var _EventsJs2 = _interopRequireDefault(_EventsJs);
 
 /**
+ * Ensures the connection object has the requested structure.
+ * If for example redis is unavailable session will be undefined
+ *
+ * @param {Object} connection
+ * @return {*}
+ */
+function ensureConnectionObject(connection) {
+  if (!(0, _lodash.isObject)(connection)) {
+    connection = {};
+  }
+
+  if (!(0, _lodash.isObject)(connection.request)) {
+    connection.request = {};
+  }
+
+  if (!(0, _lodash.isObject)(connection.request.session)) {
+    connection.request.session = {};
+  }
+
+  return connection;
+}
+
+/**
  * Handles the request and response transform callback and returns a promise, which resolves to the final
  * response.
  *
  * @param {String} event
  * @param {Object || Array} query The query object/array
- * @param {Object} connection
+ * @param {Object} _connection
  */
-function handleTriggerEvents(event, query, connection) {
+function handleTriggerEvents(event, query, _connection) {
   var transform = _EventsJs2['default'].getEvent('transform', event);
+  var connection = ensureConnectionObject(_connection);
   var request = transform.requestTransform(event, query, connection);
   // make sure requests are an array
   var requestArray = (0, _lodash.isArray)(request) && request || [request];

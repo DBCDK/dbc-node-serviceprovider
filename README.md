@@ -2,6 +2,8 @@
 
 [![David](https://img.shields.io/david/DBCDK/dbc-node-serviceprovider.svg?style=flat-square)](https://david-dm.org/DBCDK/dbc-node-serviceprovider#info=dependencies)
 [![David](https://img.shields.io/david/dev/DBCDK/dbc-node-serviceprovider.svg?style=flat-square)](https://david-dm.org/DBCDK/dbc-node-serviceprovider#info=devDependencies)
+[![Build Status](https://travis-ci.org/DBCDK/dbc-node-serviceprovider.svg?branch=master)](https://travis-ci.org/DBCDK/dbc-node-serviceprovider)
+[![Coverage Status](https://coveralls.io/repos/DBCDK/dbc-node-serviceprovider/badge.svg?branch=master&service=github)](https://coveralls.io/github/DBCDK/dbc-node-serviceprovider?branch=master)
 
 Abstraction layer for the DBC webservices. Handles the communication between 
 the application- and the service layer providing optional transforms for 

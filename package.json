@@ -13,7 +13,8 @@
     "test": "mocha --compilers js:babel/register src/**/__tests__/*.test.js  -R mocha-jenkins-reporter",
     "test:junit": "npm run test",
     "test:watch": "mocha --compilers js:babel/register src/**/__tests__/*.test.js -w",
-    "watch": "npm run cleardest && babel ./src --watch -d dist --ignore __tests__ --retain-lines"
+    "watch": "npm run cleardest && babel ./src --watch -d dist --ignore __tests__ --retain-lines",
+    "cover": "istanbul cover _mocha --report lcovonly --report cobertura --report html -- --compilers js:babel/register src/**/__tests__/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -50,6 +51,7 @@
     "babel-eslint": "^4.0.5",
     "chai": "^3.0.0",
     "eslint": "^1.0.0",
+    "istanbul": "^0.3.22",
     "mocha": "^2.2.5",
     "mocha-jenkins-reporter": "^0.1.9",
     "node-libs-browser": "^0.5.2",

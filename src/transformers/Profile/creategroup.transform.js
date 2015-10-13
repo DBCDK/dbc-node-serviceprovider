@@ -28,8 +28,17 @@ const CreateGroupTransform = {
   },
 
   responseTransform(response, query) { // eslint-disable-line no-unused-vars
+
     const isSuccesful = response.statusCode === 200;
-    return JSON.parse(isSuccesful);
+
+    const parsedResponse = JSON.parse(response.body);
+    const groupId = (isSuccesful) ? parsedResponse.id : null;
+
+    const newResponse = {
+      succes: isSuccesful,
+      groupId: groupId
+    };
+    return newResponse;
   }
 };
 

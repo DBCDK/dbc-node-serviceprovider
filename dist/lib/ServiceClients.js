@@ -24,8 +24,7 @@ var _ClientCacheJs = require('./ClientCache.js');
 
 var ClientCache = _interopRequireWildcard(_ClientCacheJs);
 
-// Creates a fallback logger object
-var Logger = console;
+var Logger = undefined;
 
 /**
  * Register clients on the provider, providing them with configurations
@@ -63,6 +62,7 @@ function registerServiceClient(config, client) {
   }
 
   var conf = config.services[name];
+  conf.logger = Logger;
   var methods = init(conf);
   if (typeof methods !== 'object') {
     throw new Error('Expected type Object to be returned from ' + name + ' client. Got ' + typeof methods);
@@ -91,6 +91,7 @@ function Clients(config) {
   }
 
   this.registerServiceClient = registerServiceClient.bind(this, config);
+  this.logger = Logger;
 }
 
 /**

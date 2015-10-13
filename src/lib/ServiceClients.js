@@ -9,8 +9,7 @@ import {forEach} from 'lodash';
 import Events from './Events.js';
 import * as ClientCache from './ClientCache.js';
 
-// Creates a fallback logger object
-let Logger = console;
+let Logger;
 
 /**
  * Register clients on the provider, providing them with configurations
@@ -46,7 +45,8 @@ function registerServiceClient(config, client) {
     throw new Error(`No init method not found on client ${name}`);
   }
 
-  const conf = config.services[name];
+  let conf = config.services[name];
+  conf.logger = Logger;
   let methods = init(conf);
   if (typeof methods !== 'object') {
     throw new Error(`Expected type Object to be returned from ${name} client. Got ${typeof methods}`);
@@ -75,6 +75,7 @@ function Clients(config) {
   }
 
   this.registerServiceClient = registerServiceClient.bind(this, config);
+  this.logger = Logger;
 }
 
 /**

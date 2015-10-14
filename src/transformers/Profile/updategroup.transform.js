@@ -11,7 +11,7 @@ const UpdateGroupTransform = {
     const passport = connection.request.session.passport || {user: {id: '', uid: ''}};
     let group = {
       accessToken: passport.user.id,
-      id: passport.user.uid
+      ownerId: passport.user.uid
     };
 
     for (var i in query) {

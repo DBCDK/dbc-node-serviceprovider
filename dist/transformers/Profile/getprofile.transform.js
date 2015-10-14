@@ -26,6 +26,7 @@ var GetProfileTransform = {
     var profile = {
       name: loopbackProfile.email,
       imageUrl: loopbackProfile.imageUrl,
+      id: loopbackProfile.id,
       favoriteLibraries: loopbackProfile.favoriteLibraries ? loopbackProfile.favoriteLibraries : [],
       likes: loopbackProfile.likes,
       userIsLoggedIn: !loopbackProfile.error

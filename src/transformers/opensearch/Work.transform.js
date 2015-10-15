@@ -182,6 +182,18 @@ const WorkTransform = {
       return edition;
     });
 
+    data.work.relations = workDOM('//opensearch:relation', false, false).map((relation, index) => {
+      const newIndex = index + 1;
+      let rel = {
+        link: '',
+        access: ''
+      };
+      rel.link = workDOM('//opensearch:relation[' + newIndex + ']/opensearch:relationUri/text()', true, false);
+      rel.access = workDOM('//opensearch:relation[' + newIndex + ']/opensearch:linkObject/opensearch:access/text()', true, false);
+      return rel;
+
+    });
+
     return data;
   }
 };

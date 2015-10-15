@@ -17,6 +17,7 @@ var QueryGroupsTransform = {
       content: query.content,
       groupId: query.groupId,
       uid: passport.user.uid,
+      postownerid: passport.user.uid,
       accessToken: passport.user.id
     });
   },

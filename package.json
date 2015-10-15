@@ -44,7 +44,9 @@
     "jsonpath-object-transform": "https://github.com/vibjerg/jsonpath-object-transform/archive/1.0.5.tar.gz",
     "lodash": "^3.10.1",
     "sinon": "^1.16.1",
-    "walk": "^2.3.9"
+    "walk": "^2.3.9",
+    "xmldom": "^0.1.19",
+    "xpath": "0.0.9"
   },
   "devDependencies": {
     "babel": "^5.5.6",

@@ -198,6 +198,17 @@ var WorkTransform = {
       return edition;
     });
 
+    data.work.relations = workDOM('//opensearch:relation', false, false).map(function (relation, index) {
+      var newIndex = index + 1;
+      var rel = {
+        link: '',
+        access: ''
+      };
+      rel.link = workDOM('//opensearch:relation[' + newIndex + ']/opensearch:relationUri/text()', true, false);
+      rel.access = workDOM('//opensearch:relation[' + newIndex + ']/opensearch:linkObject/opensearch:access/text()', true, false);
+      return rel;
+    });
+
     return data;
   }
 };

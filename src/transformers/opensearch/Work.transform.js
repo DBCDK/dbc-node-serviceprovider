@@ -189,7 +189,9 @@ const WorkTransform = {
         access: ''
       };
       rel.link = workDOM('//opensearch:relation[' + newIndex + ']/opensearch:relationUri/text()', true, false);
+      rel.type = workDOM('//opensearch:relation[' + newIndex + ']/opensearch:relationType/text()', true, false);
       rel.access = workDOM('//opensearch:relation[' + newIndex + ']/opensearch:linkObject/opensearch:access/text()', true, false);
+      rel.accessType = workDOM('//opensearch:relation[' + newIndex + ']/opensearch:linkObject/opensearch:accessType/text()', true, false);
       return rel;
 
     });

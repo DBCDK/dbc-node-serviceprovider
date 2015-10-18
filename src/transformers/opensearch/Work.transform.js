@@ -181,17 +181,18 @@ const WorkTransform = {
 
       return edition;
     });
-
-    data.work.relations = workDOM('//opensearch:relation', false, false).map((relation, index) => {
+    data.work.relations = workDOM('//opensearch:collection/opensearch:object/opensearch:relations/opensearch:relation', false, false).map((relation, index) => {
       const newIndex = index + 1;
       let rel = {
         link: '',
-        access: ''
+        type: '',
+        access: '',
+        accessType: ''
       };
-      rel.link = workDOM('//opensearch:relation[' + newIndex + ']/opensearch:relationUri/text()', true, false);
-      rel.type = workDOM('//opensearch:relation[' + newIndex + ']/opensearch:relationType/text()', true, false);
-      rel.access = workDOM('//opensearch:relation[' + newIndex + ']/opensearch:linkObject/opensearch:access/text()', true, false);
-      rel.accessType = workDOM('//opensearch:relation[' + newIndex + ']/opensearch:linkObject/opensearch:accessType/text()', true, false);
+      rel.link = workDOM('//opensearch:object/opensearch:relations/opensearch:relation[' + newIndex + ']/opensearch:relationUri/text()', true, false);
+      rel.type = workDOM('//opensearch:object/opensearch:relations/opensearch:relation[' + newIndex + ']/opensearch:relationType/text()', true, false);
+      rel.access = workDOM('//opensearch:object/opensearch:relations/opensearch:relation[' + newIndex + ']/opensearch:linkObject/opensearch:access/text()', true, false);
+      rel.accessType = workDOM('//opensearch:object/opensearch:relations/opensearch:relation[' + newIndex + ']/opensearch:linkObject/opensearch:accessType/text()', true, false);
       return rel;
 
     });

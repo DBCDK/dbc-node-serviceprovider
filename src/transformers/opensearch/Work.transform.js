@@ -187,12 +187,15 @@ const WorkTransform = {
         link: '',
         type: '',
         access: '',
-        accessType: ''
+        accessType: '',
+        collection: ''
       };
       rel.link = workDOM('//opensearch:object/opensearch:relations/opensearch:relation[' + newIndex + ']/opensearch:relationUri/text()', true, false);
       rel.type = workDOM('//opensearch:object/opensearch:relations/opensearch:relation[' + newIndex + ']/opensearch:relationType/text()', true, false);
       rel.access = workDOM('//opensearch:object/opensearch:relations/opensearch:relation[' + newIndex + ']/opensearch:linkObject/opensearch:access/text()', true, false);
       rel.accessType = workDOM('//opensearch:object/opensearch:relations/opensearch:relation[' + newIndex + ']/opensearch:linkObject/opensearch:accessType/text()', true, false);
+      rel.collection = workDOM('//opensearch:object/opensearch:relations/opensearch:relation[' + newIndex + ']/opensearch:linkObject/opensearch:linkCollectionIdentifier/text()',
+      false, true);
       return rel;
 
     });

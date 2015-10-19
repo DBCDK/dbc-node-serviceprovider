@@ -197,15 +197,20 @@ var WorkTransform = {
 
       return edition;
     });
-
-    data.work.relations = workDOM('//opensearch:relation', false, false).map(function (relation, index) {
+    data.work.relations = workDOM('//opensearch:collection/opensearch:object/opensearch:relations/opensearch:relation', false, false).map(function (relation, index) {
       var newIndex = index + 1;
       var rel = {
         link: '',
-        access: ''
+        type: '',
+        access: '',
+        accessType: '',
+        collection: ''
       };
-      rel.link = workDOM('//opensearch:relation[' + newIndex + ']/opensearch:relationUri/text()', true, false);
-      rel.access = workDOM('//opensearch:relation[' + newIndex + ']/opensearch:linkObject/opensearch:access/text()', true, false);
+      rel.link = workDOM('//opensearch:object/opensearch:relations/opensearch:relation[' + newIndex + ']/opensearch:relationUri/text()', true, false);
+      rel.type = workDOM('//opensearch:object/opensearch:relations/opensearch:relation[' + newIndex + ']/opensearch:relationType/text()', true, false);
+      rel.access = workDOM('//opensearch:object/opensearch:relations/opensearch:relation[' + newIndex + ']/opensearch:linkObject/opensearch:access/text()', true, false);
+      rel.accessType = workDOM('//opensearch:object/opensearch:relations/opensearch:relation[' + newIndex + ']/opensearch:linkObject/opensearch:accessType/text()', true, false);
+      rel.collection = workDOM('//opensearch:object/opensearch:relations/opensearch:relation[' + newIndex + ']/opensearch:linkObject/opensearch:linkCollectionIdentifier/text()', false, true);
       return rel;
     });
 

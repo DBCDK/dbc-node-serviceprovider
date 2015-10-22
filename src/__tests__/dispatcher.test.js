@@ -51,8 +51,5 @@ describe('Testing the methods in the Dispatcher object', () => {
       expect(connectionMock.emit.calledWith('testEventResponse', 'reponse value')).to.be.equal(true);
       done();
     }, 0);
-
   });
 });
-
-

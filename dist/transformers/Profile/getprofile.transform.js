@@ -29,6 +29,7 @@ var GetProfileTransform = {
       id: loopbackProfile.id,
       favoriteLibraries: loopbackProfile.favoriteLibraries ? loopbackProfile.favoriteLibraries : [],
       likes: loopbackProfile.likes,
+      groups: loopbackProfile.groups,
       userIsLoggedIn: !loopbackProfile.error
     };
 

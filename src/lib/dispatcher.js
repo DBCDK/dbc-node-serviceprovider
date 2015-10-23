@@ -28,7 +28,7 @@ function handleResponse(connection, responsePromise, event) {
     })
     .catch(error => {
       connection.emit(eventName, {error});
-      Logger.log('info', 'An error occured in a response from a service', {
+      Logger.log('error', 'An error occured while communicating with a service', {
         event: event,
         error: error,
         conection: (connection && connection.request && connection.request.session) ? connection.request.session : {}

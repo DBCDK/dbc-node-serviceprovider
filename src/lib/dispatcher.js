@@ -8,6 +8,11 @@
 
 let Logger = null;
 
+function now() {
+  let hr = process.hrtime();
+  return (hr[0] * 1e9 + hr[1]) / 1000000;
+}
+
 /**
  * Handle promises being resolved or rejected
  *
@@ -17,13 +22,16 @@ let Logger = null;
  */
 function handleResponse(connection, responsePromise, event) {
   const eventName = `${event}Response`;
+  const start = now();
   responsePromise
     .then(response => {
+      const end = now();
       connection.emit(eventName, response);
       Logger.log('info', 'Got a response to deliver by sockets', {
         event: event,
         response: response,
-        conection: (connection && connection.request && connection.request.session) ? connection.request.session : {}
+        conection: (connection && connection.request && connection.request.session) ? connection.request.session : {},
+        time_delta: end - start
       });
     })
     .catch(error => {

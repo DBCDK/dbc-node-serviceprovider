@@ -9,6 +9,7 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 exports['default'] = trigger;
+exports.getLoggingTrigger = getLoggingTrigger;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -17,6 +18,11 @@ var _lodash = require('lodash');
 var _EventsJs = require('./Events.js');
 
 var _EventsJs2 = _interopRequireDefault(_EventsJs);
+
+function now() {
+  var hr = process.hrtime();
+  return (hr[0] * 1e9 + hr[1]) / 1000000;
+}
 
 /**
  * Ensures the connection object has the requested structure.
@@ -45,16 +51,26 @@ function ensureConnectionObject(connection) {
  * Handles the request and response transform callback and returns a promise, which resolves to the final
  * response.
  *
- * @param {String} event
- * @param {Object || Array} query The query object/array
- * @param {Object} _connection
+ * @param event
+ * @param query
+ * @param _connection
+ * @param logger
+ * @returns {Array}
  */
-function handleTriggerEvents(event, query, _connection) {
+function handleTriggerEvents(event, query, _connection, logger) {
+  logger = logger || { log: function log() {} }; // eslint-disable-line
+  var startTime = now();
+
   var transform = _EventsJs2['default'].getEvent('transform', event);
   var connection = ensureConnectionObject(_connection);
+
+  var requestTransformStartTime = now();
   var request = transform.requestTransform(event, query, connection);
   // make sure requests are an array
   var requestArray = (0, _lodash.isArray)(request) && request || [request];
+
+  var requestTransformsFinishedTime = now();
+  var transformDelta = requestTransformsFinishedTime - requestTransformStartTime;
 
   // An array of promises is returned, one for each request in the request array
   // When each promise is resolved the transform response method is called.
@@ -63,6 +79,12 @@ function handleTriggerEvents(event, query, _connection) {
       return transform.responseTransform(response, query, connection);
     });
   });
+
+  var endTime = now();
+
+  logger.log('info', '[TIMER] ' + event + ' transform started at: ' + startTime + ' ms');
+  logger.log('info', '[TIMER] ' + event + ' requesttransform took ' + transformDelta + ' ms...');
+  logger.log('info', '[TIMER] ' + event + ' transform ended at: ' + endTime + ' ms, and took ' + (endTime - startTime) + ' ms.');
 
   return result;
 }
@@ -80,4 +102,14 @@ function trigger(event, params, connection) {
   return handleTriggerEvents(event, params, connection);
 }
 
-module.exports = exports['default'];
+/**
+ * Gets a trigger function with a logger attached
+ * @param logger
+ * @returns {Function}
+ */
+
+function getLoggingTrigger(logger) {
+  return function (event, params, connection) {
+    return handleTriggerEvents(event, params, connection, logger);
+  };
+}

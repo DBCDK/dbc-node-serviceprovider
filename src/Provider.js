@@ -10,7 +10,7 @@ import path from 'path';
 import autoRequire from './lib/AutoRequire.js';
 import Dispatcher from './lib/dispatcher';
 import {registerTransform} from './lib/Transforms.js';
-import trigger from './lib/Trigger.js';
+import {getLoggingTrigger} from './lib/Trigger.js';
 import ServiceClients from './lib/ServiceClients.js';
 import {getEventsOfType} from './lib/Events.js';
 
@@ -68,7 +68,7 @@ export default function ProviderFactory(config, logger) {
     bootstrap,
     registerTransform,
     registerServiceClient,
-    trigger,
+    trigger: getLoggingTrigger(logger),
     getEventsOfType
   };
 

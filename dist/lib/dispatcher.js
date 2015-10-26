@@ -12,6 +12,11 @@ Object.defineProperty(exports, '__esModule', {
 exports['default'] = SocketDispatcher;
 var Logger = null;
 
+function now() {
+  var hr = process.hrtime();
+  return (hr[0] * 1e9 + hr[1]) / 1000000;
+}
+
 /**
  * Handle promises being resolved or rejected
  *
@@ -21,12 +26,15 @@ var Logger = null;
  */
 function handleResponse(connection, responsePromise, event) {
   var eventName = event + 'Response';
+  var start = now();
   responsePromise.then(function (response) {
+    var end = now();
     connection.emit(eventName, response);
     Logger.log('info', 'Got a response to deliver by sockets', {
       event: event,
       response: response,
-      conection: connection && connection.request && connection.request.session ? connection.request.session : {}
+      conection: connection && connection.request && connection.request.session ? connection.request.session : {},
+      time_delta: end - start
     });
   })['catch'](function (error) {
     connection.emit(eventName, { error: error });

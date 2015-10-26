@@ -29,8 +29,6 @@ var _libTransformsJs = require('./lib/Transforms.js');
 
 var _libTriggerJs = require('./lib/Trigger.js');
 
-var _libTriggerJs2 = _interopRequireDefault(_libTriggerJs);
-
 var _libServiceClientsJs = require('./lib/ServiceClients.js');
 
 var _libServiceClientsJs2 = _interopRequireDefault(_libServiceClientsJs);
@@ -92,7 +90,7 @@ function ProviderFactory(config, logger) {
     bootstrap: bootstrap,
     registerTransform: _libTransformsJs.registerTransform,
     registerServiceClient: registerServiceClient,
-    trigger: _libTriggerJs2['default'],
+    trigger: (0, _libTriggerJs.getLoggingTrigger)(logger),
     getEventsOfType: _libEventsJs.getEventsOfType
   };
 

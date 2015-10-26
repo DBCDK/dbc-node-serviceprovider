@@ -93,7 +93,6 @@ const ResultListTransform = {
       return data;
     }
 
-
     data.info.hits = result.hits;
     data.info.collections = result.collections;
     data.info.more = result.more;
@@ -110,6 +109,7 @@ const ResultListTransform = {
       let no = work.collection.numberOfObjects;
       let identifiers = [];
       let title, creator, workType;
+
       if (no === '1') {
         identifiers.push(work.collection.object.identifier);
         title = work.formattedCollection.briefDisplay.manifestation.titleFull;
@@ -118,17 +118,22 @@ const ResultListTransform = {
       }
       else {
         work.collection.object.forEach((identifier) => {
-          identifiers.push(identifier.identifier);
-          title = work.formattedCollection.briefDisplay.manifestation[0].titleFull;
-          creator = work.formattedCollection.briefDisplay.manifestation[0].creator;
-          workType = work.formattedCollection.briefDisplay.manifestation[0].workType;
+          if (identifier.identifier.length) {
+            identifiers.push(identifier.identifier);
+            title = work.formattedCollection.briefDisplay.manifestation[0].titleFull;
+            creator = work.formattedCollection.briefDisplay.manifestation[0].creator;
+            workType = work.formattedCollection.briefDisplay.manifestation[0].workType;
+          }
         });
       }
-      newWork.identifiers = identifiers;
-      newWork.title = title;
-      newWork.creator = creator;
-      newWork.workType = workType;
-      data.result.push(newWork);
+
+      if (identifiers.length) {
+        newWork.identifiers = identifiers;
+        newWork.title = title;
+        newWork.creator = creator;
+        newWork.workType = workType;
+        data.result.push(newWork);
+      }
     });
 
     return data;

@@ -24,6 +24,7 @@ function cachePromiseCallback(params) {
   const {cb, ttl, key, err, result, resolve, reject} = params;
 
   if (err) {
+    Logger.error('Promise was rejected in cachePromiseCallback', {error: err, params: params});
     reject(err);
   }
   else if (result) {

@@ -25,15 +25,10 @@ function cachePromiseCallback(params) {
 
   if (err) {
     Logger.error('Promise was rejected in cachePromiseCallback', {error: err, params: params});
-    reject(err);
+    return reject(err);
   }
-  else if (result) {
-    // Cached version exists
-    const res = JSON.parse(result);
-    resolve(res);
-    Logger.info('Delivering cached result', {res: res, params: params});
-  }
-  else {
+
+  function noCache() {
     // No cache exists
     const callbacks = cb();
     const callbacksArray = isArray(callbacks) ? callbacks : [callbacks];
@@ -46,6 +41,17 @@ function cachePromiseCallback(params) {
     });
 
     Logger.info('No cahced data was found, retreiving from client with params: ', params);
+  }
+
+  if (result) {
+    // Cached version exists
+    setTimeout(noCache, 500); // respond within 500 ms or just ship
+    const res = JSON.parse(result);
+    resolve(res);
+    Logger.info('Delivering cached result', {res: res, params: params});
+  }
+  else {
+    noCache();
   }
 }
 

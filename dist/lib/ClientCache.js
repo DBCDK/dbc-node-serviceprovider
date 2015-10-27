@@ -41,6 +41,7 @@ function cachePromiseCallback(params) {
   var reject = params.reject;
 
   if (err) {
+    Logger.error('Promise was rejected in cachePromiseCallback', { error: err, params: params });
     reject(err);
   } else if (result) {
     // Cached version exists

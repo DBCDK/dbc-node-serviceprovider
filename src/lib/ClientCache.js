@@ -28,7 +28,7 @@ function cachePromiseCallback(params) {
     return reject(err);
   }
 
-  function noCache() {
+  function noCache(noError) {
     // No cache exists
     const callbacks = cb();
     const callbacksArray = isArray(callbacks) ? callbacks : [callbacks];
@@ -40,18 +40,23 @@ function cachePromiseCallback(params) {
       }));
     });
 
-    Logger.info('No cahced data was found, retreiving from client with params: ', params);
+    if (noError) {
+      Logger.info('No cahced data was found, retreiving from client with params: ', params);
+    }
+    else {
+      Logger.info('A caching error ocurred, retreiving from client with params: ', params);
+    }
   }
 
   if (result) {
     // Cached version exists
-    setTimeout(noCache, 500); // respond within 500 ms or just ship
+    setTimeout(noCache, 500, false); // respond within 500 ms or just ship
     const res = JSON.parse(result);
     resolve(res);
     Logger.info('Delivering cached result', {res: res, params: params});
   }
   else {
-    noCache();
+    noCache(true);
   }
 }
 

@@ -45,22 +45,50 @@ var GetUserStatusTransform = {
 
     var orderedItems = {};
     orderedItems.count = orders['ous:ordersCount'][0];
-    orderedItems.orders = [];
 
-    var o = undefined;
+    if (orderedItems.count > 0) {
+      (function () {
+        orderedItems.orders = [];
 
-    orders['ous:order'].forEach(function (order) {
-      o = {};
-      o.author = order['ous:author'];
-      o.title = order['ous:title'];
-      o.queue = order['ous:holdQueuePosition'];
-      o.pickUpAgency = order['ous:pickUpAgency'];
-      o.pickUpExpiryDate = order['ous:pickUpExpiryDate'];
-      o.status = order['ous:orderStatus'];
-      orderedItems.orders.push(o);
-    });
+        var o = undefined;
+
+        orders['ous:order'].forEach(function (order) {
+          o = {};
+          o.author = order['ous:author'];
+          o.title = order['ous:title'];
+          o.queue = order['ous:holdQueuePosition'];
+          o.pickUpAgency = order['ous:pickUpAgency'];
+          o.pickUpExpiryDate = order['ous:pickUpExpiryDate'];
+          o.status = order['ous:orderStatus'];
+          orderedItems.orders.push(o);
+        });
+      })();
+    }
 
     data.result.orderedItems = orderedItems;
+
+    var loans = result['ous:getUserStatusResponse']['ous:userStatus'][0]['ous:loanedItems'][0];
+
+    var loanedItems = {};
+    loanedItems.count = loans['ous:loansCount'][0];
+
+    if (loanedItems.count > 0) {
+      (function () {
+        loanedItems.loans = [];
+
+        var l = undefined;
+
+        loans['ous:loan'].forEach(function (loan) {
+          l = {};
+          l.author = loan['ous:author'];
+          l.title = loan['ous:title'];
+          l.dueDate = loan['ous:dateDue'];
+          loanedItems.loans.push(l);
+        });
+      })();
+    }
+
+    data.result.loanedItems = loanedItems;
 
     return data;
   }

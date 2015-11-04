@@ -51,7 +51,6 @@ const GetUserStatusTransform = {
     let l;
 
     loans['ous:loan'].forEach((loan) => {
-      console.log(loan);
       l = {};
       l.author = (loan['ous:author']) ? loan['ous:author'][0] : null;
       l.title = (loan['ous:title']) ? loan['ous:title'][0] : null;

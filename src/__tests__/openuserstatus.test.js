@@ -5,6 +5,7 @@ import {expect, assert} from 'chai';
 import {isEqual} from 'lodash';
 
 const userStatusTransform = require('../transformers/OpenUserStatus/GetUserStatus.transform');
+const cancelOrderTransform = require('../transformers/OpenUserStatus/CancelOrder.transform');
 
 describe('Test transform of OpenUserStatus response', () => {
 
@@ -40,7 +41,31 @@ describe('Test transform of OpenUserStatus response', () => {
 
 		let response = {"ous:getUserStatusResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:getUserStatusError":["User authentication failed"]}};
 
-		assert.equal(JSON.stringify(userStatusTransform.responseTransform(response)), JSON.stringify({"result":{},"info":{},"error":[["User authentication failed"]]}), 'Authentication Error');
+		assert.equal(JSON.stringify(userStatusTransform.responseTransform(response)), JSON.stringify({"result":{},"info":{},"error":["User authentication failed"]}), 'Authentication Error');
+
+	});
+
+	it('Response transform cancel order with error in request', function() {
+
+		let response = {"ous:cancelOrderResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:cancelOrderError":["Element rule violated"]}};
+
+		assert.equal(JSON.stringify(cancelOrderTransform.responseTransform(response)), JSON.stringify({"result":{},"info":{},"error":["Element rule violated"]}), 'Error in request');
+
+	});
+
+	it('Response transform cancel order success', function() {
+
+		let response = {"ous:cancelOrderResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:cancelOrderStatus":[{"ous:orderId":["23516292"],"ous:orderCancelled":[""]}]}};
+
+		assert.equal(JSON.stringify(cancelOrderTransform.responseTransform(response)), JSON.stringify({"result":{"orderCancelled":true},"info":{"orderId":["23516292"]},"error":[]}), 'Error in request');
+
+	});
+
+	it('Response transform cancel order, order not found', function() {
+
+		let response = {"ous:cancelOrderResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:cancelOrderStatus":[{"ous:orderId":["23516292"],"ous:cancelOrderError":["Unknown order"]}]}};
+
+		assert.equal(JSON.stringify(cancelOrderTransform.responseTransform(response)), JSON.stringify({"result":{"orderCancelled":false},"info":{"orderId":["23516292"]},"error":[]}), 'Error in request');
 
 	});
 

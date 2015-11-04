@@ -37,6 +37,7 @@ const GetUserStatusTransform = {
         o.queue = (order['ous:holdQueuePosition']) ? order['ous:holdQueuePosition'][0] : null;
       }
       o.orderId = order['ous:orderId'][0];
+      o.orderType = order['ous:orderType'][0];
       orderedItems.orders.push(o);
       if (o.status === 'Available for pickup') {
         ready++;

@@ -22,16 +22,18 @@ const GetUserStatusTransform = {
 
   getOrderData(orderedItems, orders) {
 
-    let o;
     let ready = 0;
     orders['ous:order'].forEach((order) => {
+      let o;
       o = {};
       o.author = order['ous:author'][0];
       o.title = order['ous:title'][0];
       o.queue = order['ous:holdQueuePosition'][0];
       o.pickUpAgency = order['ous:pickUpAgency'][0];
-      o.pickUpExpiryDate = order['ous:pickUpExpiryDate'][0];
       o.status = order['ous:orderStatus'][0];
+      if (o.status === 'Available for pickup') {
+        o.pickUpExpiryDate = order['ous:pickUpExpiryDate'][0];
+      }
       o.orderId = order['ous:orderId'][0];
       orderedItems.orders.push(o);
       if (o.status === 'Available for pickup') {
@@ -75,7 +77,7 @@ const GetUserStatusTransform = {
     const orders = result['ous:getUserStatusResponse']['ous:userStatus'][0]['ous:orderedItems'][0];
 
     let orderedItems = {};
-    orderedItems.count = orders['ous:ordersCount'][0];
+    orderedItems.count = parseInt(orders['ous:ordersCount'][0], 10);
 
     if (orderedItems.count > 0) {
       orderedItems.orders = [];
@@ -87,7 +89,7 @@ const GetUserStatusTransform = {
     const loans = result['ous:getUserStatusResponse']['ous:userStatus'][0]['ous:loanedItems'][0];
 
     let loanedItems = {};
-    loanedItems.count = loans['ous:loansCount'][0];
+    loanedItems.count = parseInt(loans['ous:loansCount'][0], 10);
 
     if (loanedItems.count > 0) {
       loanedItems.loans = [];

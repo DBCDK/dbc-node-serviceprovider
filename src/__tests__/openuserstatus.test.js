@@ -49,15 +49,15 @@ describe('Test transform of OpenUserStatus response', () => {
 
 		let response = {"ous:cancelOrderResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:cancelOrderError":["Element rule violated"]}};
 
-		assert.equal(JSON.stringify(cancelOrderTransform.responseTransform(response)), JSON.stringify({"result":{},"info":{},"error":["Element rule violated"]}), 'Error in request');
+		assert.equal(JSON.stringify(cancelOrderTransform.responseTransform(response)), JSON.stringify({"orderCancelled":false,"error":"Element rule violated"}), 'Error in request');
 
 	});
 
 	it('Response transform cancel order success', function() {
 
-		let response = {"ous:cancelOrderResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:cancelOrderStatus":[{"ous:orderId":["23516292"],"ous:orderCancelled":[""]}]}};
+		let response = {orderId: "23516292", "ous:cancelOrderResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:cancelOrderStatus":[{"ous:orderId":["23516292"],"ous:orderCancelled":[""]}]}};
 
-		assert.equal(JSON.stringify(cancelOrderTransform.responseTransform(response)), JSON.stringify({"result":{"orderCancelled":true},"info":{"orderId":["23516292"]},"error":[]}), 'Error in request');
+		assert.equal(JSON.stringify(cancelOrderTransform.responseTransform(response)), JSON.stringify({"orderId":"23516292","orderCancelled":true,"error":null}), 'Error in request');
 
 	});
 
@@ -65,7 +65,7 @@ describe('Test transform of OpenUserStatus response', () => {
 
 		let response = {"ous:cancelOrderResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:cancelOrderStatus":[{"ous:orderId":["23516292"],"ous:cancelOrderError":["Unknown order"]}]}};
 
-		assert.equal(JSON.stringify(cancelOrderTransform.responseTransform(response)), JSON.stringify({"result":{"orderCancelled":false},"info":{"orderId":["23516292"]},"error":[]}), 'Error in request');
+		assert.equal(JSON.stringify(cancelOrderTransform.responseTransform(response)), JSON.stringify({"orderCancelled":false,"error":null}), 'Error in request');
 
 	});
 

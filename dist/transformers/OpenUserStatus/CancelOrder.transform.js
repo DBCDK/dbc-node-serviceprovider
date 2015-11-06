@@ -21,7 +21,7 @@ var CancelOrderTransform = {
   },
 
   requestTransform: function requestTransform(event, request) {
-    return this.getUserStatus({
+    return this.cancelOrder({
       agencyId: 'DK-' + request.agencyId,
       orderId: request.orderId,
       orderType: request.orderType,
@@ -31,27 +31,24 @@ var CancelOrderTransform = {
   },
 
   responseTransform: function responseTransform(response) {
-    var data = {};
-    data.result = {};
-    data.info = {};
-    data.error = [];
 
     var result = prep.checkCancelOrderResponse(response);
 
+    var error = null;
+
+    var orderCancelled = false;
+
+    var orderId = response.orderId;
+
     if (result.hasOwnProperty('error')) {
-      data.error.push(result.error);
-      return data;
-    }
-
-    data.info.orderId = response['ous:cancelOrderResponse']['ous:cancelOrderStatus'][0]['ous:orderId'];
-
-    if (response['ous:cancelOrderResponse']['ous:cancelOrderStatus'][0].hasOwnProperty('ous:orderCancelled')) {
-      data.result.orderCancelled = true;
+      error = result.error;
     } else {
-      data.result.orderCancelled = false;
+      orderCancelled = response['ous:cancelOrderResponse']['ous:cancelOrderStatus'][0].hasOwnProperty('ous:orderCancelled');
     }
 
-    return data;
+    response = { orderId: orderId, orderCancelled: orderCancelled, error: error };
+
+    return response;
   }
 
 };

@@ -6,6 +6,7 @@ import {isEqual} from 'lodash';
 
 const userStatusTransform = require('../transformers/OpenUserStatus/GetUserStatus.transform');
 const cancelOrderTransform = require('../transformers/OpenUserStatus/CancelOrder.transform');
+const renewLoanTransform = require('../transformers/OpenUserStatus/RenewLoan.transform');
 
 describe('Test transform of OpenUserStatus response', () => {
 
@@ -57,7 +58,7 @@ describe('Test transform of OpenUserStatus response', () => {
 
 		let response = {orderId: "23516292", "ous:cancelOrderResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:cancelOrderStatus":[{"ous:orderId":["23516292"],"ous:orderCancelled":[""]}]}};
 
-		assert.equal(JSON.stringify(cancelOrderTransform.responseTransform(response)), JSON.stringify({"orderId":"23516292","orderCancelled":true,"error":null}), 'Error in request');
+		assert.equal(JSON.stringify(cancelOrderTransform.responseTransform(response)), JSON.stringify({"orderId":"23516292","orderCancelled":true,"error":null}), 'Order cancelled');
 
 	});
 
@@ -66,6 +67,30 @@ describe('Test transform of OpenUserStatus response', () => {
 		let response = {"ous:cancelOrderResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:cancelOrderStatus":[{"ous:orderId":["23516292"],"ous:cancelOrderError":["Unknown order"]}]}};
 
 		assert.equal(JSON.stringify(cancelOrderTransform.responseTransform(response)), JSON.stringify({"orderCancelled":false,"error":null}), 'Error in request');
+
+	});
+
+	it('Response transform renew loan, renew success', function() {
+
+		let response = {"ous:renewLoanResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:renewLoanStatus":[{"ous:loanId":["5056136071"],"ous:dateDue":["2015-12-07T00:00:00+01:00"]}]}};
+
+		assert.equal(JSON.stringify(renewLoanTransform.responseTransform(response)), JSON.stringify({"loanId":"5056136071","loanRenewed":true,"dueDate":"2015-12-07T00:00:00+01:00","error":null}), 'Loan renewed');
+
+	});
+
+	it('Response transform renew loan, renew failed', function() {
+
+		let response = {"ous:renewLoanResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:renewLoanStatus":[{"ous:loanId":["5056136671"],"ous:renewLoanError":["Item not renewable"]}]}};
+
+		assert.equal(JSON.stringify(renewLoanTransform.responseTransform(response)), JSON.stringify({"loanId":"5056136671","loanRenewed":false,"dueDate":null,"error":["Item not renewable"]}), 'Loan not renewed');
+
+	});
+
+	it('Response transform renew loan, error', function() {
+
+		let response = {"ous:renewLoanResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:renewLoanError":["Service unavailable"]}};
+
+		assert.equal(JSON.stringify(renewLoanTransform.responseTransform(response)), JSON.stringify({"loanId":null,"loanRenewed":false,"dueDate":null,"error":"Service unavailable"}), 'Error');
 
 	});
 

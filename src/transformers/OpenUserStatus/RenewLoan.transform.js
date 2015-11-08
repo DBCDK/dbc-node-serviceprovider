@@ -8,7 +8,7 @@ const RenewLoanTransform = {
     return 'renewLoan';
   },
 
-  cancelOrder(request) {
+  renewLoan(request) {
     return this.callServiceClient('openuserstatus', 'renewLoan', request);
   },
 

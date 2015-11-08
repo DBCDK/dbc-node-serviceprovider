@@ -16,7 +16,7 @@ var RenewLoanTransform = {
     return 'renewLoan';
   },
 
-  cancelOrder: function cancelOrder(request) {
+  renewLoan: function renewLoan(request) {
     return this.callServiceClient('openuserstatus', 'renewLoan', request);
   },
 

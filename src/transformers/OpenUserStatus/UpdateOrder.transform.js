@@ -29,7 +29,6 @@ const UpdateOrderTransform = {
     let error = null;
 
     let orderUpdated = false;
-    let dueDate = null;
     let orderId = null;
 
     if (result.hasOwnProperty('error')) {

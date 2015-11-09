@@ -6,6 +6,7 @@ Object.defineProperty(exports, '__esModule', {
 exports.checkUserStatusResponse = checkUserStatusResponse;
 exports.checkCancelOrderResponse = checkCancelOrderResponse;
 exports.checkRenewLoanResponse = checkRenewLoanResponse;
+exports.checkUpdateOrderResponse = checkUpdateOrderResponse;
 function hasValidUserStatusResponse(response) {
   return response['ous:getUserStatusResponse'].hasOwnProperty('ous:userStatus');
 }
@@ -16,6 +17,10 @@ function hasValidCancelOrderResponse(response) {
 
 function hasValidRenewLoanResponse(response) {
   return response['ous:renewLoanResponse'].hasOwnProperty('ous:renewLoanStatus');
+}
+
+function hasValidUpdateOrderResponse(response) {
+  return response['ous:updateOrderResponse'].hasOwnProperty('ous:updateOrderStatus');
 }
 
 function checkUserStatusResponse(response) {
@@ -45,5 +50,15 @@ function checkRenewLoanResponse(response) {
   }
 
   response.error = response['ous:renewLoanResponse']['ous:renewLoanError'][0];
+  return response;
+}
+
+function checkUpdateOrderResponse(response) {
+
+  if (hasValidUpdateOrderResponse(response) === true) {
+    return response;
+  }
+
+  response.error = response['ous:updateOrderResponse']['ous:updateOrderError'][0];
   return response;
 }

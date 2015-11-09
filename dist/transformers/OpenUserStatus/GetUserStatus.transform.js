@@ -67,6 +67,22 @@ var GetUserStatusTransform = {
     });
   },
 
+  getFiscalTransactionData: function getFiscalTransactionData(fiscalTransaction, fiscal) {
+
+    var f = undefined;
+
+    fiscal['ous:fiscalTransaction'].forEach(function (item) {
+      f = {};
+      f.author = item['ous:author'] ? item['ous:author'][0] : null;
+      f.title = item['ous:title'] ? item['ous:title'][0] : null;
+      f.amount = parseInt(item['ous:fiscalTransactionAmount'], 10) ? parseInt(item['ous:fiscalTransactionAmount'][0], 10) : null;
+      f.currency = item['ous:fiscalTransactionCurrency'] ? item['ous:fiscalTransactionCurrency'][0] : null;
+      f.date = item['ous:fiscalTransactionDate'] ? item['ous:fiscalTransactionDate'][0] : null;
+      f.type = item['ous:fiscalTransactionType'] ? item['ous:fiscalTransactionType'][0] : null;
+      fiscalTransaction.items.push(f);
+    });
+  },
+
   responseTransform: function responseTransform(response) {
     var data = {};
     data.result = {};
@@ -105,6 +121,19 @@ var GetUserStatusTransform = {
     }
 
     data.result.loanedItems = loanedItems;
+
+    var fiscal = result['ous:getUserStatusResponse']['ous:userStatus'][0]['ous:fiscalAccount'][0];
+
+    var fiscalTransaction = {};
+    fiscalTransaction.totalAmount = parseInt(fiscal['ous:totalAmount'][0], 10);
+    fiscalTransaction.currency = fiscal['ous:totalAmountCurrency'][0];
+
+    if (fiscalTransaction.totalAmount > 0) {
+      fiscalTransaction.items = [];
+      this.getFiscalTransactionData(fiscalTransaction, fiscal);
+    }
+
+    data.result.fiscalAccount = fiscalTransaction;
 
     return data;
   }

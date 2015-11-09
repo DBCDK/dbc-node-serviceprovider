@@ -12,6 +12,10 @@ function hasValidRenewLoanResponse(response) {
   return response['ous:renewLoanResponse'].hasOwnProperty('ous:renewLoanStatus');
 }
 
+function hasValidUpdateOrderResponse(response) {
+  return response['ous:updateOrderResponse'].hasOwnProperty('ous:updateOrderStatus');
+}
+
 export function checkUserStatusResponse(response) {
 
   if (hasValidUserStatusResponse(response) === true) {
@@ -41,6 +45,17 @@ export function checkRenewLoanResponse(response) {
   }
 
   response.error = response['ous:renewLoanResponse']['ous:renewLoanError'][0];
+  return response;
+
+}
+
+export function checkUpdateOrderResponse(response) {
+
+  if (hasValidUpdateOrderResponse(response) === true) {
+    return response;
+  }
+
+  response.error = response['ous:updateOrderResponse']['ous:updateOrderError'][0];
   return response;
 
 }

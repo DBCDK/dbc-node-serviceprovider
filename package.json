@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DBCDK/dbc-node-serviceprovider.git#master"
+    "url": "https://github.com/DBCDK/dbc-node-serviceprovider.git#master"
   },
   "bugs": {
     "url": "https://github.com/DBCDK/dbc-node-serviceprovider/issues"
@@ -33,7 +33,7 @@
   "license": "GPL-3.0",
   "dependencies": {
     "cache-manager": "^1.0.0",
-    "dbc-node-borchk": "git+https://github.com/DBCDK/dbc-node-borchk#stable_dist",
+    "dbc-node-borchk": "^1.0.3",
     "dbc-node-moreinfo-client": "^1.0.1",
     "dbc-node-openagency-client": "git+https://github.com/DBCDK/dbc-node-openagency-client#stable_dist",
     "dbc-node-openorder-client": "^1.0.1",

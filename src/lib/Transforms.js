@@ -11,7 +11,7 @@ import Events from './Events.js';
 /**
  * Base Transform Methods that are inherited
  *
- * @type {{callClient: Function}}
+ * @type {{callServiceClient: Function}}
  */
 const BaseTransform = {
   callServiceClient(client, method, params) {
@@ -62,6 +62,5 @@ function registerTransform(transform) {
 
   return transform;
 }
-
 
 export default {registerTransform};

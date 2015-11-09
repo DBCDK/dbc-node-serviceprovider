@@ -20,7 +20,7 @@ var _EventsJs2 = _interopRequireDefault(_EventsJs);
 /**
  * Base Transform Methods that are inherited
  *
- * @type {{callClient: Function}}
+ * @type {{callServiceClient: Function}}
  */
 var BaseTransform = {
   callServiceClient: function callServiceClient(client, method, params) {

@@ -7,6 +7,7 @@ import {isEqual} from 'lodash';
 const userStatusTransform = require('../transformers/OpenUserStatus/GetUserStatus.transform');
 const cancelOrderTransform = require('../transformers/OpenUserStatus/CancelOrder.transform');
 const renewLoanTransform = require('../transformers/OpenUserStatus/RenewLoan.transform');
+const updateOrderTransform = require('../transformers/OpenUserStatus/UpdateOrder.transform');
 
 describe('Test transform of OpenUserStatus response', () => {
 
@@ -99,6 +100,22 @@ describe('Test transform of OpenUserStatus response', () => {
 		let response = {"ous:renewLoanResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:renewLoanError":["Service unavailable"]}};
 
 		assert.equal(JSON.stringify(renewLoanTransform.responseTransform(response)), JSON.stringify({"loanId":null,"loanRenewed":false,"dueDate":null,"error":"Service unavailable"}), 'Error');
+
+	});
+
+	it('Response transform update order, update success', function() {
+
+		let response = {"ous:updateOrderResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:updateOrderStatus":[{"ous:orderId":["14661460"],"ous:orderUpdated":[""]}]},"orderId":"14661460"};
+
+		assert.equal(JSON.stringify(updateOrderTransform.responseTransform(response)), JSON.stringify({"orderId":"14661460","orderUpdated":true,"error":null}), 'Order updated');
+
+	});
+
+	it('Response transform update order, error', function() {
+
+		let response = {"ous:updateOrderResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:updateOrderError":["Element rule violated"]}};
+
+		assert.equal(JSON.stringify(updateOrderTransform.responseTransform(response)), JSON.stringify({"orderId":null,"orderUpdated":false,"error":"Element rule violated"}), 'Error');
 
 	});
 

@@ -20,12 +20,15 @@ var RenewLoanTransform = {
     return this.callServiceClient('openuserstatus', 'renewLoan', request);
   },
 
-  requestTransform: function requestTransform(event, request) {
+  requestTransform: function requestTransform(event, request, connection) {
+
+    var passport = connection.request.session.passport || { user: { id: '', uid: '' } };
+
     return this.renewLoan({
-      agencyId: 'DK-' + request.agencyId,
+      agencyId: 'DK-' + passport.user.agencyid,
       loanId: request.loanId,
-      userId: request.userId,
-      pinCode: request.pinCode
+      userId: passport.user.loanerid,
+      pinCode: passport.user.pincode
     });
   },
 

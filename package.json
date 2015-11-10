@@ -42,6 +42,7 @@
     "dbc-node-openuserstatus-client": "git+https://github.com/DBCDK/dbc-node-openuserstatus-client#stable_dist",
     "dbc-node-popsuggest": "^1.0.2",
     "dbc-node-profile-client": "git+https://github.com/DBCDK/dbc-node-profile-client#stable_dist",
+    "dbc-node-ranked-recommendations-client": "^0.1.1",
     "dbc-node-recommendations": "^2.0.1",
     "jsonpath-object-transform": "https://github.com/vibjerg/jsonpath-object-transform/archive/1.0.5.tar.gz",
     "lodash": "^3.10.1",

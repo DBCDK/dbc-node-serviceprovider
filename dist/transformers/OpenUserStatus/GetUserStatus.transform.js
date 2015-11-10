@@ -20,12 +20,16 @@ var GetUserStatusTransform = {
     return this.callServiceClient('openuserstatus', 'getUserStatus', request);
   },
 
-  requestTransform: function requestTransform(event, request) {
-    return this.getUserStatus({
-      agencyId: 'DK-' + request.agencyId,
-      userId: request.userId,
-      pinCode: request.pinCode
-    });
+  requestTransform: function requestTransform(event, request, connection) {
+    var passport = connection.request.session.passport || { user: { id: '', uid: '' } };
+
+    var params = {
+      agencyId: 'DK-' + passport.user.agencyid,
+      userId: passport.user.loanerid,
+      pinCode: passport.user.pincode
+    };
+
+    return this.getUserStatus(params);
   },
 
   getOrderData: function getOrderData(orderedItems, orders) {
@@ -103,8 +107,8 @@ var GetUserStatusTransform = {
     var orderedItems = {};
     orderedItems.count = parseInt(orders['ous:ordersCount'][0], 10);
 
+    orderedItems.orders = [];
     if (orderedItems.count > 0) {
-      orderedItems.orders = [];
       this.getOrderData(orderedItems, orders);
     }
 
@@ -115,25 +119,30 @@ var GetUserStatusTransform = {
     var loanedItems = {};
     loanedItems.count = parseInt(loans['ous:loansCount'][0], 10);
 
+    loanedItems.loans = [];
     if (loanedItems.count > 0) {
-      loanedItems.loans = [];
       this.getLoanData(loanedItems, loans);
     }
 
     data.result.loanedItems = loanedItems;
 
-    var fiscal = result['ous:getUserStatusResponse']['ous:userStatus'][0]['ous:fiscalAccount'][0];
+    if (result['ous:getUserStatusResponse']['ous:userStatus'][0]['ous:fiscalAccount']) {
 
-    var fiscalTransaction = {};
-    fiscalTransaction.totalAmount = parseInt(fiscal['ous:totalAmount'][0], 10);
-    fiscalTransaction.currency = fiscal['ous:totalAmountCurrency'][0];
+      var fiscal = result['ous:getUserStatusResponse']['ous:userStatus'][0]['ous:fiscalAccount'][0];
 
-    if (fiscalTransaction.totalAmount > 0) {
-      fiscalTransaction.items = [];
-      this.getFiscalTransactionData(fiscalTransaction, fiscal);
+      var fiscalTransaction = {};
+      fiscalTransaction.totalAmount = parseInt(fiscal['ous:totalAmount'][0], 10);
+      fiscalTransaction.currency = fiscal['ous:totalAmountCurrency'][0];
+
+      if (fiscalTransaction.totalAmount > 0) {
+        fiscalTransaction.items = [];
+        this.getFiscalTransactionData(fiscalTransaction, fiscal);
+      }
+
+      data.result.fiscalAccount = fiscalTransaction;
+    } else {
+      data.result.fiscalAccount = null;
     }
-
-    data.result.fiscalAccount = fiscalTransaction;
 
     return data;
   }

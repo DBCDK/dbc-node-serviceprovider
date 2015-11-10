@@ -13,18 +13,20 @@ const PersonalRecommendationsTransform = {
         dislikes: []
       });
 
-      params.likes.unshift(params.work);
+      if (params.likes.length > 0) {
+        params.likes.unshift(params.work);
 
-      let precs = this.callServiceClient('recommendranked', 'getPersonalRecommendations', {
-        like: params.likes
-      });
+        let precs = this.callServiceClient('recommendranked', 'getPersonalRecommendations', {
+          like: params.likes
+        });
+
+        precs.then((res) => {
+          ret.personal = res.result;
+        });
+      }
 
       recs.then((res) => {
         ret.generic = res.result;
-      });
-
-      precs.then((res) => {
-        ret.personal = res.result;
         resolve(ret);
       });
     });

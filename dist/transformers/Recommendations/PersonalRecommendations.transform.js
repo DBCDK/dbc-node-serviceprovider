@@ -18,18 +18,20 @@ var PersonalRecommendationsTransform = {
         dislikes: []
       });
 
-      params.likes.unshift(params.work);
+      if (params.likes.length > 0) {
+        params.likes.unshift(params.work);
 
-      var precs = _this.callServiceClient('recommendranked', 'getPersonalRecommendations', {
-        like: params.likes
-      });
+        var precs = _this.callServiceClient('recommendranked', 'getPersonalRecommendations', {
+          like: params.likes
+        });
+
+        precs.then(function (res) {
+          ret.personal = res.result;
+        });
+      }
 
       recs.then(function (res) {
         ret.generic = res.result;
-      });
-
-      precs.then(function (res) {
-        ret.personal = res.result;
         resolve(ret);
       });
     });

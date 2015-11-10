@@ -12,13 +12,16 @@ const CancelOrderTransform = {
     return this.callServiceClient('openuserstatus', 'cancelOrder', request);
   },
 
-  requestTransform(event, request) {
+  requestTransform(event, request, connection) {
+
+    const passport = connection.request.session.passport || {user: {id: '', uid: ''}};
+    
     return this.cancelOrder({
-      agencyId: 'DK-' + request.agencyId,
+      agencyId: 'DK-' + passport.user.agencyid,
       orderId: request.orderId,
       orderType: request.orderType,
-      userId: request.userId,
-      pinCode: request.pinCode
+      userId: passport.user.loanerid,
+      pinCode: passport.user.pincode
     });
   },
 

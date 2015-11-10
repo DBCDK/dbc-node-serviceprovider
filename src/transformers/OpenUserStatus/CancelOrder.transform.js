@@ -15,7 +15,7 @@ const CancelOrderTransform = {
   requestTransform(event, request, connection) {
 
     const passport = connection.request.session.passport || {user: {id: '', uid: ''}};
-    
+
     return this.cancelOrder({
       agencyId: 'DK-' + passport.user.agencyid,
       orderId: request.orderId,

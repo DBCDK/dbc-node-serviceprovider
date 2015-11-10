@@ -104,8 +104,8 @@ const GetUserStatusTransform = {
     let orderedItems = {};
     orderedItems.count = parseInt(orders['ous:ordersCount'][0], 10);
 
+    orderedItems.orders = [];
     if (orderedItems.count > 0) {
-      orderedItems.orders = [];
       this.getOrderData(orderedItems, orders);
     }
 

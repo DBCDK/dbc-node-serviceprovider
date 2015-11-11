@@ -66,6 +66,10 @@ var GetUserStatusTransform = {
       l.author = loan['ous:author'] ? loan['ous:author'][0] : null;
       l.title = loan['ous:title'] ? loan['ous:title'][0] : null;
       l.dueDate = loan['ous:dateDue'][0];
+      var date = new Date(loan['ous:dateDue'][0]);
+      var soonDate = new Date(new Date().getTime() + 48 * 60 * 60 * 1000);
+      l.overdue = date < new Date();
+      l.dueSoon = date < soonDate && date > new Date();
       l.loanId = loan['ous:loanId'][0];
       loanedItems.loans.push(l);
     });

@@ -35,8 +35,7 @@ const GetUserStatusTransform = {
       o.status = order['ous:orderStatus'][0];
       o.pickUpAgency = order['ous:pickUpAgency'][0].replace('DK-', '');
       if (o.status === 'Available for pickup') {
-        const date = new Date(order['ous:pickUpExpiryDate'][0]);
-        o.pickUpExpiryDate = date.getDate() + '/' + (date.getMonth() + 1) + '-' + date.getFullYear();
+        o.pickUpExpiryDate = order['ous:pickUpExpiryDate'][0];
       }
       else {
         o.queue = (order['ous:holdQueuePosition']) ? order['ous:holdQueuePosition'][0] : null;
@@ -60,8 +59,7 @@ const GetUserStatusTransform = {
       l = {};
       l.author = (loan['ous:author']) ? loan['ous:author'][0] : null;
       l.title = (loan['ous:title']) ? loan['ous:title'][0] : null;
-      const date = new Date(loan['ous:dateDue'][0]);
-      l.dueDate = date.getDate() + '/' + (date.getMonth() + 1) + '-' + date.getFullYear();
+      l.dueDate = loan['ous:dateDue'][0];
       l.loanId = loan['ous:loanId'][0];
       loanedItems.loans.push(l);
     });

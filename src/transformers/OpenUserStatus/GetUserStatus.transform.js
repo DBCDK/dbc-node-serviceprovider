@@ -33,7 +33,7 @@ const GetUserStatusTransform = {
       o.author = (order['ous:author']) ? order['ous:author'][0] : '';
       o.title = order['ous:title'][0];
       o.status = order['ous:orderStatus'][0];
-      o.pickUpAgency = order['ous:pickUpAgency'][0];
+      o.pickUpAgency = order['ous:pickUpAgency'][0].replace('DK-', '');
       if (o.status === 'Available for pickup') {
         o.pickUpExpiryDate = order['ous:pickUpExpiryDate'][0];
       }

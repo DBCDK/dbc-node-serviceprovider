@@ -32,7 +32,7 @@ const PersonalRecommendationsTransform = {
         ret.generic = res.result;
       });
 
-      Promise.all(promises).then((values) => {
+      Promise.all(promises).then(() => {
         resolve(ret);
       });
     });

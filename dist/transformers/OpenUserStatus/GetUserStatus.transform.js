@@ -43,7 +43,8 @@ var GetUserStatusTransform = {
       o.status = order['ous:orderStatus'][0];
       o.pickUpAgency = order['ous:pickUpAgency'][0].replace('DK-', '');
       if (o.status === 'Available for pickup') {
-        o.pickUpExpiryDate = order['ous:pickUpExpiryDate'][0];
+        var date = new Date(order['ous:pickUpExpiryDate'][0]);
+        o.pickUpExpiryDate = date.getDate() + '/' + (date.getMonth() + 1) + '-' + date.getFullYear();
       } else {
         o.queue = order['ous:holdQueuePosition'] ? order['ous:holdQueuePosition'][0] : null;
       }

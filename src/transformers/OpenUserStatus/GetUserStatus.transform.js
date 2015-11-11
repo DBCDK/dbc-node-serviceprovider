@@ -132,15 +132,17 @@ const GetUserStatusTransform = {
       fiscalTransaction.totalAmount = parseInt(fiscal['ous:totalAmount'][0], 10);
       fiscalTransaction.currency = fiscal['ous:totalAmountCurrency'][0];
 
+      fiscalTransaction.items = [];
       if (fiscalTransaction.totalAmount > 0) {
-        fiscalTransaction.items = [];
         this.getFiscalTransactionData(fiscalTransaction, fiscal);
       }
 
       data.result.fiscalAccount = fiscalTransaction;
     }
     else {
-      data.result.fiscalAccount = null;
+      data.result.fiscalAccount = {
+        items: []
+      };
     }
 
     return data;

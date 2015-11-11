@@ -18,6 +18,7 @@ describe('Test transform of OpenUserStatus response', () => {
     let newResponse = userStatusTransform.responseTransform(response);
 
 		assert.equal(newResponse.result.orderedItems.count, 3, 'Ordered items');
+		assert.equal(newResponse.result.orderedItems.orders[0].pickUpAgency, '737600', 'PickupAgency');
 
 	});
 

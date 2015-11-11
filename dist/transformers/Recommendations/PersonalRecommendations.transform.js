@@ -13,10 +13,12 @@ var PersonalRecommendationsTransform = {
 
     return new Promise(function (resolve) {
       var ret = { generic: [], personal: [] };
+      var promises = [];
       var recs = _this.callServiceClient('recommend', 'getRecommendations', {
         likes: [params.work],
         dislikes: []
       });
+      promises.push(recs);
 
       if (params.likes.length > 0) {
         params.likes.unshift(params.work);
@@ -24,6 +26,7 @@ var PersonalRecommendationsTransform = {
         var precs = _this.callServiceClient('recommendranked', 'getPersonalRecommendations', {
           like: params.likes
         });
+        promises.push(precs);
 
         precs.then(function (res) {
           ret.personal = res.result;
@@ -32,6 +35,9 @@ var PersonalRecommendationsTransform = {
 
       recs.then(function (res) {
         ret.generic = res.result;
+      });
+
+      Promise.all(promises).then(function () {
         resolve(ret);
       });
     });

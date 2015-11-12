@@ -26,7 +26,6 @@ const RenewLoanTransform = {
 
   responseTransform(response) {
 
-
     let result = prep.checkRenewLoanResponse(response);
 
     let error = null;
@@ -37,6 +36,7 @@ const RenewLoanTransform = {
 
     if (result.hasOwnProperty('error')) {
       error = result.error;
+      loanId = response.loanId;
     }
     else if (response['ous:renewLoanResponse']['ous:renewLoanStatus'][0].hasOwnProperty('ous:renewLoanError')) {
       loanRenewed = false;
@@ -50,6 +50,7 @@ const RenewLoanTransform = {
     }
 
     response = {loanId: loanId, loanRenewed: loanRenewed, dueDate: dueDate, error: error};
+
 
     return response;
   }

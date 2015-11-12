@@ -44,6 +44,7 @@ var RenewLoanTransform = {
 
     if (result.hasOwnProperty('error')) {
       error = result.error;
+      loanId = response.loanId;
     } else if (response['ous:renewLoanResponse']['ous:renewLoanStatus'][0].hasOwnProperty('ous:renewLoanError')) {
       loanRenewed = false;
       error = response['ous:renewLoanResponse']['ous:renewLoanStatus'][0]['ous:renewLoanError'];

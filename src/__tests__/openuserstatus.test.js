@@ -100,7 +100,7 @@ describe('Test transform of OpenUserStatus response', () => {
 
 		let response = {"ous:renewLoanResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:renewLoanError":["Service unavailable"]}};
 
-		assert.equal(JSON.stringify(renewLoanTransform.responseTransform(response)), JSON.stringify({"loanId":null,"loanRenewed":false,"dueDate":null,"error":"Service unavailable"}), 'Error');
+		assert.equal(JSON.stringify(renewLoanTransform.responseTransform(response)), JSON.stringify({"loanRenewed":false,"dueDate":null,"error":"Service unavailable"}), 'Error');
 
 	});
 

@@ -72,65 +72,21 @@ export const harryTitle = {
       }
     ]
   }
-  ,
-  "params": {
-    "path": {
-      "method": "suggest",
-      "index": "display.title",
-      "query": "harry",
-      "fields": "fedoraPid,display.title"
-    }
-  }
 };
 
 export const harryCreator = {
-  "responseHeader": {
-    "q": "harry",
-    "args": {
-      "hr": "None",
-      "hl": "None"
-    },
-    "time": 49
-  },
+  "responseHeader": {"q": "harry", "args": {"hr": "None", "hl": "None"}, "time": 42},
   "response": {
     "suggestions": [
-      {
-        "frequency": 5612,
-        "suggestion": "Harry Nilsson"
-      },
-      {
-        "frequency": 3825,
-        "suggestion": "Harry Belafonte"
-      },
-      {
-        "frequency": 3305,
-        "suggestion": "One Direction"
-      },
-      {
-        "frequency": 2425,
-        "suggestion": "Carson L. M. Kit"
-      },
-      {
-        "frequency": 2292,
-        "suggestion": "Terry Stacey"
-      },
-      {
-        "frequency": 2190,
-        "suggestion": "Harry McNaught"
-      },
-      {
-        "frequency": 2150,
-        "suggestion": "Harry Gregson-Williams"
-      }
-    ],
-    "numFound": 585
+      {"frequency": 5612, "suggestion": "Harry Nilsson"},
+      {"frequency": 3861, "suggestion": "Harry Belafonte"}
+    ], "numFound": 589
   },
   "params": {
-    "path": {
-      "method": "entity-suggest",
-      "query": "harry",
-      "index": "creator"
-    }
+    "service": "entity-suggest",
+    "method": "creator",
+    "qs": {"query": "harry"},
+    "url": "http://xp-p02.dbc.dk:8015/entity-suggest"
   }
 };
 
@@ -138,39 +94,19 @@ export const harrySubject = {
   "responseHeader": {
     "q": "harry",
     "rt_searches": [],
-    "args": {
-      "hr": "None",
-      "hl": "None",
-      "rs": 0
-    },
-    "time": 3
+    "args": {"hr": "None", "hl": "None", "rs": 0},
+    "time": 2
   },
   "response": {
     "suggestions": [
-      {
-        "frequency": 6243,
-        "suggestion": "harry"
-      },
-      {
-        "frequency": 1495,
-        "suggestion": "harry potter"
-      },
-      {
-        "frequency": 1491,
-        "suggestion": "harry potter bøger"
-      },
-      {
-        "frequency": 762,
-        "suggestion": "harry styles"
-      }
-    ],
-    "numFound": 35
+      {"frequency": 6310, "suggestion": "harry"}, {
+      "frequency": 1495, "suggestion": "harry potter"}
+    ], "numFound": 32
   },
   "params": {
-    "path": {
-      "method": "entity-suggest",
-      "query": "harry",
-      "index": "subject"
-    }
+    "service": "entity-suggest",
+    "method": "subject",
+    "qs": {"query": "harry"},
+    "url": "http://xp-p02.dbc.dk:8015/entity-suggest"
   }
 };

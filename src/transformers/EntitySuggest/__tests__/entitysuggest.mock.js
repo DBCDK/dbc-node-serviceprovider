@@ -83,11 +83,10 @@ export const balEntity = {
     ],
     numFound: 4
   },
-  params: {
-    path: {
-      method: 'entity-suggest',
-      query: 'bal',
-      index: 'library'
-    }
+  "params": {
+    "service": "entity-suggest",
+    "method": "library",
+    "qs": {"query": "bal"},
+    "url": "http://xp-p02.dbc.dk:8015/entity-suggest"
   }
 };

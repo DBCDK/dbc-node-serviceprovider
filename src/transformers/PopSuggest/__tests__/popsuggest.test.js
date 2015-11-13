@@ -1,4 +1,5 @@
 'use strict';
+/* eslint-disable */
 
 import {assert} from 'chai';
 import * as mocks from './popsuggest.mock.js';
@@ -24,17 +25,22 @@ describe('Test PopSuggest transform', () => {
 
   it('should respond correctly on results from entity-suggest service (creator)', () => {
     const obj = mocks.harryCreator;
-    const expected = '{"index":"display.creator","docs":[{"text":"Harry Nilsson"},{"text":"Harry Belafonte"},{"text":"One Direction"},{"text":"Carson L. M. Kit"},{"text":"Terry Stacey"}],"query":"harry"}'; // eslint-disable-line max-len
-
-    const response = JSON.stringify(PopSuggestTransform.responseTransform(obj));
-    assert.equal(response, expected, 'got object as expected');
+    const expected = {
+      index: "display.creator",
+      docs: [ { text: "Harry Nilsson" }, { text: "Harry Belafonte" } ],
+      query: 'harry'
+    };
+    const response = PopSuggestTransform.responseTransform(obj, 'harry');
+    assert.deepEqual(response, expected, 'got object as expected');
   });
 
   it('should respond correctly on results from entity-suggest service (subject)', () => {
     const obj = mocks.harrySubject;
-    const expected = '{"index":"term.subject","docs":[{"text":"harry"},{"text":"harry potter"},{"text":"harry potter bøger"},{"text":"harry styles"}],"query":"harry"}';
+    const expected = { index: 'term.subject',
+      docs: [ { text: 'harry' }, { text: 'harry potter' } ],
+      query: 'harry'};
 
-    const response = JSON.stringify(PopSuggestTransform.responseTransform(obj));
-    assert.equal(response, expected, 'got object as expected');
+    const response = PopSuggestTransform.responseTransform(obj, 'harry');
+    assert.deepEqual(response, expected, 'got object as expected');
   });
 });

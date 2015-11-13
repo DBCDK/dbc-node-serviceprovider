@@ -21,13 +21,11 @@ var PopSuggestTransform = {
       fields: ['fedoraPid', 'display.title']
     }));
 
-    requests.push(this.callServiceClient('popsuggest', 'getEntitySuggestions', {
-      index: 'creator',
+    requests.push(this.callServiceClient('entitysuggest', 'getCreatorSuggestions', {
       query: query
     }));
 
-    requests.push(this.callServiceClient('popsuggest', 'getEntitySuggestions', {
-      index: 'subject',
+    requests.push(this.callServiceClient('entitysuggest', 'getSubjectSuggestions', {
       query: query
     }));
 
@@ -42,19 +40,18 @@ var PopSuggestTransform = {
 
   responseTransform: function responseTransform(response, query) {
     var data = {};
-
     if (response.error) {
       data = {
         error: true,
         statusCode: response.error.statusCode,
         statusMessage: response.error.statusMessage
       };
-    } else if (!(0, _lodash.isEmpty)(response.params.path.method) && response.params.path.method === 'entity-suggest') {
+    } else if (response.params && response.params.service && response.params.service === 'entity-suggest') {
       if ((0, _lodash.isEmpty)(response.response.suggestions)) {
         data.isEmpty = true;
-        data.index = this.getEntitySuggestIndex(response.params.path.index);
+        data.index = this.getEntitySuggestIndex(response.params.method);
       } else {
-        data = this.parseEntitySuggestData(response);
+        data = this.parseEntitySuggestData(response, query);
       }
     } else if ((0, _lodash.isEmpty)(response.response.docs)) {
       data.isEmpty = true;
@@ -63,7 +60,6 @@ var PopSuggestTransform = {
       data = this.parseData(response, query);
       data.query = query;
     }
-
     return data;
   },
 
@@ -81,9 +77,8 @@ var PopSuggestTransform = {
   /**
    * Parse data coming from the entity-suggest service
    */
-  parseEntitySuggestData: function parseEntitySuggestData(response) {
-    var query = response.params.path.query;
-    var index = this.getEntitySuggestIndex(response.params.path.index);
+  parseEntitySuggestData: function parseEntitySuggestData(response, query) {
+    var index = this.getEntitySuggestIndex(response.params.method);
     var docs = [];
 
     var numItems = response.response.suggestions.length <= 5 ? response.response.suggestions.length : 5;
@@ -127,12 +122,11 @@ var PopSuggestTransform = {
 
   parseDocs: function parseDocs(docs, index, query) {
     var parsedDocs = [];
-
     docs.forEach(function (value, key) {
       var shouldStopFilter = false;
       if (value[index] && key < 5) {
         var text = value[index].filter(function (string) {
-          if (!shouldStopFilter && string.toLowerCase().startsWith(query.toLowerCase(), 0)) {
+          if (!shouldStopFilter && string.toLowerCase().lastIndexOf(query.toLowerCase(), 0) === 0) {
             shouldStopFilter = true;
             return true;
           }

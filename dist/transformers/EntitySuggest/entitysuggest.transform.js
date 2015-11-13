@@ -15,8 +15,7 @@ var EntitySuggestTransform = {
   getEntitySuggestionsRequest: function getEntitySuggestionsRequest(query) {
     var requests = [];
 
-    requests.push(this.callServiceClient('popsuggest', 'getEntitySuggestions', {
-      index: 'library',
+    requests.push(this.callServiceClient('entitysuggest', 'getLibrarySuggestions', {
       query: query
     }));
 
@@ -38,10 +37,10 @@ var EntitySuggestTransform = {
         statusCode: response.error.statusCode,
         statusMessage: response.error.statusMessage
       };
-    } else if (!(0, _lodash.isEmpty)(response.params.path.method) && response.params.path.method === 'entity-suggest') {
+    } else if (!(0, _lodash.isEmpty)(response.params.service) && response.params.service === 'entity-suggest') {
       if ((0, _lodash.isEmpty)(response.response.suggestions)) {
         data.isEmpty = true;
-        data.index = response.params.path.index;
+        data.index = response.params.method;
       } else {
         data = this.parseEntitySuggestData(response);
       }
@@ -82,9 +81,9 @@ var EntitySuggestTransform = {
     }
 
     return {
-      index: response.params.path.index,
+      index: response.params.method,
       docs: docs,
-      query: response.params.path.query
+      query: response.params.qs.query
     };
   }
 };

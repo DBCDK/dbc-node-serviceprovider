@@ -19,6 +19,7 @@ describe('Test transform of OpenUserStatus response', () => {
 
 		assert.equal(newResponse.result.orderedItems.count, 3, 'Ordered items');
 		assert.equal(newResponse.result.orderedItems.orders[0].pickUpAgency, '737600', 'Pickup Agency');
+		assert.equal(newResponse.result.orderedItems.orders[0].ready, true, 'Ready for pickup');
 		assert.equal(newResponse.result.orderedItems.orders[0].pickUpExpiryDate, '2015-11-03T00:00:00+01:00', 'Pickup Expiry Date');
 
 	});

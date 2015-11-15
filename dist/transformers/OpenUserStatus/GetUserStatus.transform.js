@@ -44,6 +44,7 @@ var GetUserStatusTransform = {
       o.pickUpAgency = order['ous:pickUpAgency'][0].replace('DK-', '');
       if (o.status === 'Available for pickup') {
         o.pickUpExpiryDate = order['ous:pickUpExpiryDate'][0];
+        o.ready = true;
       } else {
         o.queue = order['ous:holdQueuePosition'] ? order['ous:holdQueuePosition'][0] : null;
       }

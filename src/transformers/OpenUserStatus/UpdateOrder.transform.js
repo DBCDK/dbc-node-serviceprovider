@@ -12,13 +12,16 @@ const UpdateOrderTransform = {
     return this.callServiceClient('openuserstatus', 'updateOrder', request);
   },
 
-  requestTransform(event, request) {
+  requestTransform(event, request, connection) {
+
+    const passport = connection.request.session.passport || {user: {id: '', uid: ''}};
+
     return this.updateOrder({
-      agencyId: 'DK-' + request.agencyId,
+      agencyId: 'DK-' + passport.user.agencyid,
       orderId: request.orderId,
       pickUpAgency: request.pickUpAgency,
-      userId: request.userId,
-      pinCode: request.pinCode
+      userId: passport.user.loanerid,
+      pinCode: passport.user.pincode
     });
   },
 

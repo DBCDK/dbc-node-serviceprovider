@@ -15,10 +15,24 @@ describe('Test transform of OpenUserStatus response', () => {
 
 		let response = {"ous:getUserStatusResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:userId":["1111"],"ous:userStatus":[{"ous:loanedItems":[{"ous:loansCount":["0"]}],"ous:orderedItems":[{"ous:order":[{"ous:author":["Holm, Gretelise, f. 1946"],"ous:title":["Møgkællinger"],"ous:orderDate":["2015-10-27T00:00:00+01:00"],"ous:orderId":["1654246"],"ous:orderStatus":["Available for pickup"],"ous:orderType":["Hold"],"ous:holdQueuePosition":["1"],"ous:pickUpExpiryDate":["2015-11-03T00:00:00+01:00"],"ous:pickUpId":["1270"],"ous:pickUpAgency":["DK-737600"]},{"ous:author":["Ellemose, Søren"],"ous:title":["Tidsmaskinen"],"ous:orderDate":["2015-10-29T00:00:00+01:00"],"ous:orderId":["1655526"],"ous:orderStatus":["Available for pickup"],"ous:orderType":["Hold"],"ous:holdQueuePosition":["1"],"ous:pickUpExpiryDate":["2015-11-06T00:00:00+01:00"],"ous:pickUpId":["1708"],"ous:pickUpAgency":["DK-737600"]},{"ous:author":["Bidstrup, Lise"],"ous:title":["Overlevernes by"],"ous:orderDate":["2015-10-29T00:00:00+01:00"],"ous:orderId":["1655527"],"ous:orderStatus":["Available for pickup"],"ous:orderType":["Hold"],"ous:holdQueuePosition":["1"],"ous:pickUpExpiryDate":["2015-11-06T00:00:00+01:00"],"ous:pickUpId":["1707"],"ous:pickUpAgency":["DK-737600"]}],"ous:ordersCount":["3"]}],"ous:fiscalAccount":[{"ous:totalAmount":["0"],"ous:totalAmountCurrency":["DKK"]}]}]}};
 
-    let newResponse = userStatusTransform.responseTransform(response);
+    let connection = {
+      request: {
+        session: {
+          passport: {
+            user: {
+              branchNames: {
+                '737600':'Julemandens bibliotek'
+              }
+            }
+          }
+        }
+      }
+    };
+
+    let newResponse = userStatusTransform.responseTransform(response, {}, connection);
 
 		assert.equal(newResponse.result.orderedItems.count, 3, 'Ordered items');
-		assert.equal(newResponse.result.orderedItems.orders[0].pickUpAgency, '737600', 'Pickup Agency');
+		assert.equal(newResponse.result.orderedItems.orders[0].pickUpAgency, 'Julemandens bibliotek', 'Pickup Agency');
 		assert.equal(newResponse.result.orderedItems.orders[0].pickUpExpiryDate, '2015-11-03T00:00:00+01:00', 'Pickup Expiry Date');
 
 	});
@@ -27,7 +41,21 @@ describe('Test transform of OpenUserStatus response', () => {
 
 		let response = {"ous:getUserStatusResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:userId":["1111"],"ous:userStatus":[{"ous:loanedItems":[{"ous:loansCount":["0"]}],"ous:orderedItems":[{"ous:order":[{"ous:author":["Holm, Gretelise, f. 1946"],"ous:title":["Møgkællinger"],"ous:orderDate":["2015-10-27T00:00:00+01:00"],"ous:orderId":["1654246"],"ous:orderStatus":["Available for pickup"],"ous:orderType":["Hold"],"ous:holdQueuePosition":["1"],"ous:pickUpExpiryDate":["2015-11-03T00:00:00+01:00"],"ous:pickUpId":["1270"],"ous:pickUpAgency":["DK-737600"]},{"ous:author":["Ellemose, Søren"],"ous:title":["Tidsmaskinen"],"ous:orderDate":["2015-10-29T00:00:00+01:00"],"ous:orderId":["1655526"],"ous:orderStatus":["Available for pickup"],"ous:orderType":["Hold"],"ous:holdQueuePosition":["1"],"ous:pickUpExpiryDate":["2015-11-06T00:00:00+01:00"],"ous:pickUpId":["1708"],"ous:pickUpAgency":["DK-737600"]},{"ous:author":["Bidstrup, Lise"],"ous:title":["Overlevernes by"],"ous:orderDate":["2015-10-29T00:00:00+01:00"],"ous:orderId":["1655527"],"ous:orderStatus":["Available for pickup"],"ous:orderType":["Hold"],"ous:holdQueuePosition":["1"],"ous:pickUpExpiryDate":["2015-11-06T00:00:00+01:00"],"ous:pickUpId":["1707"],"ous:pickUpAgency":["DK-737600"]}],"ous:ordersCount":["3"]}],"ous:fiscalAccount":[{"ous:totalAmount":["0"],"ous:totalAmountCurrency":["DKK"]}]}]}};
 
-    let newResponse = userStatusTransform.responseTransform(response);
+    let connection = {
+      request: {
+        session: {
+          passport: {
+            user: {
+              branchNames: {
+                '737600':'Julemandens bibliotek'
+              }
+            }
+          }
+        }
+      }
+    };
+
+    let newResponse = userStatusTransform.responseTransform(response, {}, connection);
 
 		assert.equal(newResponse.result.loanedItems.count, 0, '0 loaned items');
 
@@ -36,7 +64,22 @@ describe('Test transform of OpenUserStatus response', () => {
 	it('Response transform 2 loaned items', function() {
 
 		let response = {"ous:getUserStatusResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:userId":["1231231231"],"ous:userStatus":[{"ous:loanedItems":[{"ous:loan":[{"ous:author":["Hesel, Lene Ewald"],"ous:title":["Pokker ta' den rådne kat"],"ous:dateDue":["2015-11-24T00:00:00+01:00"],"ous:loanId":["5008917428"],"ous:reminderLevel":["1"]},{"ous:author":["Davis, Jim"],"ous:title":["Garfield på bølgen blå"],"ous:dateDue":["2015-11-24T00:00:00+01:00"],"ous:loanId":["3487223157"],"ous:reminderLevel":["1"]}],"ous:loansCount":["2"]}],"ous:orderedItems":[{"ous:ordersCount":["0"]}],"ous:fiscalAccount":[{"ous:totalAmount":["0"],"ous:totalAmountCurrency":["DKK"]}]}]}};
-		assert.equal(JSON.stringify(userStatusTransform.responseTransform(response)), JSON.stringify({"result":{"orderedItems":{"count":0,"orders":[]},"loanedItems":{"count":2,"loans":[{"author":"Hesel, Lene Ewald","title":"Pokker ta\' den rådne kat","dueDate":"2015-11-24T00:00:00+01:00","overdue":false,"dueSoon":false,"loanId":"5008917428"},{"author":"Davis, Jim","title":"Garfield på bølgen blå","dueDate":"2015-11-24T00:00:00+01:00","overdue":false,"dueSoon":false,"loanId":"3487223157"}]},"fiscalAccount":{"totalAmount":0,"currency":"DKK","items":[]}},"info":{"userId":"1231231231"},"error":[]}), '2 loaned items');
+
+    let connection = {
+      request: {
+        session: {
+          passport: {
+            user: {
+              branchNames: {
+                '737600':'Julemandens bibliotek'
+              }
+            }
+          }
+        }
+      }
+    };
+
+		assert.equal(JSON.stringify(userStatusTransform.responseTransform(response, {}, connection)), JSON.stringify({"result":{"branchNamesMap":{"737600":"Julemandens bibliotek"},"orderedItems":{"count":0,"orders":[]},"loanedItems":{"count":2,"loans":[{"author":"Hesel, Lene Ewald","title":"Pokker ta\' den rådne kat","dueDate":"2015-11-24T00:00:00+01:00","overdue":false,"dueSoon":false,"loanId":"5008917428"},{"author":"Davis, Jim","title":"Garfield på bølgen blå","dueDate":"2015-11-24T00:00:00+01:00","overdue":false,"dueSoon":false,"loanId":"3487223157"}]},"fiscalAccount":{"totalAmount":0,"currency":"DKK","items":[]}},"info":{"userId":"1231231231"},"error":[]}), '2 loaned items');
 
 	});
 
@@ -44,7 +87,21 @@ describe('Test transform of OpenUserStatus response', () => {
 
 		let response = {"ous:getUserStatusResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:userId":["0000000000"],"ous:userStatus":[{"ous:loanedItems":[{"ous:loansCount":["0"]}],"ous:orderedItems":[{"ous:ordersCount":["0"]}],"ous:fiscalAccount":[{"ous:fiscalTransaction":[{"ous:fiscalTransactionAmount":["70"],"ous:fiscalTransactionCurrency":["DKK"],"ous:fiscalTransactionDate":["2015-05-21T00:00:00+02:00"],"ous:fiscalTransactionType":["Fine"],"ous:author":["Barber, Jacq"],"ous:title":["Design ideas for your garden"]}],"ous:totalAmount":["70"],"ous:totalAmountCurrency":["DKK"]}]}]}};
 
-		assert.equal(JSON.stringify(userStatusTransform.responseTransform(response)), JSON.stringify({"result":{"orderedItems":{"count":0,"orders":[]},"loanedItems":{"count":0,"loans":[]},"fiscalAccount":{"totalAmount":70,"currency":"DKK","items":[{"author":"Barber, Jacq","title":"Design ideas for your garden","amount":70,"currency":"DKK","date":"2015-05-21T00:00:00+02:00","type":"Fine"}]}},"info":{"userId":"0000000000"},"error":[]}), 'Fiscal account');
+    let connection = {
+      request: {
+        session: {
+          passport: {
+            user: {
+              branchNames: {
+                '737600':'Julemandens bibliotek'
+              }
+            }
+          }
+        }
+      }
+    };
+
+    assert.equal(JSON.stringify(userStatusTransform.responseTransform(response, {}, connection)), JSON.stringify({"result":{"branchNamesMap":{"737600":"Julemandens bibliotek"},"orderedItems":{"count":0,"orders":[]},"loanedItems":{"count":0,"loans":[]},"fiscalAccount":{"totalAmount":70,"currency":"DKK","items":[{"author":"Barber, Jacq","title":"Design ideas for your garden","amount":70,"currency":"DKK","date":"2015-05-21T00:00:00+02:00","type":"Fine"}]}},"info":{"userId":"0000000000"},"error":[]}), 'Fiscal account');
 
 	});
 
@@ -52,7 +109,21 @@ describe('Test transform of OpenUserStatus response', () => {
 
 		let response = {"ous:getUserStatusResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:getUserStatusError":["User authentication failed"]}};
 
-		assert.equal(JSON.stringify(userStatusTransform.responseTransform(response)), JSON.stringify({"result":{},"info":{},"error":["User authentication failed"]}), 'Authentication Error');
+    let connection = {
+      request: {
+        session: {
+          passport: {
+            user: {
+              branchNames: {
+                '737600':'Julemandens bibliotek'
+              }
+            }
+          }
+        }
+      }
+    };
+
+    assert.equal(JSON.stringify(userStatusTransform.responseTransform(response, {}, connection)), JSON.stringify({"result":{"branchNamesMap":{"737600":"Julemandens bibliotek"}},"info":{},"error":["User authentication failed"]}), 'Authentication Error');
 
 	});
 

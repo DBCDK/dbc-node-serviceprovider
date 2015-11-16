@@ -17,13 +17,11 @@ const PopSuggestTransform = {
       fields: ['fedoraPid', 'display.title']
     }));
 
-    requests.push(this.callServiceClient('popsuggest', 'getEntitySuggestions', {
-      index: 'creator',
+    requests.push(this.callServiceClient('entitysuggest', 'getCreatorSuggestions', {
       query: query
     }));
 
-    requests.push(this.callServiceClient('popsuggest', 'getEntitySuggestions', {
-      index: 'subject',
+    requests.push(this.callServiceClient('entitysuggest', 'getSubjectSuggestions', {
       query: query
     }));
 
@@ -38,7 +36,6 @@ const PopSuggestTransform = {
 
   responseTransform(response, query) {
     let data = {};
-
     if (response.error) {
       data = {
         error: true,
@@ -46,13 +43,13 @@ const PopSuggestTransform = {
         statusMessage: response.error.statusMessage
       };
     }
-    else if (!isEmpty(response.params.path.method) && response.params.path.method === 'entity-suggest') {
+    else if (response.params && response.params.service && response.params.service === 'entity-suggest') {
       if (isEmpty(response.response.suggestions)) {
         data.isEmpty = true;
-        data.index = this.getEntitySuggestIndex(response.params.path.index);
+        data.index = this.getEntitySuggestIndex(response.params.method);
       }
       else {
-        data = this.parseEntitySuggestData(response);
+        data = this.parseEntitySuggestData(response, query);
       }
     }
     else if (isEmpty(response.response.docs)) {
@@ -63,7 +60,6 @@ const PopSuggestTransform = {
       data = this.parseData(response, query);
       data.query = query;
     }
-
     return data;
   },
 
@@ -82,9 +78,8 @@ const PopSuggestTransform = {
   /**
    * Parse data coming from the entity-suggest service
    */
-  parseEntitySuggestData(response) {
-    const query = response.params.path.query;
-    const index = this.getEntitySuggestIndex(response.params.path.index);
+  parseEntitySuggestData(response, query) {
+    const index = this.getEntitySuggestIndex(response.params.method);
     const docs = [];
 
     const numItems = (response.response.suggestions.length <= 5) ? response.response.suggestions.length : 5;
@@ -129,12 +124,11 @@ const PopSuggestTransform = {
 
   parseDocs(docs, index, query) {
     let parsedDocs = [];
-
     docs.forEach((value, key) => {
       let shouldStopFilter = false;
       if (value[index] && key < 5) {
         const text = value[index].filter((string) => {
-          if (!shouldStopFilter && string.toLowerCase().startsWith(query.toLowerCase(), 0)) {
+          if (!shouldStopFilter && string.toLowerCase().lastIndexOf(query.toLowerCase(), 0) === 0) {
             shouldStopFilter = true;
             return true;
           }

@@ -28,7 +28,6 @@ var CheckBorrower = {
    */
   requestTransform: function requestTransform(event, query) {
     // eslint-disable-line no-unused-vars
-
     var promises = [];
 
     var borchkPromise = this.callServiceClient('borchk', 'getBorrowerCheckResult', {
@@ -51,7 +50,6 @@ var CheckBorrower = {
    * @return {response.requestStatus|{statusEnum, errorText}}
    */
   responseTransform: function responseTransform(response) {
-
     var finalResponse = undefined;
 
     if (response.library) {

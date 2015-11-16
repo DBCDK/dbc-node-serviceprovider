@@ -23,17 +23,16 @@ const CheckBorrower = {
    * @return {*}
    */
   requestTransform(event, query) { // eslint-disable-line no-unused-vars
-
     let promises = [];
 
-    let borchkPromise = this.callServiceClient('borchk', 'getBorrowerCheckResult', {
+    const borchkPromise = this.callServiceClient('borchk', 'getBorrowerCheckResult', {
       userId: query.loanerID,
       userPincode: query.pincode,
       libraryCode: query.agencyID
     });
     promises.push(borchkPromise);
 
-    let openAgencyPromise = this.callServiceClient('openagency', 'getAgencyBranches', {
+    const openAgencyPromise = this.callServiceClient('openagency', 'getAgencyBranches', {
       id: [query.agencyID]
     });
     promises.push(openAgencyPromise);
@@ -46,7 +45,6 @@ const CheckBorrower = {
    * @return {response.requestStatus|{statusEnum, errorText}}
    */
   responseTransform(response) {
-
     let finalResponse;
 
     if (response.library) {
@@ -59,7 +57,8 @@ const CheckBorrower = {
       });
       // save branchNames to session
       finalResponse = {branchNames: branchNames};
-    } else {
+    }
+    else {
       // Transforming Borchk response
       finalResponse = {requestStatus: response.requestStatus};
     }

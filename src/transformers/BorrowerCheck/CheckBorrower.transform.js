@@ -51,7 +51,7 @@ const CheckBorrower = {
 
     if (response.library) {
       // Transforming OpenAgency response
-      const branches = isArray(response.library.pickupAgency) ? response.library.pickupAgency : [response.library.pickupAgency]
+      const branches = isArray(response.library.pickupAgency) ? response.library.pickupAgency : [response.library.pickupAgency];
       const branchNames = {};
       forEach(branches, (lib) => {
         const name = isArray(lib.branchName) ? lib.branchName[0].$value : lib.branchName.$value;

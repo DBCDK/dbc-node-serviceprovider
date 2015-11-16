@@ -24,7 +24,7 @@ const GetUserStatusTransform = {
     return this.getUserStatus(params);
   },
 
-  getOrderData(orderedItems, orders) {
+  getOrderData(orderedItems, orders, branchNamesMap) {
 
     let ready = 0;
     orders['ous:order'].forEach((order) => {
@@ -33,7 +33,8 @@ const GetUserStatusTransform = {
       o.author = (order['ous:author']) ? order['ous:author'][0] : '';
       o.title = order['ous:title'][0];
       o.status = order['ous:orderStatus'][0];
-      o.pickUpAgency = order['ous:pickUpAgency'][0].replace('DK-', '');
+      o.pickUpAgencyId = order['ous:pickUpAgency'][0].replace('DK-', '');
+      o.pickUpAgency = branchNamesMap[o.pickUpAgencyId];
       if (o.status === 'Available for pickup') {
         o.pickUpExpiryDate = order['ous:pickUpExpiryDate'][0];
         o.ready = true;
@@ -88,11 +89,15 @@ const GetUserStatusTransform = {
 
   },
 
-  responseTransform(response) {
+  responseTransform(response, query, connection) {
     let data = {};
     data.result = {};
     data.info = {};
     data.error = [];
+
+    const branchNamesMap = connection.request.session.passport.user.branchNames;
+
+    data.result.branchNamesMap = branchNamesMap;
 
     let result = prep.checkUserStatusResponse(response);
 
@@ -111,7 +116,7 @@ const GetUserStatusTransform = {
 
     orderedItems.orders = [];
     if (orderedItems.count > 0) {
-      this.getOrderData(orderedItems, orders);
+      this.getOrderData(orderedItems, orders, branchNamesMap);
     }
 
     data.result.orderedItems = orderedItems;

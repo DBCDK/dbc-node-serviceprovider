@@ -32,7 +32,7 @@ var GetUserStatusTransform = {
     return this.getUserStatus(params);
   },
 
-  getOrderData: function getOrderData(orderedItems, orders) {
+  getOrderData: function getOrderData(orderedItems, orders, branchNamesMap) {
 
     var ready = 0;
     orders['ous:order'].forEach(function (order) {
@@ -41,7 +41,8 @@ var GetUserStatusTransform = {
       o.author = order['ous:author'] ? order['ous:author'][0] : '';
       o.title = order['ous:title'][0];
       o.status = order['ous:orderStatus'][0];
-      o.pickUpAgency = order['ous:pickUpAgency'][0].replace('DK-', '');
+      o.pickUpAgencyId = order['ous:pickUpAgency'][0].replace('DK-', '');
+      o.pickUpAgency = branchNamesMap[o.pickUpAgencyId];
       if (o.status === 'Available for pickup') {
         o.pickUpExpiryDate = order['ous:pickUpExpiryDate'][0];
         o.ready = true;
@@ -92,11 +93,15 @@ var GetUserStatusTransform = {
     });
   },
 
-  responseTransform: function responseTransform(response) {
+  responseTransform: function responseTransform(response, query, connection) {
     var data = {};
     data.result = {};
     data.info = {};
     data.error = [];
+
+    var branchNamesMap = connection.request.session.passport.user.branchNames;
+
+    data.result.branchNamesMap = branchNamesMap;
 
     var result = prep.checkUserStatusResponse(response);
 
@@ -114,7 +119,7 @@ var GetUserStatusTransform = {
 
     orderedItems.orders = [];
     if (orderedItems.count > 0) {
-      this.getOrderData(orderedItems, orders);
+      this.getOrderData(orderedItems, orders, branchNamesMap);
     }
 
     data.result.orderedItems = orderedItems;

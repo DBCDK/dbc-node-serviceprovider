@@ -57,8 +57,9 @@ var CheckBorrower = {
     if (response.library) {
       (function () {
         // Transforming OpenAgency response
+        var branches = (0, _lodash.isArray)(response.library.pickupAgency) ? response.library.pickupAgency : [response.library.pickupAgency];
         var branchNames = {};
-        (0, _lodash.forEach)(response.library.pickupAgency, function (lib) {
+        (0, _lodash.forEach)(branches, function (lib) {
           var name = (0, _lodash.isArray)(lib.branchName) ? lib.branchName[0].$value : lib.branchName.$value;
           branchNames[lib.branchId] = name;
         });

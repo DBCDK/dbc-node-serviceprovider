@@ -19,7 +19,7 @@ const UpdateOrderTransform = {
     return this.updateOrder({
       agencyId: 'DK-' + passport.user.agencyid,
       orderId: request.orderId,
-      pickUpAgency: request.pickUpAgency,
+      pickUpAgency: request.pickUpAgencyId,
       userId: passport.user.loanerid,
       pinCode: passport.user.pincode
     });

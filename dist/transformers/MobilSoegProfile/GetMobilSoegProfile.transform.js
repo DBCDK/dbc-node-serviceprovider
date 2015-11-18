@@ -23,10 +23,26 @@ var CheckBorrower = {
    * @param {String} event
    * @param {Object} query
    */
-  requestTransform: function requestTransform(event, query) {
+  requestTransform: function requestTransform(event, query, connection) {
+
+    if (!query) {
+      if (connection.request.session && connection.request.session.passport) {
+        var passport = connection.request.session.passport;
+        query = {
+          agencyid: passport.user.agencyid,
+          loanerid: passport.user.loanerid
+        };
+      } else {
+        query = {};
+      }
+    }
+
+    var agencyid = query.agencyid || '';
+    var loanerid = query.loanerid || '';
+
     return this.callServiceClient('profile', 'findMobilSoegProfile', {
-      agencyid: query.agencyid,
-      loanerid: query.loanerid
+      agencyid: agencyid,
+      loanerid: loanerid
     });
   },
 
@@ -35,6 +51,12 @@ var CheckBorrower = {
    * @return {Object}
    */
   responseTransform: function responseTransform(response) {
+    if (response.statusCode === 200 && response.body.response.id) {
+      var _id = response.body.response.id;
+      delete response.body.response.id;
+      response.body.response.mobilSoegProfileId = _id;
+    }
+
     return { body: response.body.response, statusCode: response.statusCode, statusMessage: response.statusMessage };
   }
 };

@@ -30,19 +30,19 @@ function handleResponse(connection, responsePromise, event) {
   responsePromise.then(function (response) {
     var end = now();
     connection.emit(eventName, response);
-    Logger.log('info', 'Got a response to deliver by sockets', {
+    Logger.log('info', 'Got a response to deliver by sockets', JSON.stringify({
       event: event,
       response: response,
       conection: connection && connection.request && connection.request.session ? connection.request.session : {},
       time_delta: end - start
-    });
+    }));
   })['catch'](function (error) {
     connection.emit(eventName, { error: error });
-    Logger.log('error', 'An error occured while communicating with a service', {
+    Logger.log('error', 'An error occured while communicating with a service', JSON.stringify({
       event: event,
       error: error,
       conection: connection && connection.request && connection.request.session ? connection.request.session : {}
-    });
+    }));
   });
 }
 

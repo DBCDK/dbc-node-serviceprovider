@@ -34,6 +34,8 @@
   "dependencies": {
     "cache-manager": "^1.0.0",
     "dbc-node-borchk": "^1.0.3",
+    "dbc-node-ddbcontent-client": "^1.0.1",
+    "dbc-node-entitysuggest": "^1.0.3",
     "dbc-node-moreinfo-client": "^1.0.1",
     "dbc-node-openagency-client": "git+https://github.com/DBCDK/dbc-node-openagency-client#stable_dist",
     "dbc-node-openholdingstatus-client": "git+https://github.com/DBCDK/dbc-node-openholdingstatus-client#stable_dist",
@@ -41,7 +43,6 @@
     "dbc-node-opensearch-client": "^1.2.2",
     "dbc-node-opensuggest": "git+https://github.com/DBCDK/dbc-node-opensuggest#stable_dist",
     "dbc-node-openuserstatus-client": "git+https://github.com/DBCDK/dbc-node-openuserstatus-client#stable_dist",
-    "dbc-node-entitysuggest": "^1.0.3",
     "dbc-node-popsuggest": "^2.0.1",
     "dbc-node-profile-client": "^1.0.2",
     "dbc-node-ranked-recommendations-client": "^0.1.1",

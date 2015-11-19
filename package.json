@@ -36,6 +36,7 @@
     "dbc-node-borchk": "^1.0.3",
     "dbc-node-moreinfo-client": "^1.0.1",
     "dbc-node-openagency-client": "git+https://github.com/DBCDK/dbc-node-openagency-client#stable_dist",
+    "dbc-node-openholdingstatus-client": "git+https://github.com/DBCDK/dbc-node-openholdingstatus-client#stable_dist",
     "dbc-node-openorder-client": "^1.0.1",
     "dbc-node-opensearch-client": "^1.2.2",
     "dbc-node-opensuggest": "git+https://github.com/DBCDK/dbc-node-opensuggest#stable_dist",

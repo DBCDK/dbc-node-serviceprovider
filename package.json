@@ -47,7 +47,7 @@
     "dbc-node-popsuggest": "^2.0.1",
     "dbc-node-profile-client": "^1.0.2",
     "dbc-node-ranked-recommendations-client": "^0.1.1",
-    "dbc-node-recommendations": "^2.0.1",
+    "dbc-node-recommendations": "^3.0.3",
     "jsonpath-object-transform": "https://github.com/vibjerg/jsonpath-object-transform/archive/1.0.5.tar.gz",
     "lodash": "^3.10.1",
     "sinon": "^1.16.1",

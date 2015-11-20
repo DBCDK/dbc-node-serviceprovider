@@ -40,7 +40,7 @@ var CheckBorrower = {
     var agencyid = query.agencyid || '';
     var loanerid = query.loanerid || '';
 
-    return this.callServiceClient('profile', 'findMobilSoegProfile', {
+    return this.callServiceClient('mobilSoegProfile', 'findMobilSoegProfile', {
       agencyid: agencyid,
       loanerid: loanerid
     });

@@ -25,14 +25,14 @@ const ResultListTransform = {
     let sort = request.sort;
 
     if (request.sort === 'default') {
-      sort = 'popularity_descending';
+      sort = 'rank_frequency';
     }
 
     return this.getSearchResultList({
       query: request.query,
       start: request.offset,
       stepValue: request.worksPerPage,
-      sort: 'rank_frequency',
+      sort: sort,
       facets: {
         facetName: 'term.workType',
         numberOfTerms: 15

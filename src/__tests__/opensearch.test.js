@@ -3,18 +3,22 @@
 import {expect, assert} from 'chai';
 
 const transform = require('../transformers/opensearch/ResultList.transform');
+
 const worktransform = require('../transformers/opensearch/Work.transform');
 
 const openSearchWorkMocks = require('./opensearch.mock.js');
 
+
+
 describe('Test transform of OpenSearch responses', () => {
+  transform.callServiceClient = () => {};
+
   it('Check one hit', () => {
 
     const response = {'result': {'hitCount': '1', 'collectionCount': '1', 'more': 'false', 'sortUsed': 'rank_subject', 'searchResult': {'collection': {'resultPosition': '1', 'numberOfObjects': '1', 'object': {'identifier': '870970-basis:27036031', 'recordStatus': 'active', 'creationDate': '2007-11-26', 'formatsAvailable': {'format': ['dkabm', 'marcxchange']}}}, 'formattedCollection': {'briefDisplay': {'manifestation': {'accessType': 'physical', 'fedoraPid': '870970-basis:27036031', 'identifier': '870970-basis:27036031', 'title': 'Harry Potter og Fønixordenen', 'titleFull': 'Harry Potter og Fønixordenen', 'type': 'Playstation 2', 'workType': 'game'}}}}, 'facetResult': {}, 'statInfo': {'fedoraRecordsCached': '4', 'fedoraRecordsRead': '1', 'time': '0.205224', 'trackingId': 'os:2015-06-15T11:47:46:535154:6359'}}};
 
     const result = transform.responseTransform(response);
     assert.equal(JSON.stringify(result), JSON.stringify({"result": [{"identifiers": ["870970-basis:27036031"], "title": "Harry Potter og Fønixordenen", "workType": "game"}], "info": {"facets": [], "hits": "1", "collections": "1", "more": "false"}, "error": []}), 'One hit in search result');
-
   });
   it('Check more hits', () => {
 

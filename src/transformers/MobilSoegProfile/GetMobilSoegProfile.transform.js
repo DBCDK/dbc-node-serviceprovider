@@ -38,7 +38,7 @@ const CheckBorrower = {
     const agencyid = query.agencyid || '';
     const loanerid = query.loanerid || '';
 
-    return this.callServiceClient('profile', 'findMobilSoegProfile', {
+    return this.callServiceClient('mobilSoegProfile', 'findMobilSoegProfile', {
       agencyid: agencyid,
       loanerid: loanerid
     });

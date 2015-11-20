@@ -32,7 +32,7 @@ const ResultListTransform = {
       query: request.query,
       start: request.offset,
       stepValue: request.worksPerPage,
-      sort: 'rank_title',
+      sort: 'rank_frequency',
       facets: {
         facetName: 'term.workType',
         numberOfTerms: 15

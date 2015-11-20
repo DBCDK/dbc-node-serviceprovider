@@ -34,7 +34,7 @@ var ResultListTransform = {
     var sort = request.sort;
 
     if (request.sort === 'default') {
-      sort = 'popularity_descending';
+      sort = 'rank_frequency';
     }
 
     return this.getSearchResultList({
@@ -74,6 +74,23 @@ var ResultListTransform = {
   },
 
   /**
+   * Extract facets from the response.
+   *
+   * @param {Object} response The response from which the facets should be extracted.
+   * @return {Array} result Array of facets. Empty array if none is found.
+   */
+  prefetchWork: function prefetchWork(pid) {
+    pid = 'rec.id=' + pid;
+    var request = {
+      query: pid,
+      start: 1,
+      stepValue: 1,
+      allObjects: true
+    };
+    this.callServiceClient('opensearch', 'getWorkResult', request);
+  },
+
+  /**
    * Transforms the response from Open Search webservice to a representation
    * that can be used by the application
    *
@@ -81,6 +98,8 @@ var ResultListTransform = {
    * @return {Object} the transformed result
    */
   responseTransform: function responseTransform(response) {
+    var _this = this;
+
     var data = {
       result: [],
       info: {
@@ -143,6 +162,11 @@ var ResultListTransform = {
         newWork.workType = workType;
         data.result.push(newWork);
       }
+
+      // send asynchronous prefetch request for works
+      identifiers.forEach(function (pid) {
+        _this.prefetchWork(pid);
+      });
     });
 
     return data;

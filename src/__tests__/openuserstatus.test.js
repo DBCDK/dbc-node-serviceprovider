@@ -64,7 +64,7 @@ describe('Test transform of OpenUserStatus response', () => {
 
 	it('Response transform 2 loaned items', function() {
     // Tests fluctuates because of changing date. Future date is set dynamically
-    const twoDaysBackToTheFuture = new Date(new Date().getTime() + 48 * 60 * 60 * 1000);
+    const twoDaysBackToTheFuture = new Date(new Date().getTime() + 72 * 60 * 60 * 1000);
 		let response = {"ous:getUserStatusResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:userId":["1231231231"],"ous:userStatus":[{"ous:loanedItems":[{"ous:loan":[{"ous:author":["Hesel, Lene Ewald"],"ous:title":["Pokker ta' den rådne kat"],"ous:dateDue":[twoDaysBackToTheFuture],"ous:loanId":["5008917428"],"ous:reminderLevel":["1"]},{"ous:author":["Davis, Jim"],"ous:title":["Garfield på bølgen blå"],"ous:dateDue":[twoDaysBackToTheFuture],"ous:loanId":["3487223157"],"ous:reminderLevel":["1"]}],"ous:loansCount":["2"]}],"ous:orderedItems":[{"ous:ordersCount":["0"]}],"ous:fiscalAccount":[{"ous:totalAmount":["0"],"ous:totalAmountCurrency":["DKK"]}]}]}};
 
     let connection = {

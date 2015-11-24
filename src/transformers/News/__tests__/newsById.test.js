@@ -2,9 +2,10 @@
 import {expect} from 'chai';
 import sinon from 'sinon';
 import Provider from '../../../Provider.js';
+import Events from '../../../lib/Events.js';
 import DdbContentClient from '../../../clients/DdbContent.client.js';
-import NewsTransform from '../news.transform.js';
-import newsListResponse from './data/newslistReponse.js';
+import NewsTransform from '../getNewsById.transform.js';
+import newsByIdResponse from './data/newsByIdReponse.js';
 
 // until all systems run on node >=5.0.0, it is neccesary to test where request is installed
 let request;
@@ -14,7 +15,7 @@ try {
   request = require('request');
 }
 
-describe('Test News transform', () => {
+describe('Test NewsById transform', () => {
   let provider;
   before('setup provider', () => {
     const config = {
@@ -35,45 +36,43 @@ describe('Test News transform', () => {
     request.get.restore();
   });
 
-  it('Trigger getNewsList', (done) => {
+  after('reset Provider events', () => {
+    Events.resetEvents();
+  });
+
+  it('Trigger getNewsById', (done) => {
     sinon
       .stub(request, 'get')
-      .yields(null, {statusCode: 200}, JSON.stringify(newsListResponse));
+      .yields(null, {statusCode: 200}, JSON.stringify(newsByIdResponse));
 
-    const getNewsList = provider.trigger('getNewsList', {
-      amount: 2,
-      sort: 'nid'
+    const getNewsList = provider.trigger('getNewsById', {
+      node: 1
     });
 
     getNewsList[0].then(response => {
-      const expected = [{
+      const expected = {
         id: 'id1',
+        nid: 1,
         title: 'title 1',
         lead: 'lead 1',
         body: '<p>body 1</p>',
         image: null
-      }, {
-        id: 'id2',
-        title: 'title 2',
-        lead: 'lead 2',
-        body: '<p>body 2</p>',
-        image: 'imagedata'
-      }];
+      };
       expect(response).to.deep.equal(expected);
 
       done();
     }).catch(err => done(err));
   });
 
-  it('Trigger getNewsList no results', (done) => {
+  it('Trigger getNewsById no results', (done) => {
     sinon
       .stub(request, 'get')
-      .yields(null, {statusCode: 200}, JSON.stringify({}));
+      .yields(null, {statusCode: 200}, JSON.stringify({items: []}));
 
-    const getNewsList = provider.trigger('getNewsList', {});
+    const getNewsList = provider.trigger('getNewsById', {node: 123});
 
     getNewsList[0].then(response => {
-      expect(response).to.deep.equal([]);
+      expect(response).to.deep.equal({nid: 123, error: 'unknown id'});
       done();
     }).catch(err => done(err));
   });

@@ -63,8 +63,9 @@ describe('Test transform of OpenUserStatus response', () => {
 	});
 
 	it('Response transform 2 loaned items', function() {
-
-		let response = {"ous:getUserStatusResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:userId":["1231231231"],"ous:userStatus":[{"ous:loanedItems":[{"ous:loan":[{"ous:author":["Hesel, Lene Ewald"],"ous:title":["Pokker ta' den rådne kat"],"ous:dateDue":["2015-11-24T00:00:00+01:00"],"ous:loanId":["5008917428"],"ous:reminderLevel":["1"]},{"ous:author":["Davis, Jim"],"ous:title":["Garfield på bølgen blå"],"ous:dateDue":["2015-11-24T00:00:00+01:00"],"ous:loanId":["3487223157"],"ous:reminderLevel":["1"]}],"ous:loansCount":["2"]}],"ous:orderedItems":[{"ous:ordersCount":["0"]}],"ous:fiscalAccount":[{"ous:totalAmount":["0"],"ous:totalAmountCurrency":["DKK"]}]}]}};
+    // Tests fluctuates because of changing date. Future date is set dynamically
+    const twoDaysBackToTheFuture = new Date(new Date().getTime() + 72 * 60 * 60 * 1000);
+		let response = {"ous:getUserStatusResponse":{"$":{"xmlns:ous":"http://oss.dbc.dk/ns/openuserstatus","xmlns":"http://oss.dbc.dk/ns/openuserstatus"},"ous:userId":["1231231231"],"ous:userStatus":[{"ous:loanedItems":[{"ous:loan":[{"ous:author":["Hesel, Lene Ewald"],"ous:title":["Pokker ta' den rådne kat"],"ous:dateDue":[twoDaysBackToTheFuture],"ous:loanId":["5008917428"],"ous:reminderLevel":["1"]},{"ous:author":["Davis, Jim"],"ous:title":["Garfield på bølgen blå"],"ous:dateDue":[twoDaysBackToTheFuture],"ous:loanId":["3487223157"],"ous:reminderLevel":["1"]}],"ous:loansCount":["2"]}],"ous:orderedItems":[{"ous:ordersCount":["0"]}],"ous:fiscalAccount":[{"ous:totalAmount":["0"],"ous:totalAmountCurrency":["DKK"]}]}]}};
 
     let connection = {
       request: {
@@ -80,7 +81,7 @@ describe('Test transform of OpenUserStatus response', () => {
       }
     };
 
-		assert.equal(JSON.stringify(userStatusTransform.responseTransform(response, {}, connection)), JSON.stringify({"result":{"branchNamesMap":{"737600":"Julemandens bibliotek"},"orderedItems":{"count":0,"orders":[]},"loanedItems":{"count":2,"loans":[{"author":"Hesel, Lene Ewald","title":"Pokker ta\' den rådne kat","dueDate":"2015-11-24T00:00:00+01:00","overdue":false,"dueSoon":false,"loanId":"5008917428"},{"author":"Davis, Jim","title":"Garfield på bølgen blå","dueDate":"2015-11-24T00:00:00+01:00","overdue":false,"dueSoon":false,"loanId":"3487223157"}]},"fiscalAccount":{"totalAmount":0,"currency":"DKK","items":[]}},"info":{"userId":"1231231231"},"error":[]}), '2 loaned items');
+    assert.equal(JSON.stringify(userStatusTransform.responseTransform(response, {}, connection)), JSON.stringify({"result":{"branchNamesMap":{"737600":"Julemandens bibliotek"},"orderedItems":{"count":0,"orders":[]},"loanedItems":{"count":2,"loans":[{"author":"Hesel, Lene Ewald","title":"Pokker ta\' den rådne kat","dueDate":twoDaysBackToTheFuture,"overdue":false,"dueSoon":false,"loanId":"5008917428"},{"author":"Davis, Jim","title":"Garfield på bølgen blå","dueDate":twoDaysBackToTheFuture,"overdue":false,"dueSoon":false,"loanId":"3487223157"}]},"fiscalAccount":{"totalAmount":0,"currency":"DKK","items":[]}},"info":{"userId":"1231231231"},"error":[]}), '2 loaned items');
 
 	});
 

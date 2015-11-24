@@ -18,6 +18,7 @@ const NewsListTransform = {
       const {fields} = item;
       return {
         id: item.id,
+        nid: item.nid,
         title: fields.title && fields.title.value || null,
         lead: fields.field_ding_news_lead && fields.field_ding_news_lead.value || null,
         body: fields.field_ding_news_body && fields.field_ding_news_body.value || null,

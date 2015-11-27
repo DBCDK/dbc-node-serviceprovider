@@ -33,27 +33,10 @@ function registerMethods(methods, clientName) {
  * @returns {Object} methods on the service
  * @api public
  */
-function registerServiceClient(config, client) {
-  const {name, init} = client;
-
-  if (!config.services || !config.services[name]) {
-    Logger.warning(`No Config for ${name} client found in config.js`);
-    return {};
-  }
-
-  if (!init) {
-    throw new Error(`No init method not found on client ${name}`);
-  }
-
-  let conf = config.services[name];
-  conf.logger = Logger;
-  let methods = init(conf);
-  if (typeof methods !== 'object') {
-    throw new Error(`Expected type Object to be returned from ${name} client. Got ${typeof methods}`);
-  }
-
-  if (config.services[name].cache) {
-    methods = ClientCache.CacheManager(config.services[name].cache).wrap(methods);
+export default function registerServiceClient(name, methods, cache) {
+  console.log(name, methods);
+  if (cache) {
+    methods = ClientCache.CacheManager(cache).wrap(methods, 60 * 60 * 24);
   }
   return registerMethods(methods, name);
 }
@@ -86,8 +69,8 @@ function Clients(config) {
  * @returns {Clients}
  * @constructor
  */
-export default function ClientsFactory(config, logger) {
+export function ClientsFactory(logger) {
   Logger = logger;
   ClientCache.setLogger(Logger);
-  return new Clients(config);
+  return new Clients();
 }

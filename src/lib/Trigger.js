@@ -66,7 +66,7 @@ function handleTriggerEvents(event, query, _connection, logger) {
   let result = requestArray.map((promise) => {
     return promise.then((response) => {
       return transform.responseTransform(response, query, connection);
-    });
+    }).catch(console.log.bind(console));
   });
 
   const endTime = now();

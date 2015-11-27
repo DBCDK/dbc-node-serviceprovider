@@ -85,7 +85,7 @@ function registerEventsOnConnection(connection, provider) {
  * @param logger
  * @constructor
  */
-export default function SocketDispatcher(socket, provider, logger) {
+export default function SocketDispatcher(provider, logger, socket) {
   Logger = logger;
   socket.on('connection', (connection) => registerEventsOnConnection(connection, provider));
 }

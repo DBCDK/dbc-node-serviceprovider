@@ -11,7 +11,7 @@ import autoRequire from './lib/AutoRequire.js';
 import Dispatcher from './lib/dispatcher';
 import {registerTransform} from './lib/Transforms.js';
 import {getLoggingTrigger} from './lib/Trigger.js';
-import ServiceClients from './lib/ServiceClients.js';
+import registerServiceClient from './lib/ServiceClients.js';
 import {getEventsOfType} from './lib/Events.js';
 
 let Provider = {};
@@ -28,18 +28,7 @@ Logger.notice = Logger.log;
  * @api public
  */
 function setupSockets(socket) {
-  this.bootstrap();
-  Dispatcher(socket, Provider, Logger);
-  return Provider;
-}
-
-/**
- * Loads the bundles transforms and clients
- * @api public
- */
-function bootstrap() {
-  autoRequire(path.join(__dirname, 'transformers'), 'transform.js').map(Provider.registerTransform);
-  autoRequire(path.join(__dirname, 'clients'), 'client.js').map(Provider.registerServiceClient);
+  Dispatcher(Provider, Logger, socket);
   return Provider;
 }
 
@@ -51,28 +40,19 @@ function bootstrap() {
  *
  * @api public
  */
-export default function ProviderFactory(config, logger) {
+export default function ProviderFactory(logger) {
 
   if (logger) {
     Logger = logger;
   }
 
-  if (!config) {
-    Logger.error('No configuration was provided');
-  }
-
-  let registerServiceClient = ServiceClients(config, Logger).registerServiceClient;
-
   Provider = {
     setupSockets,
-    bootstrap,
     registerTransform,
     registerServiceClient,
     trigger: getLoggingTrigger(logger),
     getEventsOfType
   };
-
-  Logger.log('debug', 'The ServiceProvider was initialized with the following config: ', config);
 
   return Provider;
 }

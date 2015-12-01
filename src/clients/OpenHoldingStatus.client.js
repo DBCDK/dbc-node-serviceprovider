@@ -1,12 +1,11 @@
 'use strict';
 
-import * as OpenHoldingStatus from 'dbc-node-openholdingstatus-client';
+import OpenHoldingStatus from 'dbc-node-openholdingstatus-client';
 
 const OpenHoldingStatusClient = {
   name: 'openholdingstatus',
   init(config) {
-    OpenHoldingStatus.init(config);
-    return OpenHoldingStatus.METHODS;
+    return OpenHoldingStatus(config);
   }
 };
 

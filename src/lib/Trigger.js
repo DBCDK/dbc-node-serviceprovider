@@ -6,7 +6,6 @@
  */
 
 import {isArray, isObject} from 'lodash';
-import Events from './Events.js';
 
 function now() {
   let hr = process.hrtime();
@@ -46,11 +45,10 @@ function ensureConnectionObject(connection) {
  * @param logger
  * @returns {Array}
  */
-function handleTriggerEvents(event, query, _connection, logger) {
+export default function trigger(transform, query, _connection, logger) {
   logger = logger || {log(){}}; // eslint-disable-line
   const startTime = now();
 
-  const transform = Events.getEvent('transform', event);
   const connection = ensureConnectionObject(_connection);
 
   const requestTransformStartTime = now();
@@ -76,27 +74,4 @@ function handleTriggerEvents(event, query, _connection, logger) {
   logger.log('info', `[TIMER] ${event} transform ended at: ${endTime} ms, and took ${(endTime - startTime)} ms.`);
 
   return result;
-}
-
-/**
- * Triggers an event with the given parameters. Returns an array of promises that resolves the request
- *
- * @param {String} event
- * @param {Object} params
- * @returns {Array}
- * @param connection
- */
-export default function trigger(event, params, connection) {
-  return handleTriggerEvents(event, params, connection);
-}
-
-/**
- * Gets a trigger function with a logger attached
- * @param logger
- * @returns {Function}
- */
-export function getLoggingTrigger(logger) {
-  return (event, params, connection) => {
-    return handleTriggerEvents(event, params, connection, logger);
-  };
 }

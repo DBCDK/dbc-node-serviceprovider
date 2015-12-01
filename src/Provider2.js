@@ -7,12 +7,12 @@
  */
 
 import Dispatcher from './lib/dispatcher';
-import {registerTransform} from './lib/Transforms.js';
-import {getLoggingTrigger} from './lib/Trigger.js';
-import registerServiceClient from './lib/ServiceClients.js';
-import {getEventsOfType} from './lib/Events.js';
+//import {registerTransform} from './lib/Transforms.js';
+import Trigger from './lib/Trigger.js';
+//import registerServiceClient from './lib/ServiceClients.js';
+//import {getEventsOfType} from './lib/Events.js';
+import {extend} from 'lodash';
 
-let Provider = {};
 let Logger = console;
 Logger.warning = Logger.error;
 Logger.notice = Logger.log;
@@ -38,7 +38,36 @@ function setupSockets(socket) {
  *
  * @api public
  */
-export default function ProviderFactory(logger, sockets) {
+export default function Provider(logger, sockets) {
+
+  let clients = {};
+  const transforms = new Map();
+
+  function registerTransform(transform) {
+    const name = transform.event();
+    if (transforms.has(name)) {
+      throw new Error(`Event '${name}' already registered`);
+    }
+    else {
+      transforms.set(name, transform);
+    }
+  }
+
+  function registerServiceClient(name, client) {
+    if (clients[name]) {
+      throw new Error(`Client '${name}' already registered`);
+    }
+    clients[name] = client;
+  }
+
+  function trigger(event, params, context) {
+    const transform = transforms.get(event);
+    return Trigger(transform, params, context, logger);
+  }
+
+  function use() {
+
+  }
 
   if (logger) {
     Logger = logger;
@@ -48,7 +77,6 @@ export default function ProviderFactory(logger, sockets) {
     setupSockets,
     registerTransform,
     registerServiceClient,
-    trigger: getLoggingTrigger(logger),
-    getEventsOfType
+    trigger
   };
 }

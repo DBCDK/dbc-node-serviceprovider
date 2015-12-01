@@ -71,12 +71,13 @@ function onEventOnConnection(connection, provider, event) {
  * @param connection
  * @param provider
  */
-function registerEventsOnConnection(connection, provider) {
-  provider
-    .getEventsOfType('transform')
-    .forEach((value, event) => onEventOnConnection(connection, provider, event));
-}
+function registerEventOnConnection(transform, connection) {
+  const event = transform.event();
+  connection.on(`${event}Request`, (request) => {
+    transform.request(request, connection, response => connection.emit(`${event}Response`, response));
+  });
 
+}
 /**
  * Register events from the provider on new connections
  *
@@ -85,12 +86,10 @@ function registerEventsOnConnection(connection, provider) {
  * @param logger
  * @constructor
  */
-export default function SocketDispatcher(provider, logger, io) {
+export default function SocketDispatcher(transforms, logger, io) {
   Logger = logger;
-  io.on('connection', (connection) => registerEventsOnConnection(connection, provider));
-
-  io.use((socket, next) => {
-    transforms.foreach((transform => registerEventOnConnection(transform, socket)));
+  io.use((connection, next) => {
+    transforms.foreach((transform) => registerEventOnConnection(transform, connection));
     next();
   });
 }

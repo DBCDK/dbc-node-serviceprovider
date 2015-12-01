@@ -1,12 +1,11 @@
 'use strict';
 
-import * as MobilSoegProfile from 'dbc-node-mobilsoeg-profile-client';
+import MobilSoegProfile from 'dbc-node-mobilsoeg-profile-client';
 
 const ProfileClient = {
   name: 'mobilSoegProfile',
   init(config) {
-    MobilSoegProfile.init(config);
-    return MobilSoegProfile.METHODS;
+    return MobilSoegProfile(config);
   }
 };
 

@@ -1,11 +1,11 @@
 'use strict';
 
-import * as PopSuggest from 'dbc-node-popsuggest';
+import PopSuggest from 'dbc-node-popsuggest';
 
 const PopSuggestClient = {
   name: 'popsuggest',
   init(config) {
-    return PopSuggest.init(config);
+    return PopSuggest(config);
   }
 };
 

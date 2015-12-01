@@ -4,17 +4,16 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var _dbcNodeOpenuserstatusClient = require('dbc-node-openuserstatus-client');
 
-var OpenUserStatus = _interopRequireWildcard(_dbcNodeOpenuserstatusClient);
+var _dbcNodeOpenuserstatusClient2 = _interopRequireDefault(_dbcNodeOpenuserstatusClient);
 
 var OpenUserStatusClient = {
   name: 'openuserstatus',
   init: function init(config) {
-    OpenUserStatus.init(config);
-    return OpenUserStatus.METHODS;
+    return (0, _dbcNodeOpenuserstatusClient2['default'])(config);
   }
 };
 

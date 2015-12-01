@@ -4,17 +4,16 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var _dbcNodeOpenorderClient = require('dbc-node-openorder-client');
 
-var OpenOrder = _interopRequireWildcard(_dbcNodeOpenorderClient);
+var _dbcNodeOpenorderClient2 = _interopRequireDefault(_dbcNodeOpenorderClient);
 
 var OpenOrderClient = {
   name: 'openorder',
   init: function init(config) {
-    OpenOrder.init(config);
-    return OpenOrder.METHODS;
+    return (0, _dbcNodeOpenorderClient2['default'])(config);
   }
 };
 

@@ -39,6 +39,7 @@ const CoverImageTransform = {
       catch(e) { // eslint-disable-line
       }
     });
+    console.log(identifiers, 'identifiers');
     return this.callServiceClient('moreinfo', 'getMoreInfoResult', {identifiers});
   },
 

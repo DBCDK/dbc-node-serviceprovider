@@ -7,7 +7,7 @@
  */
 
 import Dispatcher from './lib/dispatcher2';
-import Transform from './lib/transforms';
+import Transform from './lib/Transforms';
 
 /**
  * Initialization of the provider and the underlying services.
@@ -17,7 +17,7 @@ import Transform from './lib/transforms';
  *
  * @api public
  */
-export default function Provider(logger, sockets) {
+export default function Provider(logger) {
 
    /**
    * Object with all clients registered on the provider
@@ -70,16 +70,15 @@ export default function Provider(logger, sockets) {
     Dispatcher(transforms, logger, io);
   }
 
-  /**
-   * method for applying middleware to the transform flow
-   */
-  function use() {
-
+  function trigger(event, params, context) {
+    return transforms.get(event).trigger(params, context);
   }
+
 
   return {
     registerTransform,
     registerServiceClient,
-    dispatcher
+    dispatcher,
+    trigger
   };
 }

@@ -38,7 +38,7 @@ function setupSockets(socket) {
  *
  * @api public
  */
-export default function ProviderFactory(logger, sockets) {
+export default function ProviderFactory(logger) {
 
   if (logger) {
     Logger = logger;

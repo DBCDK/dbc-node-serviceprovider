@@ -66,13 +66,16 @@ export default function Transform(transform, clients, logger) {
   transform.trigger = function trigger(params, context, callback) {
     const request = transform.requestTransform(transform.event(), params, context);
     const requests = isArray(request) && request || [request];
-    console.log(transform.event(), 'trigger');
-    requests.forEach((request) => {
-      request
-        .then((response) => callback(transform.responseTransform(response, context)))
-        .catch((error) => console.log(error));
+    return requests.map((requestPromise) => {
+      return requestPromise
+        .then((response) => {
+          if (callback) {
+            callback(transform.responseTransform(response, params, context));
+          }
+        })
+        .catch((error) => console.log(error, 'transform request error')); // eslint-disable-line no-console
     });
-  }
+  };
 
   return transform;
 }

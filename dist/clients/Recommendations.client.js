@@ -13,7 +13,7 @@ var _dbcNodeRecommendations2 = _interopRequireDefault(_dbcNodeRecommendations);
 var RecommendationsClient = {
   name: 'recommend',
   init: function init(config) {
-    return (0, _dbcNodeRecommendations2['default'])(config.endpoint, config.filters);
+    return (0, _dbcNodeRecommendations2['default'])(config);
   }
 };
 

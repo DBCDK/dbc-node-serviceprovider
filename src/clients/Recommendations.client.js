@@ -5,7 +5,7 @@ import Recommendations from 'dbc-node-recommendations';
 const RecommendationsClient = {
   name: 'recommend',
   init(config) {
-    return Recommendations(config.endpoint, config.filters);
+    return Recommendations(config);
   }
 };
 

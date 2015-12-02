@@ -1,12 +1,11 @@
 'use strict';
 
-import * as Borchk from 'dbc-node-borchk';
+import Borchk from 'dbc-node-borchk';
 
 const BorrChk = {
   name: 'borchk',
   init(config) {
-    Borchk.init(config);
-    return Borchk.METHODS;
+    return Borchk(config);
   }
 };
 

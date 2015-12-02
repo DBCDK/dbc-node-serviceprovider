@@ -3,7 +3,6 @@ import {expect} from 'chai';
 import sinon from 'sinon';
 import Provider from '../../../Provider.js';
 import Events from '../../../lib/Events.js';
-import DdbContentClient from '../../../clients/DdbContent.client.js';
 import NewsTransform from '../getNewsById.transform.js';
 import newsByIdResponse from './data/newsByIdReponse.js';
 
@@ -27,8 +26,12 @@ describe('Test NewsById transform', () => {
         }
       }
     };
-    provider = Provider(config);
-    provider.registerServiceClient(DdbContentClient);
+    const client = {getNewsById: () => {
+      return Promise.resolve(newsByIdResponse);
+    }};
+
+    provider = Provider();
+    provider.registerServiceClient(client);
     provider.registerTransform(NewsTransform);
   });
 

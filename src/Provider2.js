@@ -6,29 +6,8 @@
  * initializes the dispatcher if sockets are available.
  */
 
-import Dispatcher from './lib/dispatcher';
-//import {registerTransform} from './lib/Transforms.js';
-import Trigger from './lib/Trigger.js';
-//import registerServiceClient from './lib/ServiceClients.js';
-//import {getEventsOfType} from './lib/Events.js';
-import {extend} from 'lodash';
-
-let Logger = console;
-Logger.warning = Logger.error;
-Logger.notice = Logger.log;
-
-/**
- * Initializes the use of sockets
- *
- * @param {Socket} socket If communication with the parent application should
- * go through a socket it should be provided here. Currently there's no
- * alternative to using socket.
- * @api public
- */
-function setupSockets(socket) {
-  Dispatcher(Provider, Logger, socket);
-  return Provider;
-}
+import Dispatcher from './lib/dispatcher2';
+import Transform from './lib/transforms';
 
 /**
  * Initialization of the provider and the underlying services.
@@ -40,19 +19,38 @@ function setupSockets(socket) {
  */
 export default function Provider(logger, sockets) {
 
-  let clients = {};
+   /**
+   * Object with all clients registered on the provider
+   * @type {{}}
+   */
+  const clients = {};
+
+  /**
+   * Map of all transforms registered on the provider
+   * @type {Map}
+   */
   const transforms = new Map();
 
+  /**
+   * Method for registering a single transform
+   * @param transform
+   */
   function registerTransform(transform) {
     const name = transform.event();
     if (transforms.has(name)) {
       throw new Error(`Event '${name}' already registered`);
     }
     else {
-      transforms.set(name, transform);
+      transforms.set(name, Transform(transform, clients, logger));
     }
   }
 
+  /**
+   * Method for registering a service client
+   *
+   * @param name
+   * @param client
+   */
   function registerServiceClient(name, client) {
     if (clients[name]) {
       throw new Error(`Client '${name}' already registered`);
@@ -60,23 +58,28 @@ export default function Provider(logger, sockets) {
     clients[name] = client;
   }
 
-  function trigger(event, params, context) {
-    const transform = transforms.get(event);
-    return Trigger(transform, params, context, logger);
+  /**
+   * Initializes the use of sockets
+   *
+   * @param {Socket} socket If communication with the parent application should
+   * go through a socket it should be provided here. Currently there's no
+   * alternative to using socket.
+   * @api public
+   */
+  function dispatcher(io) {
+    Dispatcher(transforms, logger, io);
   }
 
+  /**
+   * method for applying middleware to the transform flow
+   */
   function use() {
 
   }
 
-  if (logger) {
-    Logger = logger;
-  }
-
   return {
-    setupSockets,
     registerTransform,
     registerServiceClient,
-    trigger
+    dispatcher
   };
 }

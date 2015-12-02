@@ -38,5 +38,3 @@ export default function registerServiceClient(name, methods, cache) {
 
   return registerMethods(methods, name);
 }
-
-function createclientObject

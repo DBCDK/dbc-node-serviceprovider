@@ -10,6 +10,7 @@ const RecommendationsTransform = {
   },
 
   responseTransform(data) {
+    console.log(data);
     return this.extractWorkInformation(data.result);
   },
 

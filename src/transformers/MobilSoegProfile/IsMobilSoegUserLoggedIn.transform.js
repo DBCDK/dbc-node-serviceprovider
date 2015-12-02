@@ -19,12 +19,14 @@ const IsMobilSoegUserLoggedIn = {
    * @param {Object} connection
    */
   requestTransform(event, query, connection) {
+    console.log(connection.hest, 'fisk');
     return new Promise((resolve, reject) => {
       try {
         const isLoggedIn = (connection.request.session && connection.request.session.passport) ? true : false;
         resolve(isLoggedIn);
       } catch (e) {
-        reject(Error('Something went wrong while checking a users status in IsMobilSoegUserLoggedIn.transform.js'));
+        console.log(e, 'error');
+        //reject(Error('Something went wrong while checking a users status in IsMobilSoegUserLoggedIn.transform.js'));
       }
 
     });

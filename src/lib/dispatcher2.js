@@ -5,12 +5,34 @@
  * The Dispatcher is a wrapper for socket.io. It will handle all communication
  * between server and client
  */
-
+import {isObject} from 'lodash';
 let Logger = null;
 
 function now() {
   let hr = process.hrtime();
   return (hr[0] * 1e9 + hr[1]) / 1000000;
+}
+
+/**
+ * Ensures the connection object has the requested structure.
+ * If for example redis is unavailable session will be undefined
+ *
+ * @param {Object} connection
+ * @return {*}
+ */
+function ensureConnectionObject(connection) {
+  if (!isObject(connection)) {
+    connection = {};
+  }
+
+  if (!isObject(connection.request)) {
+    connection.request = {};
+  }
+
+  if (!isObject(connection.request.session)) {
+    connection.request.session = {};
+  }
+  return connection;
 }
 
 /**
@@ -53,6 +75,7 @@ function handleResponse(connection, responsePromise, event) {
  */
 function onEventOnConnection(connection, provider, event) {
   connection.on(`${event}Request`, (request) => {
+    console.log(event);
     provider
       .trigger(event, request, connection)
       .forEach(responsePromise => handleResponse(connection, responsePromise, event));
@@ -74,7 +97,7 @@ function onEventOnConnection(connection, provider, event) {
 function registerEventOnConnection(transform, connection) {
   const event = transform.event();
   connection.on(`${event}Request`, (request) => {
-    transform.request(request, connection, response => connection.emit(`${event}Response`, response));
+    transform.trigger(request, connection, (response) => connection.emit(`${event}Response`, response));
   });
 
 }
@@ -86,10 +109,14 @@ function registerEventOnConnection(transform, connection) {
  * @param logger
  * @constructor
  */
-export default function SocketDispatcher(transforms, logger, io) {
-  Logger = logger;
+export default function Dispatcher(transforms, logger, io) {
   io.use((connection, next) => {
-    transforms.foreach((transform) => registerEventOnConnection(transform, connection));
+    connection.hest = 'true';
+    next();
+  });
+
+  io.use((connection, next) => {
+    transforms.forEach((transform) => registerEventOnConnection(transform, connection));
     next();
   });
 }

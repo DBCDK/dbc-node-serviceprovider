@@ -2,7 +2,7 @@
   "name": "dbc-node-serviceprovider",
   "version": "1.0.1",
   "description": "Provider for the Node modules that accesesthe DBC webservices",
-  "main": "index.js",
+  "main": "dist/index.js",
   "homepage": "https://github.com/DBCDK/dbc-node-serviceprovider/tree/master#readme",
   "scripts": {
     "build": "npm run cleardest && babel ./src -d dist --ignore __tests__",

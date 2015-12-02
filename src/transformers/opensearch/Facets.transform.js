@@ -22,7 +22,7 @@ const FacetsTransform = {
 
   requestTransform(event, request) {
 
-    return this.getSearchFacets({
+    return this.getFacets({
       query: request.query,
       facets: {
         facetName: ['facet.type', 'facet.creator', 'facet.subject', 'facet.language', 'facet.category', 'facet.date', 'facet.acSource'],

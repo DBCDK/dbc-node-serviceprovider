@@ -4,6 +4,8 @@ import {expect, assert} from 'chai';
 
 const transform = require('../transformers/opensearch/ResultList.transform');
 
+const facettransform = require('../transformers/opensearch/Facets.transform');
+
 const worktransform = require('../transformers/opensearch/Work.transform');
 
 const openSearchWorkMocks = require('./opensearch.mock.js');
@@ -50,6 +52,17 @@ describe('Test transform of OpenSearch responses', () => {
 
     const result = transform.responseTransform(response);
     assert.equal(JSON.stringify(result), JSON.stringify({'result':[],'info':{facets:[]},'error':[{'errorcode':1,'errormessage':'Authentication error','serviceerror':'authentication_error'}]}), 'Authentication error');
+
+  });
+
+});
+
+describe('Test transform of OpenSearch Facet responses', () => {
+  it('Several facets', () => {
+
+    const response = {"result":{"hitCount":"161","collectionCount":"0","more":"true","facetResult":{"facet":[{"facetName":"facet.type","facetTerm":[{"frequence":"48","term":"bog"},{"frequence":"16","term":"cd (musik)"},{"frequence":"16","term":"lydbog (cd)"},{"frequence":"15","term":"dvd"},{"frequence":"7","term":"lydbog (cd-mp3)"}]},{"facetName":"facet.creator","facetTerm":[{"frequence":"109","term":"joanne k. rowling"},{"frequence":"22","term":"daniel radcliffe"},{"frequence":"22","term":"emma watson"},{"frequence":"22","term":"robbie coltrane"},{"frequence":"22","term":"rupert grint"}]},{"facetName":"facet.subject","facetTerm":[{"frequence":"83","term":"magi"},{"frequence":"83","term":"troldmænd"},{"frequence":"47","term":"fantasy"},{"frequence":"43","term":"computerspil"},{"frequence":"30","term":"adventurespil"}]},{"facetName":"facet.language","facetTerm":[{"frequence":"76","term":"dansk"},{"frequence":"53","term":"blandede sprog"},{"frequence":"24","term":"engelsk"}]},{"facetName":"facet.category","facetTerm":[{"frequence":"148","term":"børnematerialer"},{"frequence":"40","term":"voksenmaterialer"}]},{"facetName":"facet.date","facetTerm":[{"frequence":"18","term":"2011"},{"frequence":"17","term":"2009"},{"frequence":"15","term":"2003"},{"frequence":"13","term":"2004"},{"frequence":"11","term":"2000"}]},{"facetName":"facet.acSource","facetTerm":[{"frequence":"155","term":"bibliotekskatalog"},{"frequence":"6","term":"filmstriben"}]}]},"statInfo":{"fedoraRecordsCached":"0","fedoraRecordsRead":"0","time":"2.472219","trackingId":"2015-12-02T11:15:58:719869:24701"}},"raw":""};
+
+    assert.equal(JSON.stringify(facettransform.responseTransform(response)), JSON.stringify({"result":[{"facetName":"facet.type","terms":[{"term":"bog","count":"48"},{"term":"cd (musik)","count":"16"},{"term":"lydbog (cd)","count":"16"},{"term":"dvd","count":"15"},{"term":"lydbog (cd-mp3)","count":"7"}]},{"facetName":"facet.creator","terms":[{"term":"joanne k. rowling","count":"109"},{"term":"daniel radcliffe","count":"22"},{"term":"emma watson","count":"22"},{"term":"robbie coltrane","count":"22"},{"term":"rupert grint","count":"22"}]},{"facetName":"facet.subject","terms":[{"term":"magi","count":"83"},{"term":"troldmænd","count":"83"},{"term":"fantasy","count":"47"},{"term":"computerspil","count":"43"},{"term":"adventurespil","count":"30"}]},{"facetName":"facet.language","terms":[{"term":"dansk","count":"76"},{"term":"blandede sprog","count":"53"},{"term":"engelsk","count":"24"}]},{"facetName":"facet.category","terms":[{"term":"børnematerialer","count":"148"},{"term":"voksenmaterialer","count":"40"}]},{"facetName":"facet.date","terms":[{"term":"2011","count":"18"},{"term":"2009","count":"17"},{"term":"2003","count":"15"},{"term":"2004","count":"13"},{"term":"2000","count":"11"}]},{"facetName":"facet.acSource","terms":[{"term":"bibliotekskatalog","count":"155"},{"term":"filmstriben","count":"6"}]}],"info":{},"error":[]}), 'Several facets');
 
   });
 

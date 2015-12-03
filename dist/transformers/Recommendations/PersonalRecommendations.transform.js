@@ -8,15 +8,18 @@ var PersonalRecommendationsTransform = {
     return 'getPersonalRecommendations';
   },
 
-  requestTransform: function requestTransform(event, params) {
+  requestTransform: function requestTransform(event, params, connection) {
     var _this = this;
+
+    var filters = connection.libdata.config.provider.services.recommend.filters || ['rec.collectionIdentifier:' + (connection.libdata.libraryId || '716500') + '-katalog'];
 
     return new Promise(function (resolve) {
       var ret = { generic: [], personal: [] };
       var promises = [];
       var recs = _this.callServiceClient('recommend', 'getRecommendations', {
         likes: [params.work],
-        dislikes: []
+        dislikes: [],
+        filters: filters
       });
       promises.push(recs);
 
@@ -24,7 +27,8 @@ var PersonalRecommendationsTransform = {
         params.likes.unshift(params.work);
 
         var precs = _this.callServiceClient('recommendranked', 'getPersonalRecommendations', {
-          like: params.likes
+          like: params.likes,
+          filters: filters
         });
         promises.push(precs);
 

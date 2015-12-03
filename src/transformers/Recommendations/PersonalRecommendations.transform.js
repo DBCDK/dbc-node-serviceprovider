@@ -5,13 +5,16 @@ const PersonalRecommendationsTransform = {
     return 'getPersonalRecommendations';
   },
 
-  requestTransform(event, params) {
+  requestTransform(event, params, connection) {
+    let filters = connection.libdata.config.provider.services.recommend.filters || ['rec.collectionIdentifier:' + (connection.libdata.libraryId || '716500') + '-katalog'];
+
     return new Promise((resolve) => {
       let ret = {generic: [], personal: []};
       let promises = [];
       let recs = this.callServiceClient('recommend', 'getRecommendations', {
         likes: [params.work],
-        dislikes: []
+        dislikes: [],
+        filters: filters
       });
       promises.push(recs);
 
@@ -19,7 +22,8 @@ const PersonalRecommendationsTransform = {
         params.likes.unshift(params.work);
 
         let precs = this.callServiceClient('recommendranked', 'getPersonalRecommendations', {
-          like: params.likes
+          like: params.likes,
+          filters: filters
         });
         promises.push(precs);
 

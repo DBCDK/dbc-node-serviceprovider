@@ -8,7 +8,8 @@ var RecommendationsTransform = {
     return 'getRecommendations';
   },
 
-  requestTransform: function requestTransform(event, params) {
+  requestTransform: function requestTransform(event, params, connection) {
+    params.libdata = connection.libdata;
     return this.callServiceClient('recommend', 'getRecommendations', params);
   },
 

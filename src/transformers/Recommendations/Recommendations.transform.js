@@ -5,7 +5,8 @@ const RecommendationsTransform = {
     return 'getRecommendations';
   },
 
-  requestTransform(event, params) {
+  requestTransform(event, params, connection) {
+    params.libdata = connection.libdata;
     return this.callServiceClient('recommend', 'getRecommendations', params);
   },
 

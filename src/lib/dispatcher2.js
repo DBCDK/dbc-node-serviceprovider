@@ -8,10 +8,6 @@
 import {isObject} from 'lodash';
 let Logger = null;
 
-function now() {
-  let hr = process.hrtime();
-  return (hr[0] * 1e9 + hr[1]) / 1000000;
-}
 
 /**
  * Ensures the connection object has the requested structure.
@@ -110,11 +106,6 @@ function registerEventOnConnection(transform, connection) {
  * @constructor
  */
 export default function Dispatcher(transforms, logger, io) {
-  io.use((connection, next) => {
-    connection.hest = 'true';
-    next();
-  });
-
   io.use((connection, next) => {
     transforms.forEach((transform) => registerEventOnConnection(transform, connection));
     next();

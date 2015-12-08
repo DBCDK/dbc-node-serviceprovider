@@ -6,42 +6,8 @@
  * initializes the dispatcher if sockets are available.
  */
 
-import path from 'path';
-import autoRequire from './lib/AutoRequire.js';
-import Dispatcher from './lib/dispatcher';
-import {registerTransform} from './lib/Transforms.js';
-import {getLoggingTrigger} from './lib/Trigger.js';
-import ServiceClients from './lib/ServiceClients.js';
-import {getEventsOfType} from './lib/Events.js';
-
-let Provider = {};
-let Logger = console;
-Logger.warning = Logger.error;
-Logger.notice = Logger.log;
-
-/**
- * Initializes the use of sockets
- *
- * @param {Socket} socket If communication with the parent application should
- * go through a socket it should be provided here. Currently there's no
- * alternative to using socket.
- * @api public
- */
-function setupSockets(socket) {
-  this.bootstrap();
-  Dispatcher(socket, Provider, Logger);
-  return Provider;
-}
-
-/**
- * Loads the bundles transforms and clients
- * @api public
- */
-function bootstrap() {
-  autoRequire(path.join(__dirname, 'transformers'), 'transform.js').map(Provider.registerTransform);
-  autoRequire(path.join(__dirname, 'clients'), 'client.js').map(Provider.registerServiceClient);
-  return Provider;
-}
+import Dispatcher from './lib/Dispatcher';
+import Transform from './lib/Transforms';
 
 /**
  * Initialization of the provider and the underlying services.
@@ -51,28 +17,71 @@ function bootstrap() {
  *
  * @api public
  */
-export default function ProviderFactory(config, logger) {
+export default function Provider(logger) {
 
-  if (logger) {
-    Logger = logger;
+  /**
+   * Object with all clients registered on the provider
+   * @type {{}}
+   */
+  const clients = {};
+
+  /**
+   * Map of all transforms registered on the provider
+   * @type {Map}
+   */
+  const transforms = new Map();
+
+  /**
+   * Method for registering a single transform
+   * @param transform
+   */
+  function registerTransform(transformObject) {
+    const name = transformObject.event();
+    if (transforms.has(name)) {
+      throw new Error(`Event '${name}' already registered`);
+    }
+    const transform = Transform(transformObject, clients, logger);
+    transforms.set(name, transform);
+
+    return transform;
   }
 
-  if (!config) {
-    Logger.error('No configuration was provided');
+  /**
+   * Method for registering a service client
+   *
+   * @param name
+   * @param client
+   */
+  function registerServiceClient(name, client) {
+    if (clients[name]) {
+      throw new Error(`Client '${name}' already registered`);
+    }
+    clients[name] = client;
+
+    return clients;
   }
 
-  let registerServiceClient = ServiceClients(config, Logger).registerServiceClient;
+  /**
+   * Initializes the use of sockets
+   *
+   * @param {Socket} socket If communication with the parent application should
+   * go through a socket it should be provided here. Currently there's no
+   * alternative to using socket.
+   * @api public
+   */
+  function dispatcher(io) {
+    Dispatcher(transforms, logger, io);
+  }
 
-  Provider = {
-    setupSockets,
-    bootstrap,
+  function trigger(event, params, context) {
+    return transforms.get(event).trigger(params, context);
+  }
+
+
+  return {
     registerTransform,
     registerServiceClient,
-    trigger: getLoggingTrigger(logger),
-    getEventsOfType
+    dispatcher,
+    trigger
   };
-
-  Logger.log('debug', 'The ServiceProvider was initialized with the following config: ', config);
-
-  return Provider;
 }

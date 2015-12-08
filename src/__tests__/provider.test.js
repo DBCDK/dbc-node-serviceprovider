@@ -4,12 +4,13 @@
  * @file Testing the Dispatcher class in dispatcher.js
  */
 import Provider from '../Provider.js';
-import Events from '../lib/Events.js';
 import {expect, assert} from 'chai';
 
 const loggerMock = {
-  log: () => {},
-  error: () => {}
+  log: () => {
+  },
+  error: () => {
+  }
 };
 
 describe('Testing methods on the Provider', () => {
@@ -27,77 +28,49 @@ describe('Testing methods on the Provider', () => {
 
   it('Test the registerTransform method', () => {
     let provider = Provider({}, loggerMock);
-    let event = function() {
-    };
     let test = {
       event() {
+        return 'testEvent';
       },
       requestTransform: true,
       responseTransform: true,
       someMethod() {
       }
     };
-    expect(provider.registerTransform(test)).to.have.keys('someMethod', 'event', 'requestTransform', 'responseTransform', 'callServiceClient');
-
-    test = {services: []};
-    expect(() => provider.registerTransform(test)).to.throw(Error);
-
-    test = {};
-    expect(() => provider.registerTransform(test)).to.throw(Error);
-
-    test = {event};
-    expect(() => provider.registerTransform(test)).to.throw(Error);
-
-    test = {event, requestTransform: true};
-    expect(() => provider.registerTransform(test)).to.throw(Error);
-
-    test = {event, requestTransform: true, responseTransform: true};
-    expect(() => provider.registerTransform(test)).to.not.throw(Error);
+    expect(provider.registerTransform(test)).to.have.keys([
+      'callServiceClient',
+      'clients',
+      'event',
+      'logger',
+      'requestTransform',
+      'responseTransform',
+      'someMethod',
+      'trigger'
+    ]);
   });
 
   it('Test the registerServiceClient method', () => {
-    let client = {};
-    let config = {};
-    expect(() => Provider(config, loggerMock).registerServiceClient(client)).to.throw(Error);
-    config.services = {};
-    expect(() => Provider(config, loggerMock).registerServiceClient(client)).to.throw(Error);
-    client.name = 'test';
-    config.services.test = {};
-    expect(() => Provider(config, loggerMock).registerServiceClient(client)).to.throw(Error);
-    client.init = () => {
+    let client = {
+      test: () => {
+        return 'testClientMethod';
+      }
     };
-    expect(() => Provider(config, loggerMock).registerServiceClient(client)).to.throw(Error);
-    client.init = () => {
-      return {};
-    };
-    expect(() => Provider(config, loggerMock).registerServiceClient(client)).to.not.throw(Error);
-    let methods = Provider(config, loggerMock).registerServiceClient(client);
-    expect(methods).to.be.object; // eslint-disable-line no-unused-expressions
-  });
+    const provider = Provider(loggerMock);
+    expect(() => provider.registerServiceClient('test', client)).to.not.throw(Error);
+    expect(() => provider.registerServiceClient('test', client)).to.throw(Error);
 
-  describe('Test registerEvent', () => {
-    it('throws error on duplicate eventnames', () => {
-      let transform = {
-        requestTransform: true, responseTransform: true,
-        name: 'testTransform',
-        event() {
-          return 'testRegisterEvent';
-        }
-      };
-
-      Provider({}).registerTransform(transform);
-      expect(() => Provider({}).registerTransform(transform)).to.throw(Error);
-    });
+    const clients = provider.registerServiceClient('test2', client);
+    expect(clients).to.have.keys(['test', 'test2']);
   });
 
   describe('Test the trigger function', () => {
+    const provider = Provider(loggerMock);
     // No event has been reqistered
     it('Throws an error on unsupported events', () => {
-      expect(() => Provider({}, loggerMock).trigger('testEvent', {test: 'testEvent is triggered'})).to.throw(Error);
+      expect(() => provider.trigger('testEvent', {test: 'testEvent is triggered'})).to.throw(Error);
     });
 
     it('Triggers an event', (done) => {
-      let provider = Provider({}, loggerMock);
       provider.registerTransform({
         event() {
           return 'testEvent';
@@ -105,7 +78,7 @@ describe('Testing methods on the Provider', () => {
         requestTransform(event, request) {
           return Promise.resolve(request);
         },
-        responseTransform(response) {
+        responseTransform(event, response) {
           return response.test;
         }
       });
@@ -114,56 +87,47 @@ describe('Testing methods on the Provider', () => {
       trigger[0].then((result) => {
         expect(result).to.be.equal('testEvent is triggered');
         done();
-      });
+      }).catch(err => done(err));
     });
   });
 
   describe('Test callServiceClient method', () => {
     let assertString = 'Client test method was called';
-    let testMethod = function(params) {
-      return Promise.resolve(params);
-    };
+
     var testClient = {
-      name: 'testClient',
-      init() {
-        return {testMethod: testMethod};
+      testGoodMethod(params) {
+        return Promise.resolve(params);
+      },
+      testBadMethod(params) {
+        return Promise.reject(params);
       }
     };
     var testTransform = {
       event() {
         return 'testCallClientEvent';
       },
-      requestTransform() {
-        return this.callServiceClient('testClient', 'testMethod', assertString);
+      requestTransform(event, method) {
+        return this.callServiceClient('testClient', method, assertString);
       },
       responseTransform(response) {
         return response;
       }
     };
+    const provider = Provider({services: {testClient: {}}}, loggerMock);
+    provider.registerServiceClient('testClient', testClient);
+    provider.registerTransform(testTransform);
 
     it('should call method on client', () => {
-      const provider = Provider({services: {testClient: {}}}, loggerMock);
-      provider.registerServiceClient(testClient);
-      provider.registerTransform(testTransform);
 
-      provider.trigger('testCallClientEvent')[0].then((value)=> {
+      provider.trigger('testCallClientEvent', 'testGoodMethod')[0].then((value)=> {
         expect(value).to.be.equal(assertString);
       });
-
-      testMethod = function(params) {
-        return Promise.reject(params);
-      };
     });
 
     it('should catch error', (done) => {
-      Events.resetEvents();
-      testMethod = function(params) {
-        return Promise.reject(params);
-      };
-      const provider = Provider({services: {testClient: {}}}, loggerMock);
-      provider.registerServiceClient(testClient);
-      provider.registerTransform(testTransform);
-      provider.trigger('testCallClientEvent')[0].catch((value)=> {
+      provider.trigger('testCallClientEvent', 'testBadMethod')[0].then(()=> {
+        done(new Error('Promise should fail'));
+      }).catch((value)=> {
         expect(value).to.be.equal(assertString);
         done();
       });

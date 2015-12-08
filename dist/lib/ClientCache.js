@@ -54,7 +54,7 @@ function cachePromiseCallback(params) {
       resolve(callback.then(function (value) {
         store.set(key, JSON.stringify(value), ttl && { ttl: ttl }, function () {});
         return value;
-      }));
+      })); // .catch(console.log.bind(console)));
     });
 
     if (noError) {

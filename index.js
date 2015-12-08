@@ -1,2 +1,4 @@
 'use strict';
-module.exports = require('./dist/Provider');
+
+module.exports.Provider = require('./dist/Provider');
+module.exports.Autorequire = require('./dist/lib/AutoRequire');

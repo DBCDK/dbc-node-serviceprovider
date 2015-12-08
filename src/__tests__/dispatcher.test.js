@@ -3,7 +3,8 @@
 /**
  * @file Testing the Dispatcher class in dispatcher.js
  */
-import Dispatcher from '../lib/dispatcher.js';
+import Dispatcher from '../lib/Dispatcher.js';
+import Transform from '../lib/Transforms.js';
 import sinon from 'sinon';
 import {expect} from 'chai';
 
@@ -15,7 +16,7 @@ describe('Testing the methods in the Dispatcher object', () => {
    */
   const connectionMock = {
     on(event, cb) {
-      cb({event});
+      cb([]);
     },
     emit: sinon.stub()
   };
@@ -25,30 +26,30 @@ describe('Testing the methods in the Dispatcher object', () => {
    * @type {{}}
    */
   const socketMock = {
-    on(event, cb) {
-      cb(connectionMock);
+    use(cb) {
+      cb(connectionMock, ()=> {});
     }
   };
 
-  const loggerMock = {
-    log: () => {}
-  };
-
-  /**
-   * Provider Mock
-   * @type {{}}
-   */
-  const providerMock = {};
-  providerMock.trigger = sinon.stub().returns([Promise.resolve('reponse value')]);
-  providerMock.getEventsOfType = sinon.stub().returns(new Map([['testEvent', {}]]));
+  const testTransform = Transform({
+    event() {
+      return 'testEvent';
+    },
+    requestTransform(event, params) {
+      params.push('requestTransform');
+      return Promise.resolve(params);
+    },
+    responseTransform(event, params) {
+      params.push('responseTransform');
+      return params;
+    }
+  });
 
   it('tests something', (done) => {
-    Dispatcher(socketMock, providerMock, loggerMock);
-    expect(providerMock.trigger.calledWith('testEvent')).to.be.equal(true);
-    expect(providerMock.getEventsOfType.calledWith('transform')).to.be.equal(true);
+    Dispatcher([testTransform], console, socketMock);
     expect(connectionMock.emit.called).to.be.equal(false);
     setTimeout(() => {
-      expect(connectionMock.emit.calledWith('testEventResponse', 'reponse value')).to.be.equal(true);
+      expect(connectionMock.emit.calledWith('testEventResponse', ['requestTransform', 'responseTransform'])).to.be.equal(true);
       done();
     }, 0);
   });

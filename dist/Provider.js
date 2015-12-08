@@ -9,60 +9,17 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
-exports['default'] = ProviderFactory;
+exports['default'] = Provider;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _path = require('path');
-
-var _path2 = _interopRequireDefault(_path);
-
-var _libAutoRequireJs = require('./lib/AutoRequire.js');
-
-var _libAutoRequireJs2 = _interopRequireDefault(_libAutoRequireJs);
-
-var _libDispatcher = require('./lib/dispatcher');
+var _libDispatcher = require('./lib/Dispatcher');
 
 var _libDispatcher2 = _interopRequireDefault(_libDispatcher);
 
-var _libTransformsJs = require('./lib/Transforms.js');
+var _libTransforms = require('./lib/Transforms');
 
-var _libTriggerJs = require('./lib/Trigger.js');
-
-var _libServiceClientsJs = require('./lib/ServiceClients.js');
-
-var _libServiceClientsJs2 = _interopRequireDefault(_libServiceClientsJs);
-
-var _libEventsJs = require('./lib/Events.js');
-
-var Provider = {};
-var Logger = console;
-Logger.warning = Logger.error;
-Logger.notice = Logger.log;
-
-/**
- * Initializes the use of sockets
- *
- * @param {Socket} socket If communication with the parent application should
- * go through a socket it should be provided here. Currently there's no
- * alternative to using socket.
- * @api public
- */
-function setupSockets(socket) {
-  this.bootstrap();
-  (0, _libDispatcher2['default'])(socket, Provider, Logger);
-  return Provider;
-}
-
-/**
- * Loads the bundles transforms and clients
- * @api public
- */
-function bootstrap() {
-  (0, _libAutoRequireJs2['default'])(_path2['default'].join(__dirname, 'transformers'), 'transform.js').map(Provider.registerTransform);
-  (0, _libAutoRequireJs2['default'])(_path2['default'].join(__dirname, 'clients'), 'client.js').map(Provider.registerServiceClient);
-  return Provider;
-}
+var _libTransforms2 = _interopRequireDefault(_libTransforms);
 
 /**
  * Initialization of the provider and the underlying services.
@@ -73,30 +30,72 @@ function bootstrap() {
  * @api public
  */
 
-function ProviderFactory(config, logger) {
+function Provider(logger) {
 
-  if (logger) {
-    Logger = logger;
+  /**
+   * Object with all clients registered on the provider
+   * @type {{}}
+   */
+  var clients = {};
+
+  /**
+   * Map of all transforms registered on the provider
+   * @type {Map}
+   */
+  var transforms = new Map();
+
+  /**
+   * Method for registering a single transform
+   * @param transform
+   */
+  function registerTransform(transformObject) {
+    var name = transformObject.event();
+    if (transforms.has(name)) {
+      throw new Error('Event \'' + name + '\' already registered');
+    }
+    var transform = (0, _libTransforms2['default'])(transformObject, clients, logger);
+    transforms.set(name, transform);
+
+    return transform;
   }
 
-  if (!config) {
-    Logger.error('No configuration was provided');
+  /**
+   * Method for registering a service client
+   *
+   * @param name
+   * @param client
+   */
+  function registerServiceClient(name, client) {
+    if (clients[name]) {
+      throw new Error('Client \'' + name + '\' already registered');
+    }
+    clients[name] = client;
+
+    return clients;
   }
 
-  var registerServiceClient = (0, _libServiceClientsJs2['default'])(config, Logger).registerServiceClient;
+  /**
+   * Initializes the use of sockets
+   *
+   * @param {Socket} socket If communication with the parent application should
+   * go through a socket it should be provided here. Currently there's no
+   * alternative to using socket.
+   * @api public
+   */
+  function dispatcher(io) {
+    (0, _libDispatcher2['default'])(transforms, logger, io);
+  }
 
-  Provider = {
-    setupSockets: setupSockets,
-    bootstrap: bootstrap,
-    registerTransform: _libTransformsJs.registerTransform,
+  function trigger(event, params, context) {
+    return transforms.get(event).trigger(params, context);
+  }
+
+  return {
+    registerTransform: registerTransform,
     registerServiceClient: registerServiceClient,
-    trigger: (0, _libTriggerJs.getLoggingTrigger)(logger),
-    getEventsOfType: _libEventsJs.getEventsOfType
+    dispatcher: dispatcher,
+    trigger: trigger
   };
-
-  Logger.log('debug', 'The ServiceProvider was initialized with the following config: ', config);
-
-  return Provider;
 }
 
 module.exports = exports['default'];

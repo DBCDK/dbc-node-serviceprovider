@@ -5,45 +5,18 @@
  * Module for registering all transforms
  */
 
-import {extend} from 'lodash';
-import Events from './Events.js';
+import {isArray} from 'lodash';
+import {now} from './Utils.js';
 
 /**
- * Base Transform Methods that are inherited
- *
- * @type {{callServiceClient: Function}}
- */
-const BaseTransform = {
-  callServiceClient(client, method, params) {
-    const event = `${client}::${method}`;
-    return Events.getEvent('client', event)(params);
-  }
-};
-
-/**
- * Registers all events on a transform
- *
- * if an event already exists. An error is thrown
- *
- * @param event
- * @param transform
- * @api private
- */
-function registerEvents(event, transform) {
-  if (event) {
-    Events.addEvent('transform', event, transform);
-  }
-}
-
-/**
- * Factory method for the transforms defined in /transformers
+ * Validate the transform object.
  *
  * @param {Object} transform
  * @return {Object}
  * @throws {Error}
  * @api public
  */
-function registerTransform(transform) {
+function validateTransform(transform) {
   if (!transform.event) {
     throw new Error('No event method not found on transform');
   }
@@ -55,12 +28,63 @@ function registerTransform(transform) {
   if (!transform.responseTransform) {
     throw new Error('No responseTransform method not found on transform');
   }
-
-  registerEvents(transform.event(), transform);
-
-  extend(transform, BaseTransform);
-
   return transform;
 }
 
-export default {registerTransform};
+/**
+ *
+ * @param transform
+ * @param clients
+ * @param logger
+ * @returns {trigger}
+ */
+export default function Transform(transform, clients, logger = console) {
+  validateTransform(transform);
+  transform.clients = clients;
+  transform.logger = logger;
+
+  /**
+   *
+   * @deprecated
+   * Call the clients directly through the clients object. this.clients.clientName.method(params);
+   *
+   * @param client
+   * @param method
+   * @param params
+   * @returns {*}
+   */
+  transform.callServiceClient = function callServiceClient(client, method, params) {
+    return clients[client][method](params);
+  };
+
+  /**
+   * Trigger request on a transform
+   *
+   * @param params
+   * @param context
+   * @param callback
+   */
+  transform.trigger = function trigger(params, context) {
+    const requestStart = now();
+    const event = transform.event();
+    const request = transform.requestTransform(event, params, context);
+    const requests = isArray(request) && request || [request];
+    return requests.map((requestPromise) => {
+      return requestPromise
+        .then((response) => {
+          const transformedResponse = transform.responseTransform(response, params, context);
+          const requestStop = now();
+          logger.log('info', 'Transform has been triggered', {
+            event: event,
+            timing: requestStop - requestStart,
+            request: params,
+            serviceReponse: response,
+            finalResponse: transformedResponse
+          });
+          return transformedResponse;
+        });
+    });
+  };
+
+  return transform;
+}

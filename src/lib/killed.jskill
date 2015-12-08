@@ -1,0 +1,160 @@
+import {isObject} from 'lodash';
+let Logger = null;
+
+
+/**
+ * Ensures the connection object has the requested structure.
+ * If for example redis is unavailable session will be undefined
+ *
+ * @param {Object} connection
+ * @return {*}
+ */
+function ensureConnectionObject(connection) {
+  if (!isObject(connection)) {
+    connection = {};
+  }
+
+  if (!isObject(connection.request)) {
+    connection.request = {};
+  }
+
+  if (!isObject(connection.request.session)) {
+    connection.request.session = {};
+  }
+  return connection;
+}
+
+/**
+ * Handle promises being resolved or rejected
+ *
+ * @param connection
+ * @param responsePromise
+ * @param event
+ */
+function handleResponse(connection, responsePromise, event) {
+  const eventName = `${event}Response`;
+  const start = now();
+  responsePromise
+    .then(response => {
+      const end = now();
+      connection.emit(eventName, response);
+      Logger.log('info', 'Got a response to deliver by sockets', JSON.stringify({
+        event: event,
+        response: response,
+        conection: (connection && connection.request && connection.request.session) ? connection.request.session : {},
+        time_delta: end - start
+      }));
+    })
+    .catch(error => {
+      connection.emit(eventName, {error});
+      Logger.log('error', 'An error occured while communicating with a service', JSON.stringify({
+        event: event,
+        error: error,
+        conection: (connection && connection.request && connection.request.session) ? connection.request.session : {}
+      }));
+    });
+}
+
+/**
+ * Trigger event on provider, when an event is registered on a connection
+ *
+ * @param connection
+ * @param provider
+ * @param event
+ */
+function onEventOnConnection(connection, provider, event) {
+  connection.on(`${event}Request`, (request) => {
+    console.log(event);
+    provider
+      .trigger(event, request, connection)
+      .forEach(responsePromise => handleResponse(connection, responsePromise, event));
+
+    Logger.log('info', 'Got a request by sockets', {
+      event: event,
+      request: request,
+      conection: (connection && connection.request && connection.request.session) ? connection.request.session : {}
+    });
+  });
+}
+
+
+/* TRIGGER */
+
+'use strict';
+
+/**
+ * @file
+ * Methods for triggering events on the provider
+ */
+
+import {isArray, isObject} from 'lodash';
+
+function now() {
+  let hr = process.hrtime();
+  return (hr[0] * 1e9 + hr[1]) / 1000000;
+}
+
+/**
+ * Ensures the connection object has the requested structure.
+ * If for example redis is unavailable session will be undefined
+ *
+ * @param {Object} connection
+ * @return {*}
+ */
+function ensureConnectionObject(connection) {
+  if (!isObject(connection)) {
+    connection = {};
+  }
+
+  if (!isObject(connection.request)) {
+    connection.request = {};
+  }
+
+  if (!isObject(connection.request.session)) {
+    connection.request.session = {};
+  }
+
+  return connection;
+}
+
+/**
+ * Handles the request and response transform callback and returns a promise, which resolves to the final
+ * response.
+ *
+ * @param event
+ * @param query
+ * @param _connection
+ * @param logger
+ * @returns {Array}
+ */
+export default function trigger(transform, query, _connection, logger) {
+  logger = logger || {log(){}}; // eslint-disable-line
+  const startTime = now();
+
+  const connection = ensureConnectionObject(_connection);
+
+  const requestTransformStartTime = now();
+  const request = transform.requestTransform(event, query, connection);
+  // make sure requests are an array
+  const requestArray = isArray(request) && request || [request];
+
+  const requestTransformsFinishedTime = now();
+  const transformDelta = requestTransformsFinishedTime - requestTransformStartTime;
+
+  // An array of promises is returned, one for each request in the request array
+  // When each promise is resolved the transform response method is called.
+  let result = requestArray.map((promise) => {
+    return promise.then((response) => {
+      return transform.responseTransform(response, query, connection);
+    });
+  });
+
+  const endTime = now();
+
+  logger.log('info', `[TIMER] ${event} transform started at: ${startTime} ms`);
+  logger.log('info', `[TIMER] ${event} requesttransform took ${transformDelta} ms...`);
+  logger.log('info', `[TIMER] ${event} transform ended at: ${endTime} ms, and took ${(endTime - startTime)} ms.`);
+
+  return result;
+}
+

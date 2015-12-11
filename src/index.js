@@ -1,4 +1,4 @@
 'use strict';
-import Provider2 from './Provider2.js';
 
-export default Provider2;
+export const Provider = require('./Provider');
+export const AutoRequire = require('./lib/AutoRequire');

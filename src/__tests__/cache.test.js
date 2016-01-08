@@ -1,5 +1,5 @@
 'use strict';
-import * as ClientCache from '../lib/ClientCache.js';
+import ClientCache from '../lib/ClientCache.js';
 import {expect} from 'chai';
 
 describe('CacheManager wrap method', () => {
@@ -9,8 +9,7 @@ describe('CacheManager wrap method', () => {
     info: () => {}
   };
 
-  ClientCache.setLogger(loggerMock);
-  const manager = ClientCache.CacheManager({store: 'memory', ttl: 100});
+  const clientCacheWrapper = ClientCache({store: 'memory', ttl: 100}, loggerMock);
   let returnText;
   const methods = {
     test() {
@@ -18,7 +17,7 @@ describe('CacheManager wrap method', () => {
     }
   };
 
-  const wrapped = manager.wrap(methods);
+  const wrapped = clientCacheWrapper(methods);
 
   it('uses callback when no cache', (done) => {
     returnText = 'no cache';

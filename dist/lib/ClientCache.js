@@ -8,8 +8,7 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
-exports.CacheManager = CacheManager;
-exports.setLogger = setLogger;
+exports['default'] = ClientCache;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -20,111 +19,17 @@ var _cacheManager = require('cache-manager');
 var _cacheManager2 = _interopRequireDefault(_cacheManager);
 
 /**
- * Central cache store object
- */
-var store = undefined;
-var Logger = console;
-
-/**
- * Handles the callback from cachePromiseWrapper
+ * Converts a promise to a callback. Is needed to use cachemanager.wrap that expects a callback
  *
- * @param {Object} params
- * @api private
+ * @param promise
+ * @param callback
  */
-function cachePromiseCallback(params) {
-  var cb = params.cb;
-  var ttl = params.ttl;
-  var key = params.key;
-  var err = params.err;
-  var result = params.result;
-  var resolve = params.resolve;
-  var reject = params.reject;
-
-  if (err) {
-    Logger.error('Promise was rejected in cachePromiseCallback', { error: err, params: params });
-    return reject(err);
-  }
-
-  function noCache(noError) {
-    // No cache exists
-    var callbacks = cb();
-    var callbacksArray = (0, _lodash.isArray)(callbacks) ? callbacks : [callbacks];
-
-    (0, _lodash.forEach)(callbacksArray, function (callback) {
-      resolve(callback.then(function (value) {
-        store.set(key, JSON.stringify(value), ttl && { ttl: ttl }, function () {});
-        return value;
-      })); // .catch(console.log.bind(console)));
-    });
-
-    if (noError) {
-      Logger.info('No cahced data was found, retreiving from client with params: ', params);
-    } else {
-      Logger.info('A caching error ocurred, retreiving from client with params: ', params);
-    }
-  }
-
-  if (result) {
-    // Cached version exists
-    setTimeout(noCache, 500, false); // respond within 500 ms or just ship
-    var res = JSON.parse(result);
-    resolve(res);
-    Logger.info('Delivering cached result', { res: res, params: params });
-  } else {
-    noCache(true);
-  }
-}
-
-/**
- * Retrieves a value from the cache store from key, If no cache exists, a callback method is called
- * The callback method has to return a promise.
- *
- * @param {String} key Cache key
- * @param {Function} cb Callback method. Required to return a Promise
- * @param {Number} ttl optional cache time
- * @returns {Promise}
- * @api private
- */
-function cachePromiseWrapper(key, cb, ttl) {
-  return new Promise(function (resolve, reject) {
-    store.get(key, function (err, result) {
-      cachePromiseCallback({ cb: cb, ttl: ttl, key: key, resolve: resolve, reject: reject, err: err, result: result });
-    });
+function promiseAsCallback(promise, callback) {
+  promise.then(function (result) {
+    return callback(null, JSON.stringify(result));
+  })['catch'](function (err) {
+    return callback(err, null);
   });
-}
-
-/**
- * Simple Wrapper for the indiviual client method
- *
- * Encapsulates the settings used for the cachePromiseWrapper
- *
- * @param fn
- * @param ttl
- * @returns {Function}
- * @api private
- */
-function methodCacheWrap(fn, ttl) {
-  return function (args) {
-    var key = JSON.stringify(args);
-    return cachePromiseWrapper(key, function () {
-      return fn(args);
-    }, ttl);
-  };
-}
-
-/**
- * Wraps the client methods with a promise cache layer
- *
- * @param {Object} methods the methods of a client
- * @param {Number} ttl optional cache time in seconds
- * @returns {Object} returns the methods wrapped in a cache layer
- * @api public
- */
-function wrap(methods, ttl) {
-  (0, _lodash.forEach)(methods, function (fn, key) {
-    methods[key] = methodCacheWrap(fn, ttl);
-  });
-  return methods;
 }
 
 /**
@@ -140,18 +45,58 @@ function wrap(methods, ttl) {
  *
  * const wrappedMethods = manager.wrap(Client.METHODS);
  *
- * @todo Add support for redis and Memcache
- *
  * @param config
  * @returns {{wrap: wrap, store: *}}
  * @constructor
  */
 
-function CacheManager(config) {
-  store = _cacheManager2['default'].caching(config);
-  return { wrap: wrap };
+function ClientCache(config) {
+  var _this = this;
+
+  var logger = arguments.length <= 1 || arguments[1] === undefined ? console : arguments[1];
+
+  var manager = _cacheManager2['default'].caching(config);
+
+  /**
+   * Simple Wrapper for the indiviual client method
+   *
+   * Encapsulates the settings used for the cachePromiseWrapper
+   *
+   * @param fn function that is called
+   * @param ttl time to live
+   * @param params params for function call
+   * @returns {Promise}
+   * @api private
+   */
+  function wrapMethodInCache(fn, fnName, ttl, params) {
+    var key = fnName + JSON.stringify(params);
+    return new Promise(function (resolve, reject) {
+      manager.wrap(key, function (cb) {
+        promiseAsCallback(fn(params), cb);
+      }, { ttl: ttl }, function (err, result) {
+        if (err) {
+          logger.error('Promise was rejected in cachePromiseCallback', { error: err, params: params });
+          reject(err);
+        } else {
+          resolve(JSON.parse(result));
+        }
+      });
+    });
+  }
+
+  /**
+   * Wraps the client methods with a promise cache layer
+   *
+   * @param {Object} methods the methods of a client
+   * @param {Number} ttl optional cache time in seconds
+   * @returns {Object} returns the methods wrapped in a cache layer
+   * @api public
+   */
+  return function (methods, ttl) {
+    return (0, _lodash.mapValues)(methods, function (fn, fnName) {
+      return wrapMethodInCache.bind(_this, fn, fnName, ttl);
+    });
+  };
 }
 
-function setLogger(logger) {
-  Logger = logger;
-}
+module.exports = exports['default'];

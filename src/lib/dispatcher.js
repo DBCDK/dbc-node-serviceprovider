@@ -31,8 +31,20 @@ function registerEventOnConnection(transform, connection) {
  * @constructor
  */
 export default function Dispatcher(transforms, logger, io) {
-  io.use((connection, next) => {
-    transforms.forEach((transform) => registerEventOnConnection(transform, connection));
-    next();
+  io.on('connection', function(connection) {
+    transforms.forEach((transform) => {
+      const event = transform.event();
+      connection.on(`${event}Request`, (data, res) => {
+        transform.trigger(data, connection).forEach((responsePromise) => {
+          responsePromise
+            .then((response) => {
+              connection.emit(`${event}Response`, response);
+            })
+            .catch((error) => {
+              connection.emit(`${event}Response`, error);
+            });
+        });
+      });
+    });
   });
 }

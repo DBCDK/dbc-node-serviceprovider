@@ -1,6 +1,6 @@
 {
   "name": "dbc-node-serviceprovider",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Provider for the Node modules that accesesthe DBC webservices",
   "main": "dist/index.js",
   "homepage": "https://github.com/DBCDK/dbc-node-serviceprovider/tree/master#readme",

@@ -25,7 +25,8 @@ var _cacheManager2 = _interopRequireDefault(_cacheManager);
  * @param callback
  */
 function promiseAsCallback(promise, callback) {
-  promise.then(function (result) {
+  var promises = (0, _lodash.isArray)(promise) && Promise.all(promise) || promise;
+  promises.then(function (result) {
     return callback(null, JSON.stringify(result));
   })['catch'](function (err) {
     return callback(err, null);

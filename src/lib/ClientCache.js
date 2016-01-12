@@ -5,7 +5,7 @@
  * Cache wrapper for Provider Client Methods
  */
 
-import {mapValues} from 'lodash';
+import {mapValues, isArray} from 'lodash';
 import cacheManager from 'cache-manager';
 
 /**
@@ -15,7 +15,8 @@ import cacheManager from 'cache-manager';
  * @param callback
  */
 function promiseAsCallback(promise, callback) {
-  promise
+  const promises = isArray(promise) && Promise.all(promise) || promise;
+  promises
     .then((result) => callback(null, JSON.stringify(result)))
     .catch((err) => callback(err, null));
 }

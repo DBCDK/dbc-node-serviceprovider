@@ -15,10 +15,12 @@ import cacheManager from 'cache-manager';
  * @param callback
  */
 function promiseAsCallback(promise, callback) {
-  const promises = isArray(promise) && Promise.all(promise) || promise;
-  promises
-    .then((result) => callback(null, JSON.stringify(result)))
-    .catch((err) => callback(err, null));
+  const promises = isArray(promise) && promise || [promise];
+  promises.forEach((singlePromise) => {
+    singlePromise
+      .then((result) => callback(null, JSON.stringify(result)))
+      .catch((err) => callback(err, null));
+  });
 }
 
 

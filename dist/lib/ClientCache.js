@@ -25,11 +25,13 @@ var _cacheManager2 = _interopRequireDefault(_cacheManager);
  * @param callback
  */
 function promiseAsCallback(promise, callback) {
-  var promises = (0, _lodash.isArray)(promise) && Promise.all(promise) || promise;
-  promises.then(function (result) {
-    return callback(null, JSON.stringify(result));
-  })['catch'](function (err) {
-    return callback(err, null);
+  var promises = (0, _lodash.isArray)(promise) && promise || [promise];
+  promises.forEach(function (singlePromise) {
+    singlePromise.then(function (result) {
+      return callback(null, JSON.stringify(result));
+    })['catch'](function (err) {
+      return callback(err, null);
+    });
   });
 }
 

@@ -212,3 +212,24 @@ Setup socket api
   
   provider.dispatcher(socket);
 ```
+
+## API 3.0
+The new 3.0 api is almost identical to the 2.0 api, except it requires a [socketcluster worker](http://socketcluster.io/#!/docs/api-scworker) or something with an identical api.
+
+### Provider.dispatcher
+```javascript
+
+  module.exports.run = function (worker) {
+    const app = express();
+    const server = worker.httpServer;
+    const scServer = worker.getSCServer();
+    
+    server.on('request', app);
+    
+    ...
+    
+    provider.dispatcher(worker);
+  }
+  
+```
+

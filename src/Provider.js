@@ -6,7 +6,7 @@
  * initializes the dispatcher if sockets are available.
  */
 
-import Dispatcher from './lib/dispatcher';
+import Dispatcher from './lib/Dispatcher';
 import Transform from './lib/Transforms';
 
 /**

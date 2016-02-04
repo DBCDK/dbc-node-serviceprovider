@@ -26,8 +26,10 @@ function registerEventOnConnection(transform, logger, connection) {
           connection.emit(`${event}Response`, response);
         })
         .catch(error => {
-          logger.log('warning', `Error in ${event}Response`, error);
-          connection.emit(`${event}Response`, {error});
+          // in-progress/TODO make emitted/logged error contain more info
+          // - we cannot emit the error itself, as it may be a cyclic structure
+          logger.log('warning', `ResponseError`, event);
+          connection.emit(`${event}Response`, {error: 'server error'});
         });
     });
   });

@@ -75,11 +75,20 @@ export default function Transform(transform, clients, logger = console) {
           const transformedResponse = transform.responseTransform(response, params, context);
           const requestStop = now();
           logger.log('info', 'Transform has been triggered', {
+            /* commented this logging-data out, 
+             * as these sometimes include large data, 
+             * - especially with mobilsoeg-profile transforms -
+             * which has a bad performance impact
+             * when it tries to serialise it..
+             *
+             * TODO: find out what we can/should log.
+             * TODO: make sure mobilsoeg-profile actually sends the wanted data
+             *
             event: event,
             timing: requestStop - requestStart,
             request: params,
             serviceReponse: response,
-            finalResponse: transformedResponse
+            finalResponse: transformedResponse */
           });
           return transformedResponse;
         });

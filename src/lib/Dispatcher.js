@@ -24,11 +24,16 @@ function registerEventOnConnection(transform, logger, connection) {
           connection.emit(`${event}Response`, response);
         })
         .catch(error => {
-          // in-progress/TODO make emitted/logged error contain more info
-          // - we cannot emit the error itself, as it may be a cyclic structure
-          logger.log('warning', 'ResponseError', {event: event,
-            time: Date.now() - startTime, 'String(error)': String(error)});
-          connection.emit(`${event}Response`, {error: 'server error'});
+          // Make sure that `error` is serialisable,
+          // as we will send it to log, and across socket connection.
+          try {
+            JSON.stringify(error); // for side-effect: throws if unserialisable
+          } catch (_) {
+            error = 'unserialisable error';
+          }
+
+          logger.log('warning', 'ResponseError', {event, error, time: Date.now() - startTime});
+          connection.emit(`${event}Response`, {error});
         });
     });
   });

@@ -47,8 +47,9 @@ function registerEventOnConnection(transform, logger, connection) {
  * @constructor
  */
 export default function Dispatcher(transforms, logger, io) {
-  io.use((connection, next) => {
+  // On socket.io it would make more sense to use `io.use(...)` instead of
+  // `io.on('connection'...)`, but io.use is not supported on socketcluster yet.
+  io.on('connection', (connection) => {
     transforms.forEach((transform) => registerEventOnConnection(transform, logger, connection));
-    next();
   });
 }

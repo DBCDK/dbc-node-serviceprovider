@@ -26,8 +26,11 @@ function registerEventOnConnection(transform, logger, connection) {
         .catch(error => {
           // Make sure that `error` is serialisable,
           // as we will send it to log, and across socket connection.
+          // Notice: socketcluster may try to serialise prototype,
+          // while `JSON.parse(JSON.stringify...` makes sure that
+          // we have a plain js object, and also throws if it is cyclic etc.
           try {
-            JSON.stringify(error); // for side-effect: throws if unserialisable
+            error = JSON.parse(JSON.stringify(error));
           } catch (_) {
             error = 'unserialisable error';
           }

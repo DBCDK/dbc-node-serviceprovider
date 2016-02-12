@@ -13,7 +13,7 @@ exports['default'] = Provider;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _libDispatcher = require('./lib/dispatcher');
+var _libDispatcher = require('./lib/Dispatcher');
 
 var _libDispatcher2 = _interopRequireDefault(_libDispatcher);
 

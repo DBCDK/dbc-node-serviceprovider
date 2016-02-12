@@ -26,8 +26,8 @@ describe('Testing the methods in the Dispatcher object', () => {
    * @type {{}}
    */
   const socketMock = {
-    use(cb) {
-      cb(connectionMock, ()=> {});
+    on(event, cb) {
+      cb(connectionMock);
     }
   };
 

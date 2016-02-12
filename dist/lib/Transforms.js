@@ -86,13 +86,7 @@ function Transform(transform, clients) {
           event: event,
           timing: requestStop - requestStart,
           request: params,
-          /* Do not log `response` objects
-           * as these sometimes include large data,
-           * - especially with mobilsoeg-profile transforms -
-           * which has a bad performance impact
-           * when the logger tries to serialise it.
-          //serviceReponse: response,
-           */
+          serviceReponse: response,
           finalResponse: transformedResponse
         });
         return transformedResponse;

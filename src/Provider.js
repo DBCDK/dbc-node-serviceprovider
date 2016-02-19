@@ -74,7 +74,7 @@ export default function Provider(logger) {
   }
 
   function trigger(event, params, context) {
-    if(!transforms.get(event)) {
+    if (!transforms.get(event)) {
       throw new Error('No such API endpoint');
     }
     return transforms.get(event).trigger(params, context);

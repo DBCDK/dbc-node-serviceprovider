@@ -84,8 +84,8 @@ export default function Transform(transform, clients, logger = console) {
              * which has a bad performance impact
              * when the logger tries to serialise it.
             //serviceReponse: response,
+            //finalResponse: transformedResponse
              */
-            finalResponse: transformedResponse
           });
           return transformedResponse;
         });

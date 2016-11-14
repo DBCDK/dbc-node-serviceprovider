@@ -1,12 +1,10 @@
 language: node_js
-node_js:
-  - "4.1"
+sudo: false
+dist: trusty
 cache:
+  bundler: true
   directories:
-    - node_modules
+  - node_modules
 branches:
   only:
-  - 'master'
-after_success:
-  - npm run cover
-  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+  - master

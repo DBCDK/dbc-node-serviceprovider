@@ -8,6 +8,8 @@
 import {mapValues, isArray} from 'lodash';
 import cacheManager from 'cache-manager';
 
+export let manager = null;
+
 /**
  * Converts a promise to a callback. Is needed to use cachemanager.wrap that expects a callback
  *
@@ -41,8 +43,8 @@ function promiseAsCallback(promise, callback) {
  * @returns {{wrap: wrap, store: *}}
  * @constructor
  */
-export default function ClientCache(config, logger = console) {
-  const manager = cacheManager.caching(config);
+export function ClientCache(config, logger = console) {
+  manager = cacheManager.caching(config);
 
   /**
    * Simple Wrapper for the indiviual client method

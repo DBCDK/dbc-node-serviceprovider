@@ -41,6 +41,7 @@ describe('Testing methods on the Provider', () => {
       'callServiceClient',
       'clients',
       'event',
+      'invalidateCache',
       'logger',
       'requestTransform',
       'responseTransform',

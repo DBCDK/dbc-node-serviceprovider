@@ -7,6 +7,7 @@
 
 import {isArray} from 'lodash';
 import {now} from './Utils.js';
+import {manager} from './ClientCache';
 
 /**
  * Validate the transform object.
@@ -89,6 +90,33 @@ export default function Transform(transform, clients, logger = console) {
           });
           return transformedResponse;
         });
+    });
+  };
+
+  transform.invalidateCache = function invalidateCache(arg) {
+    return new Promise((resolve) => {
+      try {
+        manager.keys(arg, (keysErr, rows) => {
+          if (keysErr) {
+            console.error('error while looking for keys in cachestore', keysErr); // eslint-disable-line no-console
+          }
+
+          if (rows && rows.length) {
+            manager.del(rows, (delErr) => {
+              if (delErr) {
+                console.error('error while deleting keys from cachestore', delErr); // eslint-disable-line no-console
+              }
+              resolve();
+            });
+          }
+          else {
+            resolve();
+          }
+        });
+      } catch (e) {
+        console.error(e); // eslint-disable-line no-console
+        resolve();
+      }
     });
   };
 

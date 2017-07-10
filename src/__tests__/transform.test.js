@@ -31,6 +31,7 @@ describe('Testing Validate Transform', () => {
       'callServiceClient',
       'clients',
       'event',
+      'invalidateCache',
       'logger',
       'requestTransform',
       'responseTransform',

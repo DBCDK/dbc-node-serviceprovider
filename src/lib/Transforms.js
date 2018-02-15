@@ -76,7 +76,7 @@ export default function Transform(transform, clients, logger = console) {
           logger.log('info', 'Transform has been triggered', {
             event: event,
             timing: requestStop - requestStart,
-            request: typeof params !== 'string' ? JSON.stringify(params) : params
+            params: params
             /* Do not log `response` objects
              * as these sometimes include large data,
              * - especially with mobilsoeg-profile transforms -
@@ -112,7 +112,7 @@ export default function Transform(transform, clients, logger = console) {
           }
         });
       } catch (e) {
-        console.error(e); // eslint-disable-line no-console
+        logger.error(e);
         resolve();
       }
     });

@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @file
  * Module for requiring all modules in a folder with a specified namespace

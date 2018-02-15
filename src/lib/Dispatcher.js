@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @file
  * The Dispatcher is a wrapper for socket.io. It will handle all communication

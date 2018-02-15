@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @file
  * Basic service provider. Discovers and initializes the transforms and

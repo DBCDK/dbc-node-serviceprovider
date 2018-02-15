@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @file
  * Module for registering all transforms

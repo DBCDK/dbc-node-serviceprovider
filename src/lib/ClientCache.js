@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @file
  * Cache wrapper for Provider Client Methods
